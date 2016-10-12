@@ -1,0 +1,20 @@
+Week 1:
+    Homework 1:
+        C:\PRAGADHE\DEV_GIT\LearnJava\JavaPractice\MongoDB\MongoDB_M101J\hw1-1__m101j>mongorestore dump
+        MongoDB Enterprise > use m101
+        switched to db m101
+        MongoDB Enterprise > db.hw1.findOne()
+        {
+                "_id" : ObjectId("50773061bf44c220307d8514"),
+                "answer" : 42,
+                "question" : "The Ultimate Question of Life, The Universe and Everything"
+        }
+
+    Homework 2:
+        Valid JSON object
+
+    Homework 3:
+        523258
+
+Week 2:
+
