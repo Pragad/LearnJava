@@ -1,0 +1,134 @@
+1. Basic Commands
+2. INSERTMANY()
+3. count()
+---------------------------------------------------------------------------------------------
+COMMANDS:
+1. Basic Commands:
+    - db.getCollectionNames()
+    - use database_name
+    - db.movies.insertOne({"title" : "harry potter", "year": 2005, "imdb":"tt98765" })
+    - db.movies.find()
+    - db.movies.find().pretty()
+    - db.movies.find({"year" : 2010}).pretty()
+    - var c = db.movies.find()
+    - c.hasNext()
+    - c.next()
+
+    MVN Commands:
+    The below command creates a mvn project
+    > mvn archetype:generate
+
+    Run a maven project by giving the Main Class using "-Dexec.mainclass"
+    C:\PRAGADHE\DEV_GIT\LearnJava\JavaPractice\MongoDB\MongoDB_M101J\M101J>mvn clean compile exec:java -Dexec.mainClass=com.mongodb.App
+
+2. INSERTMANY():
+    MongoDB Enterprise > db.names.insertMany(
+    ... [
+    ...     {
+    ...         "name" : "Prag",
+    ...         "age" : 28,
+    ...         "gender" : "male"
+    ...     },
+    ...     {
+    ...         "name" : "abc",
+    ...         "age" : 20,
+    ...         "gender" : "male"
+    ...     },
+    ...     {
+    ...         "name" : "def",
+    ...         "age" : 18,
+    ...         "gender" : "female"
+    ...     }
+    ... ]
+    ... );
+    {
+            "acknowledged" : true,
+            "insertedIds" : [
+                    ObjectId("580e1873dad6ecfdbf3da06d"),
+                    ObjectId("580e1873dad6ecfdbf3da06e"),
+                    ObjectId("580e1873dad6ecfdbf3da06f")
+            ]
+    }
+
+3. count()
+        MongoDB Enterprise > db.names.find().pretty()
+        { "_id" : ObjectId("57fd64c8ee435d20d5b1af97"), "name" : "Prag Thiru" }
+        {
+                "_id" : ObjectId("580e1873dad6ecfdbf3da06d"),
+                "name" : "Prag",
+                "age" : 28,
+                "gender" : "male"
+        }
+        {
+                "_id" : ObjectId("580e1873dad6ecfdbf3da06e"),
+                "name" : "abc",
+                "age" : 20,
+                "gender" : "male"
+        }
+        {
+                "_id" : ObjectId("580e1873dad6ecfdbf3da06f"),
+                "name" : "def",
+                "age" : 18,
+                "gender" : "female"
+        }
+        
+        MongoDB Enterprise > db.names.find().count()
+        4
+        MongoDB Enterprise > db.names.find({"gender" : "female"}).count()
+        1
+        MongoDB Enterprise > db.names.find({"gender" : "male"}).count()
+        2
+        MongoDB Enterprise > db.names.find({"gender" : "male", "age" : 28}).count()
+        1
+
+4. dropDatabase()
+        MongoDB Enterprise > use names
+        switched to db names
+
+        MongoDB Enterprise > db.dropDatabase()
+        { "dropped" : "names", "ok" : 1 }
+
+
+5. DOT operator in Find
+    MongoDB Enterprise > db.names.find().pretty()
+    {
+            "_id" : ObjectId("580e24b4dad6ecfdbf3da073"),
+            "name" : {
+                    "first name" : "Prag",
+                    "last name" : "Thiru"
+            },
+            "age" : 28,
+            "gender" : "male"
+    }
+    {
+            "_id" : ObjectId("580e24b4dad6ecfdbf3da074"),
+            "name" : {
+                    "first name" : "abc",
+                    "last name" : "qwe"
+            },
+            "age" : 20,
+            "gender" : "male"
+    }
+    {
+            "_id" : ObjectId("580e24b4dad6ecfdbf3da075"),
+            "name" : {
+                    "first name" : "def",
+                    "last name" : "poi"
+            },
+            "age" : 18,
+            "gender" : "female"
+    }
+
+    MongoDB Enterprise > db.names.find({"gender" : "male", "name.last name" : "Thiru"}).count()
+    1
+
+    MongoDB Enterprise > db.names.find({"gender" : "male", "name.last name" : "Thiru"}).pretty()
+    {
+            "_id" : ObjectId("580e24b4dad6ecfdbf3da073"),
+            "name" : {
+                    "first name" : "Prag",
+                    "last name" : "Thiru"
+            },
+            "age" : 28,
+            "gender" : "male"
+    }

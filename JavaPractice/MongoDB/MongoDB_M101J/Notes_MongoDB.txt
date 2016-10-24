@@ -73,20 +73,38 @@ Week 1:
     Spark POST requests
         - To handle form requests
 
+Week 2:
+    1. Creating Documents:
+        - All documents must contain a _id
+        - It is the Number to identify a document within a collection
+        - All IDs within a Single Collection are Unique
 
-COMMANDS:
-    - use database_name
-    - db.movies.insertOne({"title" : "harry potter", "year": 2005, "imdb":"tt98765" })
-    - db.movies.find()
-    - db.movies.find().pretty()
-    - db.movies.find({"year" : 2010}).pretty()
-    - var c = db.movies.find()
-    - c.hasNext()
-    - c.next()
+        - We can provide IDs as well
 
-    MVN Commands:
-    The below command creates a mvn project
-    > mvn archetype:generate
+        INSERTMANY():
+            - Inserts in order
+            - If it finds an entry that is already a DUPLICATE (I.E. if _id is same as previous one)
+              then it bails out without adding that entry to db.
+            - It would fail with E1000:Duplicate Key Error
 
-    Run a maven project by giving the Main Class using "-Dexec.mainclass"
-    C:\PRAGADHE\DEV_GIT\LearnJava\JavaPractice\MongoDB\MongoDB_M101J\M101J>mvn clean compile exec:java -Dexec.mainClass=com.mongodb.App
+            - If you want INSERTMANY to go on and insert other entries without bailing out
+                (
+                    { }
+                ],
+                {
+                    "ordered" : false
+                }
+                );
+
+    2. The _id field:            
+        -        DATE    |Mac ADDR| PID |COUNTER
+                         |        |     |
+        - ObjId: - - - - | - - -  | - - | - - - 
+          Eg:    580e1873  dad6ec   fdbf  3da06d
+        - It is a 12 Byte HEX String
+
+    3. Reading Documents:
+        - We can use . (DOT) notation to go under hierarchy. 
+        - DOT notation requires QUOTES
+
+
