@@ -1,3 +1,9 @@
+RDBMS 	        MongoDB
+Table 	        Collection
+Column 	        Key
+Value 	        Value
+Records / Rows 	Document / Object
+
 HOW TO RUN MONGODB:
     C:\Users\pragadhe>mongod - Will start the server
     C:\Users\pragadhe>mongo  - Will start the shell
@@ -107,4 +113,33 @@ Week 2:
         - We can use . (DOT) notation to go under hierarchy. 
         - DOT notation requires QUOTES
 
+        CURSORS
+        - find() returns a cursor
+        - We should iterate over the cursor to get the values
 
+        - If we don't assign "find" to a $var, mongoDB by default iterates for 20 times
+        - First batch will usually be 101 docs
+
+        > var c = db.movieDetails.find();
+        > var doc = funtcion() { return c.hasNext() ? c.next() : null; }
+        > c.objsLeftInBatch();
+
+        PROJECTIONS:
+        - reduce network overhead and processing requirement
+        - Supplied a second argument to "find"
+
+        INCLUDE:
+        - Document to contain jus a title
+        - _id field will always be returned
+        - IF you don't want to see _id field, it should be explicitly excluded
+
+        INCLUDE TITLE AND EXCLUDE _ID:
+        > db.movieDetails.find({ rated: "PG" }, {title : 1, _id : 0}).pretty()
+
+    4. Comparison Operators:
+        - $eq, $gt, $gte, $lt, $lte
+        - $ne - not equal to
+        - $in
+          > db.movieDetails.find({ rated : {$in: ["G", "PG", "PG-E"]}})
+
+    5. Element Operators:
