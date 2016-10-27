@@ -5,6 +5,14 @@
 5. DOT operator in Find
 6. Projections
 7. Comparison Operators
+8. Show all dbs databases
+9. Element Operators
+10. Logical Operators
+11. RegEX Operator
+11b. Evaluation Operators
+12. Array Operators
+13. Bitwise Operators
+14. UPDATE
 ---------------------------------------------------------------------------------------------
 COMMANDS:
 1. Basic Commands:
@@ -86,7 +94,7 @@ COMMANDS:
         MongoDB Enterprise > db.names.find({"gender" : "male", "age" : 28}).count()
         1
 
-4. dropDatabase()
+4. Drop Database dropDatabase()
         MongoDB Enterprise > use names
         switched to db names
 
@@ -145,14 +153,14 @@ COMMANDS:
     > db.movieDetails.find({ rated: "PG" }, {title : 1, _id : 0}).pretty()
 
 7. Comparison Operators
-    $eq 	Matches values that are equal to a specified value.
-    $gt 	Matches values that are greater than a specified value.
-    $gte 	Matches values that are greater than or equal to a specified value.
-    $lt 	Matches values that are less than a specified value.
-    $lte 	Matches values that are less than or equal to a specified value.
-    $ne 	Matches all values that are not equal to a specified value.
-    $in 	Matches any of the values specified in an array.
-    $nin 	Matches none of the values specified in an array.
+    - $eq 	: Matches values that are equal to a specified value.
+    - $gt 	: Matches values that are greater than a specified value.
+    - $gte 	: Matches values that are greater than or equal to a specified value.
+    - $lt 	: Matches values that are less than a specified value.
+    - $lte 	: Matches values that are less than or equal to a specified value.
+    - $ne 	: Matches all values that are not equal to a specified value.
+    - $in 	: Matches any of the values specified in an array.
+    - $nin 	: Matches none of the values specified in an array.
 
         > db.names.find( {age : {$gte : 20, $lt : 25} }).pretty()
         {
@@ -171,8 +179,8 @@ COMMANDS:
 
           > db.movieDetails.find({ rated : {$in: ["G", "PG", "PG-E"]}})
 
-8. Show all dbs
-
+8. Show all dbs databases
+http://stackoverflow.com/questions/25947929/how-to-list-all-databases-in-the-mongo-shell
     MongoDB Enterprise > show dbs
     local   0.000GB
     m101    0.000GB
@@ -232,30 +240,53 @@ COMMANDS:
         db.names.find( { "award" : { $regex : /^Won\s.*/} } ).pretty()
 
 11b. Evaluation Operators
-    $mod 	Performs a modulo operation on the value of a field and selects documents with a specified result.
-    $regex 	Selects documents where values match a specified regular expression.
-    $text 	Performs text search.
-    $where 	Matches documents that satisfy a JavaScript expression.
+    - $mod 	    : Performs a modulo operation on the value of a field and selects documents with a specified result
+    - $regex 	: Selects documents where values match a specified regular expression.
+    - $text 	: Performs text search.
+    - $where 	: Matches documents that satisfy a JavaScript expression.
 
 12. Array Operators
     These Operators work with Array Values
 
-    $all 	    Matches arrays that contain all elements specified in the query.
-    $elemMatch 	Selects documents if element in the array field matches all the specified $elemMatch conditions.
-    $size 	    Selects documents if the array field is a specified size.
+    - $all 	        : Matches arrays that contain all elements specified in the query.
+    - $elemMatch 	: Selects documents if element in the array field matches all the specified $elemMatch conditions.
+    - $size 	    : Selects documents if the array field is a specified size.
 
     $all:
         > db.movieList.find( { "genres" : { $all : ["comedy", "drama", "action"] } } ).pretty()
 
     $elemMatch:
-
         This would match list that has UK and lists with revenue > 4.5
 
         > db.movieList.find( { "boxOffice" : { "country" : "UK", "revenue" : { $gt : 4.5 } } } )
 
 
 13. Bitwise Operators
-    $bitsAllSet 	Matches numeric or binary values in which a set of bit positions all have a value of 1.
-    $bitsAnySet 	Matches numeric or binary values in which any bit from a set of bit positions has a value of 1.
-    $bitsAllClear 	Matches numeric or binary values in which a set of bit positions all have a value of 0.
-    $bitsAnyClear 	Matches numeric or binary values in which any bit from a set of bit positions has a value of 0.
+    - $bitsAllSet 	: Matches numeric or binary values in which a set of bit positions all have a value of 1.
+    - $bitsAnySet 	: Matches numeric or binary values in which any bit from a set of bit positions has a value of 1.
+    - $bitsAllClear : Matches numeric or binary values in which a set of bit positions all have a value of 0.
+    - $bitsAnyClear	: Matches numeric or binary values in which any bit from a set of bit positions has a value of 0.
+
+14. UPDATE
+    $updateMany:
+    $replaceOne
+    $updateOne:
+        - Will update the first document that matches the SELECTOR
+        - If existing field, then it will get modified else it will get added
+
+    UPDATE OPERATORS:
+        - $set
+        - $unset
+        - $ince
+        
+        > db.names.updateOne( {"name.first name" : "Prag"} , {$set : { "age" : 30, "award" : "Learning Mongo DB"} } );
+        > db.names.updateOne( {"name.first name" : "Prag"} , {$inc : { "age" : 3} } );
+
+
+        $push
+        $each - add to an existing array
+        $position : 0: insert the new element at top
+
+        > upsert : true
+
+        $slice - push but keep just certain number of elements
