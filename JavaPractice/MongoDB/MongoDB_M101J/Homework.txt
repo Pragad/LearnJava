@@ -17,4 +17,29 @@ Week 1:
         523258
 
 Week 2:
+    Homework 2.1:
+        MVN Commands:
+        mvn compile exec:java -Dexec.mainClass=course.homework.MongoDBSparkFreemarkerStyle
+
+    Homework 2.2:
+        Importing JSON / BSON to mongodb:
+        mongoimport --drop -d students -c grades grades.json
+
+    Homework 2.4
+        mvn compile exec:java -Dexec.mainClass=course.BlogController
+
+    Homework 2.5
+        mongoimport --drop -d movies -c movieDetails movieDetails.json
+
+        SOLUTION:
+        > db.movieDetails.find( { "year" : 2013 , "rated" : "PG-13", "awards.wins" : 0} ).pretty()
+        "A Decade of Decadence, Pt. 2: Legacy of Dreams"
+
+    Homework 2.6
+        SOLUTION:
+        Find Documents that have Sweden as the 2nd country
+        > db.movieDetails.count( { "countries" : { $size : 2}, "countries.1" : "Sweden"} )
+
+        Find Documents that have JUST two countries and has Sweden as 2nd element in Countries
+        > db.movieDetails.find( { "countries" : { $size : 2}, "countries.1" : "Sweden"} )
 

@@ -259,7 +259,7 @@ http://stackoverflow.com/questions/25947929/how-to-list-all-databases-in-the-mon
         This would match list that has UK and lists with revenue > 4.5
 
         > db.movieList.find( { "boxOffice" : { "country" : "UK", "revenue" : { $gt : 4.5 } } } )
-
+        > db.movieList.find( { "boxOffice" : { $elemMatch { country : "UK", "revenue" : { $gt : 4.5} } } } )
 
 13. Bitwise Operators
     - $bitsAllSet 	: Matches numeric or binary values in which a set of bit positions all have a value of 1.
@@ -277,7 +277,7 @@ http://stackoverflow.com/questions/25947929/how-to-list-all-databases-in-the-mon
     UPDATE OPERATORS:
         - $set
         - $unset
-        - $ince
+        - $inc
         
         > db.names.updateOne( {"name.first name" : "Prag"} , {$set : { "age" : 30, "award" : "Learning Mongo DB"} } );
         > db.names.updateOne( {"name.first name" : "Prag"} , {$inc : { "age" : 3} } );

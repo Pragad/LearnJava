@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
+import org.bson.Document;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -29,34 +33,54 @@ public class HelloWorldSparkFreemarkerStyle {
 		
 		BasicConfigurator.configure();
 		
-        Spark.get("/", new Route() {
-            public Object handle(final Request request, final Response response){
+		// NOTE 1. Setup MongoDB
+		MongoClient client = new MongoClient();
+		
+		// Both the database name and collection name is movies
+		MongoDatabase db = client.getDatabase("movies");
+		MongoCollection<Document> coll = db.getCollection("movies");
+		
+		// NOTE 2. Delete the existing collection
+		coll.drop();		
+		
+		// NOTE 3. Add an element to the document
+		coll.insertOne(new Document("name", "MongoDB Sample by Prag"));
+		
+        Spark.get("/", new Route() 
+        {
+            public Object handle(final Request request, final Response response)
+            {
             	StringWriter strWriter = new StringWriter();
-        		try {
+        		try 
+        		{
         			Template helloTemplate = configuration.getTemplate("hello.ftl");
-        			Map<String, Object> helloMap = new HashMap<String, Object>();
-        			helloMap.put("name", "Prag Thiru");
         			
-        			try {
-        				helloTemplate.process(helloMap, strWriter);
-        			} catch (TemplateException e) {
+        			// NOTE 3. Adding a name directly
+        			//Map<String, Object> helloMap = new HashMap<String, Object>();
+        			//helloMap.put("name", "Prag Thiru");
+        			
+        			// NOTE 4. Fetching a name from  MongoDB
+        			Document doc = coll.find().first();
+        			try 
+        			{
+        				// NOTE 3b.
+        				//helloTemplate.process(helloMap, strWriter);
+        				
+        				helloTemplate.process(doc, strWriter);
+        			} 
+        			catch (TemplateException e) 
+        			{
         				// TODO Auto-generated catch block
         				e.printStackTrace();
         			}
         			
-        		} catch (TemplateNotFoundException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		} catch (MalformedTemplateNameException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		} catch (ParseException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		} catch (IOException e) {
+        		} 
+        		catch (Exception e) 
+        		{
         			// TODO Auto-generated catch block
         			e.printStackTrace();
         		}
+        		
 				return strWriter;
             }
         });

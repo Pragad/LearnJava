@@ -75,4 +75,14 @@ MongoDB vs RDBMS
     Value 	        Value
     Records / Rows 	Document / Object
 
+4.
+Converting BSON dump into JSON file
+https://docs.mongodb.com/manual/reference/program/bsondump/
+
+    > bsondump movieDetails.bson > movieDetails.json
+
+5. 
+Import JSON into mongodb
+
+    > mongoimport --drop -d students -c grades grades.json
 
