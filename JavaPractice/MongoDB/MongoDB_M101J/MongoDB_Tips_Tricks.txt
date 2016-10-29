@@ -1,6 +1,9 @@
 1. Difference Between insert(), insertOne() and insertMany()method
 2. Show all databases
 3. MongoDB vs RDBMS
+4. Converting BSON dump into JSON file
+5. Import JSON into mongodb
+6. When does MongoDB create a database
 ---------------------------------------------------------------------------------------------
 1.
 Difference Between insert(), insertOne() and insertMany()method
@@ -85,4 +88,8 @@ https://docs.mongodb.com/manual/reference/program/bsondump/
 Import JSON into mongodb
 
     > mongoimport --drop -d students -c grades grades.json
+
+6.
+When does MongoDB create a database
+    - Only when data is inserted / stored into the db
 

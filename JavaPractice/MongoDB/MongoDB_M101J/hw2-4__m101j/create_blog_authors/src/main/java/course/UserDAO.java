@@ -17,10 +17,13 @@
 package course;
 
 import com.mongodb.ErrorCategory;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+
 import sun.misc.BASE64Encoder;
 
 import java.io.UnsupportedEncodingException;
@@ -31,35 +34,50 @@ import java.util.Random;
 
 import static com.mongodb.client.model.Filters.eq;
 
-public class UserDAO {
+public class UserDAO
+{
     private final MongoCollection<Document> usersCollection;
     private Random random = new SecureRandom();
 
-    public UserDAO(final MongoDatabase blogDatabase) {
+    public UserDAO(final MongoDatabase blogDatabase)
+    {
         usersCollection = blogDatabase.getCollection("users");
     }
 
     // validates that username is unique and insert into db
-    public boolean addUser(String username, String password, String email) {
+    public boolean addUser(String username, String password, String email)
+    {
 
         String passwordHash = makePasswordHash(password, Integer.toString(random.nextInt()));
 
-        // XXX WORK HERE
-        // create an object suitable for insertion into the user collection
-        // be sure to add username and hashed password to the document. problem instructions
+        // TASK: Pragad
+        // Create an object suitable for insertion into the user collection
+        // be sure to add username and hashed password to the document. problem
+        // instructions
         // will tell you the schema that the documents must follow.
 
-        if (email != null && !email.equals("")) {
-            // XXX WORK HERE
-            // if there is an email address specified, add it to the document too.
+        // NOTE 3. Create a document
+        Document userData = new Document("_id", username).append("password", passwordHash);
+
+        if (email != null && !email.equals(""))
+        {
+            // TASK: Pragad
+            // If there is an email address specified, add it to the document too.
+            userData.append("email", email);
         }
 
-        try {
-            // XXX WORK HERE
-            // insert the document into the user collection here
+        try
+        {
+            // TASK: Pragad
+            // Insert the document into the user collection here
+            usersCollection.insertOne(userData);
+            System.out.println("LOG: Inserted User: " + username);
             return true;
-        } catch (MongoWriteException e) {
-            if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
+
+        } catch (MongoWriteException e)
+        {
+            if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY))
+            {
                 System.out.println("Username already in use: " + username);
                 return false;
             }
@@ -67,13 +85,22 @@ public class UserDAO {
         }
     }
 
-    public Document validateLogin(String username, String password) {
+    public Document validateLogin(String username, String password)
+    {
         Document user = null;
+        String strUserName = "";
 
-        // XXX look in the user collection for a user that has this username
+        // TASK: Pragad
+        // Look in the user collection for a user that has this username and
         // assign the result to the user variable.
+        Bson filterUserName = new Document("_id", username);
+        user = usersCollection.find(filterUserName).first();
+        
+        strUserName = user.get("_id").toString();
+        System.out.println("LOG: Retrieved User: " + strUserName);
 
-        if (user == null) {
+        if (user == null)
+        {
             System.out.println("User not in database");
             return null;
         }
@@ -82,7 +109,8 @@ public class UserDAO {
 
         String salt = hashedAndSalted.split(",")[1];
 
-        if (!hashedAndSalted.equals(makePasswordHash(password, salt))) {
+        if (!hashedAndSalted.equals(makePasswordHash(password, salt)))
+        {
             System.out.println("Submitted password is not a match");
             return null;
         }
@@ -90,18 +118,21 @@ public class UserDAO {
         return user;
     }
 
-
-    private String makePasswordHash(String password, String salt) {
-        try {
+    private String makePasswordHash(String password, String salt)
+    {
+        try
+        {
             String saltedAndHashed = password + "," + salt;
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(saltedAndHashed.getBytes());
             BASE64Encoder encoder = new BASE64Encoder();
             byte hashedBytes[] = (new String(digest.digest(), "UTF-8")).getBytes();
             return encoder.encode(hashedBytes) + "," + salt;
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e)
+        {
             throw new RuntimeException("MD5 is not available", e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e)
+        {
             throw new RuntimeException("UTF-8 unavailable?  Not a chance", e);
         }
     }

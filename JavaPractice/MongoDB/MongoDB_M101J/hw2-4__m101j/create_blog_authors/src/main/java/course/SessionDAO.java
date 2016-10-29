@@ -65,7 +65,7 @@ public class SessionDAO {
         return session.getString("_id");
     }
 
-    // ends the session by deleting it from the sesisons table
+    // ends the session by deleting it from the sessions table
     public void endSession(String sessionID) {
         sessionsCollection.deleteOne(eq("_id", sessionID));
     }

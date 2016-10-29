@@ -6,6 +6,7 @@
 6. Projections
 7. Comparison Operators
 8. Show all dbs databases
+8b. Show all collection
 9. Element Operators
 10. Logical Operators
 11. RegEX Operator
@@ -187,6 +188,9 @@ http://stackoverflow.com/questions/25947929/how-to-list-all-databases-in-the-mon
     movies  0.000GB
     names   0.000GB
     video   0.000GB
+
+8b. Show all collection
+    show collections
 
 9. Element Operators
     $exists: Matches documents that have the specified field.

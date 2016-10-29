@@ -27,7 +27,7 @@ import spark.Spark;
 public class HelloWorldSparkFreemarkerStyle {
 	public static void main(String args[])
 	{
-		Configuration configuration = new Configuration();
+		final Configuration configuration = new Configuration();
 		configuration.setClassForTemplateLoading(
 				HelloWorldSparkFreemarkerStyle.class, "/");
 		
@@ -38,7 +38,7 @@ public class HelloWorldSparkFreemarkerStyle {
 		
 		// Both the database name and collection name is movies
 		MongoDatabase db = client.getDatabase("movies");
-		MongoCollection<Document> coll = db.getCollection("movies");
+		final MongoCollection<Document> coll = db.getCollection("movies");
 		
 		// NOTE 2. Delete the existing collection
 		coll.drop();		
