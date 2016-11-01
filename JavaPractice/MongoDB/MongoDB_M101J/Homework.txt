@@ -25,21 +25,53 @@ Week 2:
         Importing JSON / BSON to mongodb:
         mongoimport --drop -d students -c grades grades.json
 
-    Homework 2.4
+        This next query, which uses the aggregation framework that we have not taught yet, will tell you the student_id with the highest average score:
+            > db.grades.aggregate( { '$group' : { '_id' : '$student_id', 'average' : { $avg : '$score' } } }, { '$sort' : { 'average' : -1 } }, { '$limit' : 1 } )
+
+        SOLUTION:
+
+    Homework 2.3:
+        Now let us find the student who holds the 101st best grade across all grades
+            > db.grades.find().sort( { 'score' : -1 } ).skip( 100 ).limit( 1 )
+
+        Now let us sort the students by student_id , and score, while also displaying the type to then see what the top five docs are
+            > db.grades.find( { }, { 'student_id' : 1, 'type' : 1, 'score' : 1, '_id' : 0 } ).sort( { 'student_id' : 1, 'score' : 1, } ).limit( 5 )
+
+        SOLUTION:
+
+    Homework 2.4:
         mvn compile exec:java -Dexec.mainClass=course.BlogController
 
-    Homework 2.5
+    Homework 2.5:
         mongoimport --drop -d movies -c movieDetails movieDetails.json
 
         SOLUTION:
         > db.movieDetails.find( { "year" : 2013 , "rated" : "PG-13", "awards.wins" : 0} ).pretty()
         "A Decade of Decadence, Pt. 2: Legacy of Dreams"
 
-    Homework 2.6
+    Homework 2.6:
         SOLUTION:
         Find Documents that have Sweden as the 2nd country
         > db.movieDetails.count( { "countries" : { $size : 2}, "countries.1" : "Sweden"} )
 
         Find Documents that have JUST two countries and has Sweden as 2nd element in Countries
         > db.movieDetails.find( { "countries" : { $size : 2}, "countries.1" : "Sweden"} )
+
+Week 3:
+    Homework 3.1:
+        Provide the identity (in the form of their _id) of the student with the highest average in the class with following query that uses the aggregation framework.
+        The answer will appear in the _id field of the resulting document.
+
+            db.students.aggregate( [
+              { '$unwind': '$scores' },
+              {
+                '$group':
+                {
+                  '_id': '$_id',
+                  'average': { $avg: '$scores.score' }
+                }
+              },
+              { '$sort': { 'average' : -1 } },
+              { '$limit': 1 }
+            ] )
 

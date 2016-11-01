@@ -142,4 +142,41 @@ Week 2:
         - $in
           > db.movieDetails.find({ rated : {$in: ["G", "PG", "PG-E"]}})
 
-    5. Element Operators:
+    SEE "MongoDB_Commands_Syntax.txt"
+
+Week 3:
+
+    - In RDBMS you would like to keep your data in 3NF
+    - Keep data such that it is AGNOSTIC to the application
+
+    1. MongoDB Schema Design:
+        - Keep data in a way such that it suits the data access pattern
+
+        - APPLICATION - DRIVEN SCHEMA
+            - i.e. Know the following
+            - What pieces of data are used together
+            - What pieces of data are read only
+            - What pieces of data are written often
+
+
+        - MongoDB supports Rich documents i.e. it allows document inside a document, array
+        - We might have to embed a data within a document (PRE - JOIN) as mongodb does not
+          support joins
+        - No constraints in Mongodb
+            i.e. Foreign key constraint:
+            Attribute of one row in a table would form a foriegn key in another table
+
+        - MongoDB - how to organize data to support Atomic operations
+
+    2. Goals of Normalization:
+        - Free the database of modification anomalies
+            EG: have a table for Blog Post as
+                Post ID, Title, Author, Body, Author's Email
+            If an author's email id changes then you shouldn't go to multiple rows to update it
+
+        - Minimize the redesign when extending the database
+        - Avoid any bias to a particular access pattern
+
+        "AVOID ANY BIAS TO A PARTICUAL ACCESS PATTERN"
+            - is something we avoid in MongoDB. 
+            - If we do it, then we would end up BAD at everything
