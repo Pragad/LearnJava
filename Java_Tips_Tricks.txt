@@ -22,6 +22,8 @@
 22. Java Constructors and Super Class
 23. Exceptions
 24. Final, Finally, Finalize
+25. How to find index of min element in a list
+26. Get current date and time
 --------------------------------------------------------------------------------------------
 
 1.
@@ -564,4 +566,16 @@ http://stackoverflow.com/questions/7814688/in-java-what-purpose-do-the-keywords-
               //free resources (e.g. unallocate memory)
               super.finalize();
             }
+
+25.
+How to find index of min element in a list
+http://stackoverflow.com/questions/15995458/how-to-find-the-minimum-value-in-an-arraylist-along-with-the-index-number-jav
+
+    int minIndex = list.indexOf(Collections.min(list));
+
+26. Get current date and time
+http://stackoverflow.com/questions/833768/java-code-for-getting-current-time
+
+    new java.util.Date() : Human Readable Format
+    System.currentTimeMillis() : 1478422910095
 
