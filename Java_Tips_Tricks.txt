@@ -24,6 +24,9 @@
 24. Final, Finally, Finalize
 25. How to find index of min element in a list
 26. Get current date and time
+27. Priority Queue peek, element, poll, remove
+28. Priority Queue Offer vs Add
+29. for each loop in Java
 --------------------------------------------------------------------------------------------
 
 1.
@@ -573,9 +576,36 @@ http://stackoverflow.com/questions/15995458/how-to-find-the-minimum-value-in-an-
 
     int minIndex = list.indexOf(Collections.min(list));
 
-26. Get current date and time
+26.
+Get current date and time
 http://stackoverflow.com/questions/833768/java-code-for-getting-current-time
 
     new java.util.Date() : Human Readable Format
     System.currentTimeMillis() : 1478422910095
 
+27.
+Priority Queue peek, element, poll, remove
+http://www.davismol.net/2014/04/04/java-ocpjp7-difference-between-element-peek-poll-and-remove-methods-of-the-queue-interface/
+
+    The peek() method retrieves the value of the first element of the queue without removing it from the queue.
+    For each invocation of the method we always get the same value and its execution does not affect the size of the queue. If the queue is empty the peek() method returns null.
+
+    The element() method behaves like peek(), so it again retrieves the value of the first element without removing it. Unlike peek ), however, if the list is empty element() throws a NoSuchElementException
+
+    The poll() method retrieves the value of the first element of the queue by removing it from the queue.
+    At each invocation it removes the first element of the list and if the list is already empty it returns null but does not throw any exception
+
+    The remove() method behaves as the poll() method, so it removes the first element of the list and if the list is empty it throws a NoSuchElementException
+
+28.
+Priority Queue Offer vs Add
+http://stackoverflow.com/questions/2703984/what-is-the-difference-between-the-add-and-offer-methods-in-a-queue-in-java
+
+    The Queue interface specifies that add() will throw an IllegalStateException if no space is currently available (and otherwise return true) while offer() will return false if the element couldn't be inserted due to capacity restrictions.
+
+29.
+for each loop in Java
+
+    for (int intValue : test) {
+        // do some work here on intValue
+    }
