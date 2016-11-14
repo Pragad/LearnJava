@@ -27,6 +27,7 @@
 27. Priority Queue peek, element, poll, remove
 28. Priority Queue Offer vs Add
 29. for each loop in Java
+30. Increment Value of a HashMap's Key
 --------------------------------------------------------------------------------------------
 
 1.
@@ -609,3 +610,13 @@ for each loop in Java
     for (int intValue : test) {
         // do some work here on intValue
     }
+
+30.
+Increment Value of a HashMap's Key
+http://stackoverflow.com/questions/4157972/how-to-update-a-value-given-a-key-in-a-java-hashmap
+
+    - map.put(key, map.get(key) + 1);
+    - Replace Integer by AtomicInteger and call one of the incrementAndGet/getAndIncrement methods on it.
+    - An alternative is to wrap an int in your own MutableInteger class which has an increment()
+
+
