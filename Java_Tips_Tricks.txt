@@ -28,6 +28,8 @@
 28. Priority Queue Offer vs Add
 29. for each loop in Java
 30. Increment Value of a HashMap's Key
+31. How to split a string in Java
+32. Java String to Int and Int to String
 --------------------------------------------------------------------------------------------
 
 1.
@@ -619,4 +621,31 @@ http://stackoverflow.com/questions/4157972/how-to-update-a-value-given-a-key-in-
     - Replace Integer by AtomicInteger and call one of the incrementAndGet/getAndIncrement methods on it.
     - An alternative is to wrap an int in your own MutableInteger class which has an increment()
 
+31.
+How to split a string in Java
+http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
 
+        String string = "004-034556";
+        String[] parts = string.split("-");
+        String part1 = parts[0]; // 004
+        String part2 = parts[1]; // 034556
+
+    Note that this takes a regular expression, so remember to escape special characters if necessary.
+    There are 12 characters with special meanings: the backslash \, the caret ^, the dollar sign $, the period or dot ., the vertical bar or pipe symbol |, the question mark ?, the asterisk or star *, the plus sign +, the opening parenthesis (, the closing parenthesis ), and the opening square bracket [, the opening curly brace {, These special characters are often called "metacharacters".
+
+    So, if you want to split on e.g. period/dot . which means "any character" in regex, use either backslash \ to escape the individual special character like so split("\\."), or use character class [] to represent literal character(s) like so split("[.]"), or use Pattern#quote() to escape the entire string like so split(Pattern.quote(".")).
+
+        String[] parts = string.split(Pattern.quote(".")); // Split on period.
+
+32. 
+Java String to Int and Int to String
+http://stackoverflow.com/questions/5585779/converting-string-to-int-in-java
+http://stackoverflow.com/questions/3335737/integer-tostringint-i-vs-string-valueofint-i
+
+		String s = "1234";
+		int i = Integer.parseInt(s);
+		System.out.println(i);
+		
+		i++;
+		String t = String.valueOf(i);
+		System.out.println(t);
