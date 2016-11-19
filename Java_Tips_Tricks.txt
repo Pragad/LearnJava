@@ -30,6 +30,7 @@
 30. Increment Value of a HashMap's Key
 31. How to split a string in Java
 32. Java String to Int and Int to String
+33. Iterating over a Map using EntrySet
 --------------------------------------------------------------------------------------------
 
 1.
@@ -649,3 +650,20 @@ http://stackoverflow.com/questions/3335737/integer-tostringint-i-vs-string-value
 		i++;
 		String t = String.valueOf(i);
 		System.out.println(t);
+
+33.
+Iterating over a Map using EntrySet
+http://stackoverflow.com/questions/5428897/why-do-we-use-entryset-method-and-use-the-retured-set-to-iterate-a-map
+
+    This is as close to iterating over the map as we can because you have to say whether you want just the keys, just the values or the whole key/value entry.
+    For Sets and Lists, there is only one option so, no need to have a separate method to do this.
+
+    BTW: This is how I would iterate over a Map.
+
+        Map<K,V> m=new LinkedHashMap<K,V>();
+        for(Map.Entry<K,V> entry: m.entrySet())
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+
+    In Java 8 you can write
+        m.forEach((k, v) -> System.out.println(k + ": " + v));
+
