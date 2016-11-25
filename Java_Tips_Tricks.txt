@@ -31,6 +31,7 @@
 31. How to split a string in Java
 32. Java String to Int and Int to String
 33. Iterating over a Map using EntrySet
+34. Signed Right Shift and Unsigned Right Shift
 --------------------------------------------------------------------------------------------
 
 1.
@@ -667,3 +668,16 @@ http://stackoverflow.com/questions/5428897/why-do-we-use-entryset-method-and-use
     In Java 8 you can write
         m.forEach((k, v) -> System.out.println(k + ": " + v));
 
+34.
+Signed Right Shift and Unsigned Right Shift
+http://www.geeksforgeeks.org/bitwise-shift-operators-in-java/
+
+    >> (Signed right shift)
+        In Java, the operator ‘>>’ is signed right shift operator.
+        All integers are signed in Java, and it is fine to use >> for negative numbers.
+        The operator ‘>>’ uses the sign bit (left most bit) to fill the trailing positions after shift.
+        If the number is negative, then 1 is used as a filler and if the number is positive, then 0 is used as a filler.
+
+    >>> (Unsigned right shift)
+        In Java, the operator ‘>>>’ is unsigned right shift operator.
+        It always fills 0 irrespective of the sign of the number.
