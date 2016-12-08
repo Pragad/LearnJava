@@ -22,16 +22,34 @@
 22. Java Constructors and Super Class
 23. Exceptions
 24. Final, Finally, Finalize
+24b. Final in Java
 25. How to find index of min element in a list
 26. Get current date and time
 27. Priority Queue peek, element, poll, remove
 28. Priority Queue Offer vs Add
 29. for each loop in Java
 30. Increment Value of a HashMap's Key
+30b. Print All Key Valye pairs of Hashmap in Java
 31. How to split a string in Java
 32. Java String to Int and Int to String
 33. Iterating over a Map using EntrySet
 34. Signed Right Shift and Unsigned Right Shift
+35. Method Variables and Class Variables with Final
+36. Creating Java Objects
+37. Why Java string does not need new to create
+38. How are Java objects stored in memory
+38b. When is memory allocated
+39. Java Pass by value or Pass by reference
+40. ArrayLists
+41. Check if Array is empty
+42. Convert Array to ArrayList in Java
+42b. Convert ArrayList to Array in Java
+43. Integer MAX_VALUE
+44. Char array to String
+45. String to Char Array
+46. Length Length() and Size()
+47. How to use Iterator in Java
+48. Generating Random Number
 --------------------------------------------------------------------------------------------
 
 1.
@@ -575,6 +593,33 @@ http://stackoverflow.com/questions/7814688/in-java-what-purpose-do-the-keywords-
               super.finalize();
             }
 
+24b.
+Final in Java
+http://stackoverflow.com/questions/15655012/how-final-keyword-works
+Thinking in Java
+    
+    Why Final?
+        - To create a constant
+        1. Compile Time Constant:
+            - Value Won't ever change
+            - Calculations using compile time constants can be performed at compile time
+            - This eliminates runtime overhead
+
+            - Use "final" on primitive data types to create compile time constants
+            - Also a value MUST be given at compile time
+
+            IMP: 
+              final int a;
+              Error will be thrown only when trying to access the variable
+
+        2. Run time constant:
+            - Value gets initialized at run time
+
+            - Using "final" on Object References makes the REFERENCE a constant
+            - Once the reference is initialized to an object, it can never be changed to
+              point to another object.
+            - But the object itself can be modified
+
 25.
 How to find index of min element in a list
 http://stackoverflow.com/questions/15995458/how-to-find-the-minimum-value-in-an-arraylist-along-with-the-index-number-jav
@@ -622,6 +667,21 @@ http://stackoverflow.com/questions/4157972/how-to-update-a-value-given-a-key-in-
     - map.put(key, map.get(key) + 1);
     - Replace Integer by AtomicInteger and call one of the incrementAndGet/getAndIncrement methods on it.
     - An alternative is to wrap an int in your own MutableInteger class which has an increment()
+
+30b.
+Print All Key Valye pairs of Hashmap in Java
+
+    map.put("A", 1);
+    map.put("B", 2);
+    map.put("C", 3);
+
+    for (String key : map.keySet()) {
+        System.out.println(key + " " + map.get(key));
+    }
+
+    for (Map.Entry<KeyType, ValueType> entry : map.entrySet()) {
+        System.out.println(entry.getKey()+" : "+entry.getValue());
+    }
 
 31.
 How to split a string in Java
@@ -681,3 +741,248 @@ http://www.geeksforgeeks.org/bitwise-shift-operators-in-java/
     >>> (Unsigned right shift)
         In Java, the operator ‘>>>’ is unsigned right shift operator.
         It always fills 0 irrespective of the sign of the number.
+
+35.
+Method Variables and Class Variables
+
+    Class Variables:
+        - All Class variables must be initialized if the variable is FINAL
+        - If NO final, then the class variables gets the DEFAULT VALUE
+
+    Method Variables:
+        - Method variables MUST be initialized before being used
+
+36.
+Creating Java Objects
+
+    The only way to create a new object in Java is with new [1].
+    However, in some classes, you're not permitted to say new for yourself, you must call a factory method, which might be static (as with your logger example) or not.
+
+37.
+Why Java string does not need new to create
+
+    String literals [ie, Strings like "abcd" but not like new String("abcd")] in Java are interned - this means that every time you refer to "abcd", you get a reference to a single String instance, rather than a new one each time.
+
+    So you will have
+        String a = "abcd";
+        String b = "abcd";
+
+        a == b; //True
+
+    but if you had
+        String a = new String("abcd")
+        String b = new String("abcd")
+
+    then its possible to have
+        a == b; // False
+
+    (and in case anyone needs reminding, always use .equals() to compare Strings; == tests for physical equality)
+
+    Interning String literals is good because they are often used more than once. For example, consider the (contrived) code:
+
+        for (int i = 0; i < 10; i++) {
+          System.out.println("Next iteration");
+        }
+
+    If we didn't have interning of Strings, "Next iteration" would need to be instantiated 10 times, whereas now it will only be instantiated once.
+
+38.
+How are Java objects stored in memory
+
+    When we only declare a variable of a class type, only a reference is created (memory is not allocated for the object).
+    To allocate memory to an object, we must use new(). So the object is always allocated memory on heap
+
+38b.
+When is memory allocated
+http://stackoverflow.com/questions/25055375/when-is-memory-allocated-during-instance-creating-or-using-new-keyword-for-objec
+
+    Variables declared within a method are stored within the stack, while the actual objects are stored on the heap. Consider
+
+        Integer a = new Integer(10);
+
+    In this example, an object of type Integer is created on the heap and a reference (either 32 or 64bits) is returned and stored within the methods stack as variable 'a'.
+    The JVM is free to keep variables like this within the CPU registers if it prefers as an optimization.
+
+    Memory of an object is allocated when the new keyword is used.
+
+39.
+Java Pass by value or Pass by reference
+http://stackoverflow.com/questions/40480/is-java-pass-by-reference-or-pass-by-value
+
+    The key to understanding this is that something like
+
+        Dog myDog;
+
+    is not a Dog; it's actually a pointer to a Dog.
+
+    What that means, is when you have you're essentially passing the address of the created Dog object to the foo method.
+
+        Dog myDog = new Dog("Rover");
+        foo(myDog);
+
+    (I say essentially because Java pointers aren't direct addresses, but it's easiest to think of them that way)
+
+    Suppose the Dog object resides at memory address 42. This means we pass 42 to the method.
+
+    if the Method were defined as
+
+        public void foo(Dog someDog) {
+            someDog.setName("Max");     // AAA
+            someDog = new Dog("Fifi");  // BBB
+            someDog.setName("Rowlf");   // CCC
+        }
+
+    let's look at what's happening.
+
+        the parameter someDog is set to the value 42
+        at line "AAA"
+            someDog is followed to the Dog it points to (the Dog object at address 42)
+            that Dog (the one at address 42) is asked to change his name to Max
+        at line "BBB"
+            a new Dog is created. Let's say he's at address 74
+            we assign the parameter someDog to 74
+        at line "CCC"
+            someDog is followed to the Dog it points to (the Dog object at address 74)
+            that Dog (the one at address 74) is asked to change his name to Rowlf
+        then, we return
+
+    Now let's think about what happens outside the method:
+
+    Did myDog change?
+
+    There's the key.
+
+    Keeping in mind that myDog is a pointer, and not an actual Dog, the answer is NO.
+    myDog still has the value 42; it's still pointing to the original Dog (but note that because of line "AAA", its name is now "Max" - still the same Dog; myDog's value has not changed.)
+
+
+    Java is always pass-by-value.
+    Unfortunately, they decided to call pointers references, thus confusing newbies.
+    Because those references are passed by value.
+
+    It goes like this:
+        public static void main( String[] args ){
+            Dog aDog = new Dog("Max");
+            foo(aDog);
+
+            if (aDog.getName().equals("Max")) { //true
+                System.out.println( "Java passes by value." );
+
+            } else if (aDog.getName().equals("Fifi")) {
+                System.out.println( "Java passes by reference." );
+            }
+        }
+
+        public static void foo(Dog d) {
+            d.getName().equals("Max"); // true
+
+            d = new Dog("Fifi");
+            d.getName().equals("Fifi"); // true
+        }
+
+    In this example aDog.getName() will still return "Max".
+    The value aDog within main is not overwritten in the function foo with the Dog "Fifi" as the object reference is passed by value.
+    If it were passed by reference, then the aDog.getName() in main would return "Fifi" after the call to foo.
+
+    Likewise:
+        Dog aDog = new Dog("Max");
+        foo(aDog);
+        aDog.getName().equals("Fifi"); // true
+        public void foo(Dog d) {
+            d.getName().equals("Max"); // true
+            d.setName("Fifi");
+        }
+
+    In the above example, FiFi is the dog's name after call to foo(aDog).
+    Any operations that foo performs on d are such that, for all practical purposes, they are performed on aDog itself (except d=new Dog("Boxer")).
+
+40.
+ArrayLists
+
+    isEmpty() to check if arrayList is empty.
+
+41.
+Check if Array is empty
+    
+    int[] arr = null;
+    if (arr == null)
+
+42.
+Convert Array to ArrayList
+
+    new ArrayList<Element>(Arrays.asList(array))
+
+42b.
+Convert ArrayList to Array in Java
+
+    String[] dsf = new String[al.size()];
+    al.toArray(dsf);
+
+43.
+Integer MAX_VALUE
+    
+    int i = Integer.MAX_VALUE;
+
+44.
+Char array to String
+
+    char[] a = {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
+    String b = new String(a);
+
+45.
+String to Char Array
+
+    String.toCharArray();
+
+46.
+Length Length() and Size()
+
+    length --- arrays (int[], double[], String[]) ---- to know the length of the arrays
+    length() --- String related Object (String, StringBuilder etc)to know the length of the String
+    size() --- Collection Object (ArrayList, Set etc)to know the size of the Collection 
+
+47.
+How to use Iterator in Java
+
+        List<String> list = new ArrayList<String>();
+
+		System.out.println("#4 iterator");
+		Iterator<String> iterator = list.iterator();
+
+		while (iterator.hasNext())
+        {
+			System.out.println(iterator.next());
+		}
+
+48.
+Generating Random Number
+http://stackoverflow.com/questions/363681/generating-random-integers-in-a-specific-range 
+http://stackoverflow.com/questions/5887709/getting-random-numbers-in-java
+
+    0. Generating Random Number between 1 and N
+        a. Math.random
+            random() method returns a random number between 0.0 and 0.999
+
+            double random = Math.random() * 50 + 1;
+            or
+            int random = (int )(Math.random() * 50 + 1);
+
+        b.
+            Random rand = new Random(); 
+            int value = rand.nextInt(50);
+
+            This will give value from 0 to 49.
+            For 1 to 50: rand.nextInt((max - min) + 1) + min;
+
+    1. Generating Random Number in a Range between Min and Max
+        a.
+            Min + (int)(Math.random() * ((Max - Min) + 1))
+            This returns a value in the range [0,Max-Min), where 'Max-Min' is not included.
+
+        b.
+            import java.util.concurrent.ThreadLocalRandom;
+
+            // nextInt is normally exclusive of the top value,
+            // so add 1 to make it inclusive
+            ThreadLocalRandom.current().nextInt(min, max + 1);
+
