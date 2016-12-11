@@ -9,6 +9,7 @@
 9. What is Escape Analysis:
 10. Where objects are stored in Java
 11. Hashtable HashMap LinkedHashMap TreeMap
+11b. LinkedHashMap Complexity and Usage
 12. How to make System.out.println() shorter
 13. Using int vs Integer
 14. How do I apply the for-each loop to every character in a String
@@ -50,6 +51,18 @@
 46. Length Length() and Size()
 47. How to use Iterator in Java
 48. Generating Random Number
+49. Using Synchronized in Java
+50. Converting int to Integer and Integer to int
+51. Iterator for LinkedHashMap
+52. What are Packages
+53. What is CLASSPATH
+54. What is Strongly Typed / Weak Typed, Static Typed and Dynamic Typed Language
+55. C++ Features Missing in Java
+56. Java Main Class need not be Public
+57. What is Volatile in Java
+58. Can't use INT as Bool in condition
+59. >>> and >>
+
 --------------------------------------------------------------------------------------------
 
 1.
@@ -323,6 +336,21 @@ http://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhas
 
         This is the reason that HashMap should be used if the program is thread-safe. 
 
+11b.
+LinkedHashMap Complexity and Usage
+
+    If LinkedHashMap's time complexity is same as HashMap's complexity why do we need HashMap?
+
+    You should not confuse complexity with performance. Two algorithms can have the same complexity, yet one can consistently perform better than the other.
+
+    Remember that f(N) is O(N) means that:
+
+    C1*N <= limit(f(N), N -> infinity) <= C2*N  
+
+    where C1 and C2 are strictly positive constants. The complexity says nothing about how small or large the C values are. For two different algorithms, the constants will most likely be different.
+
+    (And remember that big-O complexity is about the behavior / performance as N gets very large. It tells you nothing about the behavior / performance for small N values.)
+
 12.
 How to make System.out.println() shorter
 http://stackoverflow.com/questions/3320764/how-to-make-system-out-println-shorter
@@ -352,6 +380,17 @@ http://stackoverflow.com/questions/564/what-is-the-difference-between-an-int-and
     You cannot call any methods on it, because it is simply a primitive. So:
         String s = i.toString();//will not work!!!
 
+    // IMP: Can't use "=="
+        Integer alpha = new Integer(1);
+        Integer foo = new Integer(1);
+
+        if(alpha == foo) {
+            System.out.println("1. true");
+        }
+
+        if(alpha.equals(foo)) {
+            System.out.println("2. true");
+        }
 14.
 How do I apply the for-each loop to every character in a String
 http://stackoverflow.com/questions/2451650/how-do-i-apply-the-for-each-loop-to-every-character-in-a-string
@@ -986,3 +1025,178 @@ http://stackoverflow.com/questions/5887709/getting-random-numbers-in-java
             // so add 1 to make it inclusive
             ThreadLocalRandom.current().nextInt(min, max + 1);
 
+49.
+Using Synchronized in Java
+http://tutorials.jenkov.com/java-concurrency/synchronized.html
+
+ The synchronized keyword can be used to mark four different types of blocks:
+
+    1. Instance methods
+          public synchronized void add(int value){
+          this.count += value;
+      }
+
+    2. Static methods
+          public static synchronized void add(int value){
+              count += value;
+          }
+    3. Code blocks inside instance methods
+          public void add(int value){
+
+            synchronized(this){
+               this.count += value;   
+            }
+          }
+    4. Code blocks inside static methods
+        public static void log2(String msg1, String msg2){
+           synchronized(MyClass.class){
+              log.writeln(msg1);
+              log.writeln(msg2);  
+           }
+        }
+
+50.
+Converting int to Integer and Integer to int
+http://stackoverflow.com/questions/4052085/passing-integer-to-int-and-vice-versa
+
+    This is auto-boxing and auto-unboxing.
+    Basically the compiler puts in calls to Integer.valueOf() or x.intValue() appropriately
+
+51.
+Iterator for LinkedHashMap
+http://stackoverflow.com/questions/13735574/how-do-i-iterate-through-a-java-linked-hash-map
+
+    Map<String, User> users = new LinkedHashMap<String, User>();
+    users.put(name, user);
+
+    for (Map.Entry<String,User> entry : users.entrySet()) {
+        // entry.getValue() is of type User now
+    }
+
+    Iterator<User> it = users.values().iterator();
+    while (it.hasNext())
+    {
+      User currentUser = it.next();
+      currentUser.someMethod();
+    }
+
+52.
+What are Packages
+
+    - Packaging breaks down projects into meaningful segments
+    - I a large application, you are bound to have two files named exactly the same (java.util.Date and java.sql.Date), especially when you start bringing in third party jars.
+    - Ensure uniqueness.
+    - A Java package is a mechanism for organizing Java classes into namespaces similar to the modules of Modula.
+    - Java packages can be stored in compressed files called JAR files, allowing classes to download faster as a group rather than one at a time.
+    - Programmers also typically use packages to organize classes belonging to the same category or providing similar functionality.
+
+    - Preventing naming conflicts.
+    - Making searching/locating and usage of classes, interfaces, enumerations and annotations easier
+    - Providing controlled access: protected and default have package level access control
+    - Packages can be considered as data encapsulation (or data-hiding).
+
+53.
+What is CLASSPATH
+
+    - Think of it as Java's answer to the PATH environment variable
+    - OSes search for EXEs on the PATH.
+    - Java searches for classes and packages on the classpath
+
+    When programming in Java, you make other classes available to the class you are writing by putting something like this at the top of your source file:
+        import org.javaguy.coolframework.MyClass;
+
+    Or sometimes you 'bulk import' stuff by saying:
+        import org.javaguy.coolframework.*;
+
+    So later in your program when you say:
+        MyClass mine = new MyClass();
+
+    The Java Virtual Machine will know where to find your compiled class.
+
+    It would be impractical to have the VM look through every folder on your machine, so you have to provide the VM a list of places to look.
+    This is done by putting folder and jar files on your classpath
+
+54.
+What is Strongly Typed / Weak Typed, Static Typed and Dynamic Typed Language
+http://stackoverflow.com/questions/2351190/static-dynamic-vs-strong-weak
+    - Java is statically typed and also a strongly typed language
+
+    - Don't use the terms "strong" and "weak" typing, because they don't have a universally agreed on technical meaning
+
+    - Static/Dynamic typing is about when type information is aquired (Either at compiletime or at runtime)
+
+    - Strong/Weak typing is about how strictly types are distinguished (e.g. whether the language tries to do implicit conversion from strings to numbers)
+
+55.
+C++ Features Missing in Java
+
+    No pointers
+    No sizeof operator
+    No scope resolution operator
+    Local variables in functions cannot be static
+    No Multiple Inheritance
+    No Operator Overloading
+    No preprocessor and macros
+    No user suggested inline functions
+    No goto
+    No default arguments
+    No unsigned int in Java
+    No -> operator in java
+    No stack allocated objects in java
+    No delete operator in java due to java’s garbage collection
+    No destructor in java
+    No typedef in java
+    No global variables, no global function because java is pure OO.
+    No friend functions
+    No friend classes
+    No templates in java
+
+56.
+Java Main Class need not be Public
+http://www.geeksforgeeks.org/myth-file-name-class-name-java/
+
+    - It is just that the standard enforces using Public class 
+
+    If Main class is not Public, following error gets generated
+        javac Trial.java
+        Trial.java:9: error: class Geeks is public, should be
+                            declared in a file named Geeks.java
+        public class Geeks
+
+    But the myth can be violated in such a way to compile the above file.
+        /***** File name: Trial.java ******/
+        class Geeks
+        {
+            public static void main(String[] args) {
+                System.out.println("Hello world");
+            }
+        }
+
+    Step 1: javac Trial.java
+        Step1 will create a Geeks.class (byte code) without any error message since the class is not public.
+
+    Step 2: java Geeks
+        Now the output will be Hello world
+
+57.
+What is Volatile in Java
+
+     "volatile" tells the compiler that the value of a variable must never be cached as its value may change outside of the scope of the program itself.
+
+    The values of volatile variable will never be cached and all writes and reads will be done to and from the main memory.
+    However, use of volatile is limited to very restricted set of cases as most of the times atomicity is desired
+
+58.
+Can't use INT as Bool in condition
+http://stackoverflow.com/questions/13806021/checking-the-boolean-result-of-an-int-type
+
+    int i = 5;
+    if (i) <-- Fails
+
+    int y = (int)(i == 5); <--- Fails too
+
+59.
+>>> and >>
+    >> is arithmetic shift right, >>> is logical shift right.
+
+    In an arithmetic shift, the sign bit is extended to preserve the signedness of the number.
