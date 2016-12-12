@@ -62,6 +62,8 @@
 57. What is Volatile in Java
 58. Can't use INT as Bool in condition
 59. >>> and >>
+60. try catch throw throws finally
+61. What is finalize
 
 --------------------------------------------------------------------------------------------
 
@@ -1178,6 +1180,26 @@ http://www.geeksforgeeks.org/myth-file-name-class-name-java/
     Step 2: java Geeks
         Now the output will be Hello world
 
+    /*** File name: Trial.java ***/
+    class ForGeeks
+    {
+       public static void main(String[] args){
+          System.out.println("For Geeks class");
+       }
+    }
+     
+    class GeeksTest
+    {
+       public static void main(String[] args){
+          System.out.println("Geeks Test class");
+       }
+    }
+
+    When the above file is compiled as javac Trial.java will create two .class files as ForGeeks.class and GeeksTest.class .
+    Since each class has separate main() stub they can be tested individually.
+    When java ForGeeks is executed the output is For Geeks class.
+    When java GeeksTest is executed the output is Geeks Test class.
+
 57.
 What is Volatile in Java
 
@@ -1200,3 +1222,51 @@ http://stackoverflow.com/questions/13806021/checking-the-boolean-result-of-an-in
     >> is arithmetic shift right, >>> is logical shift right.
 
     In an arithmetic shift, the sign bit is extended to preserve the signedness of the number.
+
+60.
+try catch throw throws finally
+
+    - Checked Exception
+        - These are compile time exceptions
+    - Unchecked Excpetion:
+        - These are Runtime exception
+    - Try must have a catch or finally
+    - throw to throw custom exception
+
+    - "Throws keyword" is mainly used for handling checked exception as using throws we can declare multiple exceptions in one go.
+    1. The throws keyword is used in method declaration, in order to explicitly specify the exceptions that a particular method might throw.
+    When a method declaration has one or more exceptions defined using throws clause then the method-call must handle all the defined exceptions.
+
+    2. When defining a method you must include a throws clause to declare those exceptions that might be thrown but doesn’t get caught in the method.
+
+    3. If a method is using throws clause along with few exceptions then this implicitly tells other methods that – “ If you call me, you must handle these exceptions that I throw”.
+
+        class MyOwnException extends Exception {
+           public MyOwnException(String msg){
+              super(msg);
+           }
+        }
+
+        class EmployeeTest {
+           static void  employeeAge(int age) throws MyOwnException{
+              if(age < 0)
+                 throw new MyOwnException("Age can't be less than zero");
+              else
+                 System.out.println("Input is valid!!");
+           }
+           public static void main(String[] args) {
+               try {
+                    employeeAge(-2);
+               }
+               catch (MyOwnException e) {
+                    e.printStackTrace();
+               }
+           }
+        }
+
+61.
+What is finalize
+
+    finalize is present in every Object
+    - If we want to do some type of cleanup before the object gets cleaned by the garbage
+      collector, we can add those inside finalize method in the Class
