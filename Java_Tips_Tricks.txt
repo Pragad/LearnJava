@@ -64,7 +64,8 @@
 59. >>> and >>
 60. try catch throw throws finally
 61. What is finalize
-
+62. Create 2D Array in Java
+63. Access Specifiers in Java
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1270,3 +1271,35 @@ What is finalize
     finalize is present in every Object
     - If we want to do some type of cleanup before the object gets cleaned by the garbage
       collector, we can add those inside finalize method in the Class
+
+62.
+Create 2D Array in Java
+
+    1.
+    int[][] multi = new int[5][10];
+
+    2.
+    int[][] multi = new int[5][];
+    multi[0] = new int[10];
+    multi[1] = new int[10];
+    multi[2] = new int[10];
+    multi[3] = new int[10];
+    multi[4] = new int[10];
+
+    3.
+    int marks[][]={{50,60,55,67,70},{62,65,70,70,81},{72,66,77,80,69}};
+
+63.
+Access Specifiers in Java
+
+    Classes and Interfaces can have only two access specifiers when declared outside any other class.
+    1) public
+    2) default (when no access specifier is specified)
+
+    Methods and Members:
+    Access Levels
+    Modifier 	Class 	Package 	Subclass 	World
+    public 	    Y 	    Y 	        Y 	        Y
+    protected 	Y 	    Y 	        Y 	        N
+    no modifier	Y 	    Y 	        N 	        N
+    private 	Y 	    N 	        N 	        N
