@@ -12,6 +12,7 @@
 11b. LinkedHashMap Complexity and Usage
 12. How to make System.out.println() shorter
 13. Using int vs Integer
+13b. Using array vs ArrayList
 14. How do I apply the for-each loop to every character in a String
 15. Why can Java Collections not directly store Primitives types
 16. Why is Java Vector class considered obsolete or deprecated
@@ -30,7 +31,7 @@
 28. Priority Queue Offer vs Add
 29. for each loop in Java
 30. Increment Value of a HashMap's Key
-30b. Print All Key Valye pairs of Hashmap in Java
+30b. Print All Key Value pairs of Hashmap in Java
 31. How to split a string in Java
 32. Java String to Int and Int to String
 33. Iterating over a Map using EntrySet
@@ -66,6 +67,14 @@
 61. What is finalize
 62. Create 2D Array in Java
 63. Access Specifiers in Java
+64. Find log base 2 of a number
+65. Convert a char to an int or Get numeric value of a character
+66. What is THIS
+67. Java Heap Old gen, Perm Gen and Young gen
+68. Declare array in Java
+69. Boolean[] vs BitSet
+70. ArrayList get set
+71. Array and ArrayList pass reference by value
 --------------------------------------------------------------------------------------------
 
 1.
@@ -275,6 +284,7 @@ http://programmers.stackexchange.com/questions/65281/stack-and-heap-memory-in-ja
 Where objects are stored in Java
 http://programmers.stackexchange.com/questions/65281/stack-and-heap-memory-in-java
 http://stackoverflow.com/questions/3646632/do-java-primitives-go-on-the-stack-or-the-heap
+
     - Java only stores primitives on the stack.
     - Objects are created on the heap
 
@@ -394,6 +404,12 @@ http://stackoverflow.com/questions/564/what-is-the-difference-between-an-int-and
         if(alpha.equals(foo)) {
             System.out.println("2. true");
         }
+
+13b.
+Using array vs ArrayList
+http://stackoverflow.com/questions/2843928/benefits-of-arrays
+
+
 14.
 How do I apply the for-each loop to every character in a String
 http://stackoverflow.com/questions/2451650/how-do-i-apply-the-for-each-loop-to-every-character-in-a-string
@@ -540,7 +556,8 @@ http://stackoverflow.com/questions/28387134/combining-charat-and-ignorecase
 
     (Character.toLowerCase(newGame.charAt(0)) == 'y');
 
-21. Adding Object to an ArrayList adds its reference
+21.
+Adding Object to an ArrayList adds its reference
 http://stackoverflow.com/questions/7080546/add-an-object-to-an-arraylist-and-modify-it-later
     
     Q. 
@@ -575,7 +592,8 @@ http://stackoverflow.com/questions/7080546/add-an-object-to-an-arraylist-and-mod
 
 22.
 Java Constructors and Super Class
-    
+http://stackoverflow.com/questions/3767365/super-in-java 
+
     1. If the FIRST LINE of the constructor is NOT a call to Super Class Constructor OR a call
     to ONE of its own constructor THEN the compiler will insert "super()" as the first line in
     the constructor
@@ -584,6 +602,30 @@ Java Constructors and Super Class
 
     3. Always have a constructor with NO ARGUMENTS as java could add a "super()" and try to call
        a constructor with NO arguments.
+
+    Calling exactly super() is always redundant.
+    It's explicitly doing what would be implicitly done otherwise.
+    That's because if you omit a call to the super constructor, the no-argument super constructor will be invoked automatically anyway.
+    Not to say that it's bad style; some people like being explicit.
+
+    However, where it becomes useful is when the super constructor takes arguments that you want to pass in from the subclass.
+
+        public class Animal {
+           private final String noise;
+           protected Animal(String noise) {
+              this.noise = noise;
+           }
+
+           public void makeNoise() {
+              System.out.println(noise);
+           }
+        }
+
+        public class Pig extends Animal {
+            public Pig() {
+               super("Oink");
+            }
+        }
 
 23.
 Exceptions
@@ -897,7 +939,7 @@ http://stackoverflow.com/questions/40480/is-java-pass-by-reference-or-pass-by-va
     Keeping in mind that myDog is a pointer, and not an actual Dog, the answer is NO.
     myDog still has the value 42; it's still pointing to the original Dog (but note that because of line "AAA", its name is now "Max" - still the same Dog; myDog's value has not changed.)
 
-
+    --------
     Java is always pass-by-value.
     Unfortunately, they decided to call pointers references, thus confusing newbies.
     Because those references are passed by value.
@@ -947,7 +989,7 @@ ArrayLists
 Check if Array is empty
     
     int[] arr = null;
-    if (arr == null)
+    if (arr == null || arr.length == 0)
 
 42.
 Convert Array to ArrayList
@@ -1303,3 +1345,100 @@ Access Specifiers in Java
     protected 	Y 	    Y 	        Y 	        N
     no modifier	Y 	    Y 	        N 	        N
     private 	Y 	    N 	        N 	        N
+
+64.
+Find log base 2 of a number
+
+    logb(n) = log(n) / log(b)
+
+65.
+Convert a char to an int or Get numeric value of a character
+
+        char c= '5';
+        Character.getNumericValue(c)
+
+66.
+What is THIS
+    Anit:
+    When an object is created a invisible "this" gets created.
+    When we call a method through the object, "this" gets passed
+
+67.
+Java Heap Old gen, Perm Gen and Young gen
+http://stackoverflow.com/questions/2129044/java-heap-terminology-young-old-and-permanent-generations
+
+http://stackoverflow.com/questions/3849634/static-allocation-in-java-heap-stack-and-permanent-generation/3849819#3849819
+
+https://docs.oracle.com/cd/E13150_01/jrockit_jvm/jrockit/geninfo/diagnos/garbage_collect.html
+
+68.
+Declare array in Java
+
+        int[] myIntArray = new int[3];
+        int[] myIntArray = {1,2,3};
+        int[] myIntArray = new int[]{1,2,3};
+
+    For classes, for example String, it's the same:
+        String[] myStringArray = new String[3];
+        String[] myStringArray = {"a","b","c"};
+        String[] myStringArray = new String[]{"a","b","c"};
+
+69.
+Boolean[] vs BitSet
+http://stackoverflow.com/questions/605226/boolean-vs-bitset-which-is-more-efficient
+
+    From some benchmarks with Sun JDK 1.6 computing primes with a sieve (best of 10 iterations to warm up, give the JIT compiler a chance, and exclude random scheduling delays, Core 2 Duo T5600 1.83GHz):
+
+    BitSet is more memory efficient than boolean[] except for very small sizes.
+    Each boolean in the array takes a byte.
+    The numbers from runtime.freeMemory() are a bit muddled for BitSet, but less.
+
+    boolean[] is more CPU efficient except for very large sizes, where they are about even.
+    E.g., for size 1 million boolean[] is about four times faster (e.g. 6ms vs 27ms), for ten and a hundred million they are about even.
+
+70.
+ArrayList get set
+
+        int t = arr.get(0);
+        arr.set(0, arr.get(1));
+        arr.set(1, t);
+
+71.
+Array and ArrayList pass reference by value
+
+    So value gets changed in caller
+
+        {
+	    int[] c = new int[2];
+	    c[0] = 5;
+	    c[1] = 3;
+	    System.out.println(c[0]);
+	    System.out.println(c[1]);
+	    System.out.println();
+	    
+	    mySwap(c);
+	    System.out.println(c[0]);
+	    System.out.println(c[1]);
+	    
+	    ArrayList<Integer> al = new ArrayList<>();
+	    al.add(5);
+	    al.add(3);
+	    System.out.println(al);
+	    
+	    mySwap2(al);
+	    System.out.println(al);
+        }
+
+        static void mySwap(int[] arr)
+        {
+            int t = arr[0];
+            arr[0] = arr[1];
+            arr[1] = t;
+        }
+        
+        static void mySwap2(ArrayList<Integer> arr)
+        {
+            int t = arr.get(0);
+            arr.set(0, arr.get(1));
+            arr.set(1, t);
+        }

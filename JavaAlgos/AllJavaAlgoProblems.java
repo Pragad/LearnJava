@@ -3,95 +3,160 @@ import java.util.*;
 
 public class AllJavaAlgoProblems
 {
-    public static int findFirstGreaterElementIndex(ArrayList<Integer> nums, int myNum)
+    
+    // -----------------------------------------------------------------------------------
+    // Problem 1.
+    // Print all possilbe steps down a ladder
+    // -----------------------------------------------------------------------------------
+    public static void printLadderPaths(int numSteps, String path)
     {
-        /*
-        if (nums.empty())
+        if (numSteps == 0)
         {
-            return -1;
+            System.out.println(path);
+            return;
         }
 
-        if (myNum < nums[0])
+        if (numSteps >= 1)
         {
-            return 0;
+            path  += '1';
+            printLadderPaths(numSteps - 1, path);
+            path = path.substring(0, path.length()-1);
         }
 
-        int32_t stIdx = 0;
-        int32_t endIdx = nums.size() - 1;
-
-        while (stIdx <= endIdx)
+        if (numSteps >= 2)
         {
-            int32_t midIdx = stIdx + (endIdx - stIdx) / 2;
-
-            if (nums[midIdx] <= myNum)
-            {
-                if (midIdx + 1 < nums.size() - 1 && nums[midIdx + 1] > myNum)
-                {
-                    return midIdx + 1;
-                }
-                else
-                {
-                    stIdx = midIdx + 1;
-                }
-            }
-            // So num[midIdx] is GREATER than myNum
-            // If the previous number is a smaller or equal number, we go the answer
-            else
-            {
-                if (midIdx - 1 >= 0 && nums[midIdx - 1] <= myNum)
-                {
-                    return midIdx;
-                }
-                else
-                {
-                    endIdx = midIdx - 1;
-                }
-            }
+            path  += '2';
+            printLadderPaths(numSteps - 2, path);
         }
-
-        return -1;
-        */
     }
 
-    public int elementGreater(ArrayList<Integer> aList, int givenNumber)
+    // -----------------------------------------------------------------------------------
+    // Problem 2.
+    // Print matrix diagonally
+    // -----------------------------------------------------------------------------------
+    public static void printDiagonally(int[][] matrix)
     {
-        if(aList.isEmpty)                   // Case "alist"
+        for(int i=0; i<matrix.length; i++)
         {
-            return -1;
-        }
-
-        int start = 0;                      // Where is INT
-        int end = aList.size() -1;          // Where in INT
-        while(start <= end) {
-            int mid = start + (end - start) / 2;            
-            if(end - start <= 2)
+            for(int j=0, k=i; j<=i; j++,k--)
             {
-                if(mid<=given) {            // What is given?
-                    return end;
+                if(j<0)
+                {
+                    break;
                 }
-                else {
-                    return mid;
+
+                if (k >= 0 && k <matrix.length && j >= 0 && j < matrix[0].length)
+                {
+                    System.out.print(matrix[k][j] + ", ");
                 }
             }
 
-
-            if(aList.get(mid) == givenNumber) {
-                return aList.get(mid+1);
-            }
-            else if(aList.get(mid) < givenNumber) {
-                start = mid;
-            }
-            else {
-                end = mid;
-            }
+            System.out.println();
         }
 
-        // Where is the return type for this case?
-        return -1;
+        for(int j=1; j<matrix[0].length; j++)
+        {
+            for(int i=matrix.length-1, k=j; k<=matrix[0].length; i--,k++)
+            {
+                if(k>=matrix[0].length)
+                {
+                    break;
+                }
+
+                if (i >= 0 && i < matrix.length && k >= 0 && k < matrix[0].length)
+                {
+                    System.out.print(matrix[i][k] + ", ");
+                }
+            }
+
+            System.out.println();
+        }
     }
 
+    // -----------------------------------------------------------------------------------
+    // Problem 3.
+    // Print matrix diagonally
+    // -----------------------------------------------------------------------------------
+    public static void printMatrixSpirally(int[][] twoDMat)
+    {
+        int topBoundary = 0;
+        int leftBoundary = 0;
+        int bottomBoundary = twoDMat.length-1;
+        int rightBoundary = twoDMat[0].length-1;
+        
+        while(topBoundary < bottomBoundary && leftBoundary < rightBoundary) {
+
+            for(int i=leftBoundary; i<=rightBoundary; i++) {
+                System.out.print(twoDMat[topBoundary][i]+" " );
+            }
+            System.out.println();
+            topBoundary++;
+            
+            for(int i=topBoundary; i<=bottomBoundary; i++) {
+                System.out.print(twoDMat[i][rightBoundary]+" " );
+            }
+            System.out.println();
+            rightBoundary--;
+
+            for(int i=rightBoundary; i>=leftBoundary; i--) {
+                System.out.print(twoDMat[bottomBoundary][i]+" " );
+            }
+            System.out.println();
+            bottomBoundary--;
+
+            for(int i=bottomBoundary; i>=topBoundary; i--) {
+                System.out.print(twoDMat[i][leftBoundary]+" " );
+            }
+            System.out.println();
+            leftBoundary++;
+        }
+    }
+
+
+    // -----------------------------------------------------------------------------------
+    // Main Function
+    // -----------------------------------------------------------------------------------
     public static void main(String[] args)
     {
-        System.out.println("hi");
+        System.out.println("All Algo Problems");
+
+        // Problem 1.
+        // Print all steps down a ladder
+        {
+            System.out.println("\nProblem 1. Print All Steps down a ladder");
+            String str = "";
+            int [][] twoDMat = new int[5][3];
+            printLadderPaths(4, str);
+        }
+
+        // Problem 2.
+        // Print the matrix in diagonal order
+        {
+            System.out.println("\nProblem 2. Print Matrix Diagonally");
+            int[][] matrix1 = {{1, 2, 3, 4, 5},
+                              {6, 7, 8, 9, 10},
+                              {11, 12, 13, 14, 15},
+                              {16, 17, 18, 19, 20},
+                              {21, 22, 23, 24, 25} };
+
+             int[][] matrix2 = {{1, 2, 3, 4, 5},
+                              {6, 7, 8, 9, 10},
+                              {16, 17, 18, 19, 20} };
+                
+            printDiagonally(matrix2);
+        }
+
+        // Problem 3.
+        // Print a matrix in Spiral order
+        {
+            int[][] twoDMatrix = {{1, 2, 3, 4},
+                                  {5, 6, 7, 8},
+                                  {9, 10, 11, 12},
+                                  {13, 14, 15, 16},
+                                  {17, 18, 19, 20}};
+
+
+            printMatrixSpirally(twoDMatrix);
+        }
     }
 }
