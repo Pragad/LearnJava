@@ -63,7 +63,7 @@
 57. What is Volatile in Java
 58. Can't use INT as Bool in condition
 59. >>> and >>
-60. try catch throw throws finally
+60. try catch throw throws finally throwable
 61. What is finalize
 62. Create 2D Array in Java
 63. Access Specifiers in Java
@@ -1275,6 +1275,7 @@ try catch throw throws finally
         - These are Runtime exception
     - Try must have a catch or finally
     - throw to throw custom exception
+    - Throwable is a super class for all types of errors and exceptions in java.
 
     - "Throws keyword" is mainly used for handling checked exception as using throws we can declare multiple exceptions in one go.
     1. The throws keyword is used in method declaration, in order to explicitly specify the exceptions that a particular method might throw.

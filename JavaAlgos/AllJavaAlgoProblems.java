@@ -75,7 +75,7 @@ public class AllJavaAlgoProblems
 
     // -----------------------------------------------------------------------------------
     // Problem 3.
-    // Print matrix diagonally
+    // Print matrix spirally
     // -----------------------------------------------------------------------------------
     public static void printMatrixSpirally(int[][] twoDMat)
     {
