@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.lang.*;
 
 public class AllJavaAlgoProblems
 {
@@ -112,6 +113,56 @@ public class AllJavaAlgoProblems
         }
     }
 
+    // -----------------------------------------------------------------------------------
+    // Problem 4.
+    // Given a string of 1s and 0s with '?' in between. A '?' can be either one or zero.
+    // -----------------------------------------------------------------------------------
+    public static void printCombinationOnesZerosRec(StringBuilder str, int stIdx, int lastQMarkPos)
+    {
+        if (stIdx == lastQMarkPos)
+        {
+            System.out.println(str);
+            return;
+        }
+
+        for (int i = stIdx; i < str.length(); i++)
+        {
+            if (str.charAt(i) == '?')
+            {
+                str.setCharAt(i, '0');
+                printCombinationOnesZerosRec(str, i, lastQMarkPos);
+
+                str.setCharAt(i, '1');
+                printCombinationOnesZerosRec(str, i, lastQMarkPos);
+            }
+        }
+    }
+
+    public static void printCombinationOnesZeros(String str)
+    {
+        int lastQMarkPos = str.length();
+        for (int i = str.length()-1; i >=0; i--)
+        {
+            if (str.charAt(i) == '?')
+            {
+                lastQMarkPos = i;
+            }
+        }
+
+        if (lastQMarkPos < str.length())
+        {
+            // Convert the string to string builder so that it can be changed in place
+            StringBuilder strBuilder = new StringBuilder(str);
+
+            printCombinationOnesZerosRec(strBuilder, 0, lastQMarkPos);
+
+        }
+        else
+        {
+            System.out.println(str);
+        }
+    }
+
 
     // -----------------------------------------------------------------------------------
     // Main Function
@@ -149,6 +200,7 @@ public class AllJavaAlgoProblems
         // Problem 3.
         // Print a matrix in Spiral order
         {
+            System.out.println("\nProblem 3. Print Matrix Spirally");
             int[][] twoDMatrix = {{1, 2, 3, 4},
                                   {5, 6, 7, 8},
                                   {9, 10, 11, 12},
@@ -157,6 +209,14 @@ public class AllJavaAlgoProblems
 
 
             printMatrixSpirally(twoDMatrix);
+        }
+
+        // Problem 4.
+        // Given a string of 1s and 0s with '?' in between. A '?' can be either one or zero.
+        {
+            System.out.println("\nProblem 4. Replace ? with 0s and 1s");
+            String str = "0?0?1";
+            printCombinationOnesZeros(str);
         }
     }
 }

@@ -75,6 +75,7 @@
 69. Boolean[] vs BitSet
 70. ArrayList get set
 71. Array and ArrayList pass reference by value
+72. Change a character in a String
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1443,3 +1444,20 @@ Array and ArrayList pass reference by value
             arr.set(0, arr.get(1));
             arr.set(1, t);
         }
+
+72.
+Change a character in a String
+
+    String are immutable in Java. You can't change them.
+    You need to create a new string with the character replaced.
+
+        String myName = "domanokz";
+        String newName = myName.substring(0,4)+'x'+myName.substring(5);
+
+    Or you can use a StringBuilder:
+        StringBuilder myName = new StringBuilder("domanokz");
+        myName.setCharAt(4, 'x');
+
+        System.out.println(myName);
+
+
