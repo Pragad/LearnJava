@@ -76,7 +76,7 @@
 70. ArrayList get set
 71. Array and ArrayList pass reference by value
 72. Change a character in a String
-
+73. Java FileChannel - Java NIO
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1473,4 +1473,15 @@ Change a character in a String
 
         System.out.println(myName);
 
+73.
+Java FileChannel - Java NIO
+https://examples.javacodegeeks.com/core-java/nio/filechannel/java-nio-channels-filechannel-example/
+
+    - NIO - New IO
+    - NIO allows Java programmers to implement high-speed I/O without having to write custom native code.
+    - NIO moves the most time consuming I/O activities (like, filling and draining buffers) back into the operating system, thus providing increase in speed.
+    - NIO makes I/O faster than traditional I/O.
+
+    - File channels are read/write channels and they are always blocking.
+    - This is a channel for reading, writing, mapping, and manipulating a file. FileChannel objects are thread-safe.
 
