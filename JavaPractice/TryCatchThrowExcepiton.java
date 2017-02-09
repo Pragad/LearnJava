@@ -11,6 +11,18 @@ class MyAgeException extends Exception
 
 public class TryCatchThrowExcepiton
 {
+    static boolean isPositiveNumber(int num) throws IllegalArgumentException
+    {
+        if (num < 0)
+        {
+            throw new IllegalArgumentException("Negative Number");
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     static int  employeeAgeNoExcep(int age) throws MyAgeException
     {
         if(age < 0)
@@ -55,7 +67,7 @@ public class TryCatchThrowExcepiton
         // Learn 2:
         try
         {
-            employeeAge(-2);
+            employeeAge(2);
         }
         catch (MyAgeException e1)
         {
@@ -68,6 +80,18 @@ public class TryCatchThrowExcepiton
             // This won't get executed
             System.out.println("2.");
             e2.printStackTrace();
+        }
+
+        // Learn 4
+        int num = -5;
+        try
+        {
+            boolean flag = isPositiveNumber(num);
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.out.println("Negative Number");
+            e.printStackTrace();
         }
     }
 }

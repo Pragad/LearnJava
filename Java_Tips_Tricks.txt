@@ -77,6 +77,7 @@
 71. Array and ArrayList pass reference by value
 72. Change a character in a String
 73. Java FileChannel - Java NIO
+74. @Override
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1485,3 +1486,11 @@ https://examples.javacodegeeks.com/core-java/nio/filechannel/java-nio-channels-f
     - File channels are read/write channels and they are always blocking.
     - This is a channel for reading, writing, mapping, and manipulating a file. FileChannel objects are thread-safe.
 
+74.
+    @Override
+    It's a hint for the compiler to let it know that you're overriding the method of a parent class (or interface in Java 6).
+
+    If the compiler detects that there IS no function to override, it will warn you (or error).
+
+    This is extremely useful to quickly identify typos or API changes.
+    Say you're trying to override your parent class' method harvest() but spell it harvset(), your program will silently call the base class, and without @Override, you wouldn't have any warning about that.
