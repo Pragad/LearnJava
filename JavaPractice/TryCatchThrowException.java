@@ -9,7 +9,15 @@ class MyAgeException extends Exception
     }
 }
 
-public class TryCatchThrowExcepiton
+class MyCustomException extends Exception
+{
+    public MyCustomException(String errMsg)
+    {
+        super(errMsg);
+    }
+}
+
+public class TryCatchThrowException
 {
     static boolean isPositiveNumber(int num) throws IllegalArgumentException
     {
@@ -47,7 +55,7 @@ public class TryCatchThrowExcepiton
     {
         if(age < 0)
         {
-            throw new MyAgeException("Age can't be less than zero");
+            throw new MyAgeException("Age can't be less than zero: ");
         }
         else
         {
@@ -55,6 +63,47 @@ public class TryCatchThrowExcepiton
             return 1;
         }
     }
+
+    static void employeeAgeWrapper(int age) throws MyCustomException
+    {
+        if(age < 0)
+        {
+            throw new MyCustomException("Custom: Age can't be less than zero: ");
+        }
+        else
+        {
+            System.out.println("Input is valid!!");
+        }
+    }
+
+    static void foo(int age)
+    {
+        try
+        {
+            employeeAge(age);
+            employeeAgeWrapper(age);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught in parent block" + e);
+            System.out.println("DONE");
+            e.printStackTrace();
+        }
+    }
+
+    /*
+    static void employeeAgeWrapper(int age) throws MyCustomException
+    {
+        try
+        {
+            employeeAge(-2);
+        }
+        catch (MyAgeException e)
+        {
+            throw new MyCustomException("Custom age less than zero");
+        }
+    }
+    */
 
     public static void main(String[] args)
     {
@@ -67,13 +116,17 @@ public class TryCatchThrowExcepiton
         // Learn 2:
         try
         {
-            employeeAge(2);
+            foo(-2);
+            //employeeAgeWrapper(-2);
         }
-        catch (MyAgeException e1)
+        catch (Exception e1)
+        //catch (MyCustomException e1)
         {
             System.out.println("1.");
-            e1.printStackTrace();
+            System.out.println(e1);
+            //e1.printStackTrace();
         }
+        /*
         catch (Exception e2)
         {
             // Learn 3
@@ -81,8 +134,10 @@ public class TryCatchThrowExcepiton
             System.out.println("2.");
             e2.printStackTrace();
         }
+        */
 
         // Learn 4
+        /*
         int num = -5;
         try
         {
@@ -93,5 +148,6 @@ public class TryCatchThrowExcepiton
             System.out.println("Negative Number");
             e.printStackTrace();
         }
+        */
     }
 }

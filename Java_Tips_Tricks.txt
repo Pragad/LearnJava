@@ -78,6 +78,7 @@
 72. Change a character in a String
 73. Java FileChannel - Java NIO
 74. @Override
+75. Get Boolean from a String
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1494,3 +1495,13 @@ https://examples.javacodegeeks.com/core-java/nio/filechannel/java-nio-channels-f
 
     This is extremely useful to quickly identify typos or API changes.
     Say you're trying to override your parent class' method harvest() but spell it harvset(), your program will silently call the base class, and without @Override, you wouldn't have any warning about that.
+
+75.
+Get Boolean from a String
+    Boolean boolean1 = Boolean.valueOf("true");
+    boolean boolean2 = Boolean.parseBoolean("true");
+    Advantage:
+
+    Boolean: this does not create new instances of Boolean, so performance is better (and less garbage-collection). It reuses the two instances of either Boolean.TRUE or Boolean.FALSE.
+    boolean: no instance is needed, you use the primitive type.
+
