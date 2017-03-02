@@ -79,6 +79,9 @@
 73. Java FileChannel - Java NIO
 74. @Override
 75. Get Boolean from a String
+76. Try Catch Throws - Komprise
+77. String concatenation for Logging {} vs +
+78. Logging exception
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1505,3 +1508,18 @@ Get Boolean from a String
     Boolean: this does not create new instances of Boolean, so performance is better (and less garbage-collection). It reuses the two instances of either Boolean.TRUE or Boolean.FALSE.
     boolean: no instance is needed, you use the primitive type.
 
+76.
+Try Catch Throws - Komprise
+    - You don't have to catch a Local Exception and another another string or message to it.
+    - You just throw it as such
+
+    - Add all your exceptions to local exception
+    - Finally before throwing the local exception, log and throw it
+
+77.
+String concatenation for Logging {} vs +
+http://stackoverflow.com/questions/2245088/how-to-display-stack-trace-on-a-caught-exception
+
+78.
+Logging exception
+http://stackoverflow.com/questions/10555409/logger-slf4j-advantages-of-formatting-with-instead-of-string-concatenation
