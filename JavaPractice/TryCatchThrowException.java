@@ -55,7 +55,8 @@ public class TryCatchThrowException
     {
         if(age < 0)
         {
-            throw new MyAgeException("Age can't be less than zero: ");
+            int x = 5;
+            throw new MyAgeException("Age can't be less than zero: {} X: {}" + age + x);
         }
         else
         {

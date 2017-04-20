@@ -3,8 +3,12 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
 
 public class FPolicyServer {
+
+    private static final int LEN = 6;
 
     // Create a listener that listens on an all observer IPs
     // That is the listener that observer will be calling with all observer IPs
@@ -22,6 +26,22 @@ public class FPolicyServer {
             @SuppressWarnings("resource")
             Socket connectionSocket = welcomeSocket.accept();
             System.out.println("PRAGAD . A: " + connectionSocket);
+
+            StringBuilder reqStr = new StringBuilder();
+            byte[] buffer = new byte[LEN];
+            int temp = LEN;
+            while (temp > 0) {
+                int numBytes = connectionSocket.getInputStream().read(buffer);
+                reqStr.append(new String(buffer, LEN - temp, numBytes, StandardCharsets.UTF_8));
+                temp -= numBytes;
+            }
+            System.out.println("PRAGAD . B: " + reqStr);
+            capitalizedSentence = reqStr.toString().toUpperCase() + '\n';
+            byte[] finalResp = capitalizedSentence.getBytes(StandardCharsets.UTF_8);
+            DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+            outToClient.write(finalResp, 0, finalResp.length);
+
+            /*
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             System.out.println("PRAGAD . B: " + inFromClient);
             DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
@@ -30,8 +50,9 @@ public class FPolicyServer {
             System.out.println("PRAGAD . D: Received: " + clientSentence);
             capitalizedSentence = clientSentence.toUpperCase() + '\n';
             outToClient.writeBytes(capitalizedSentence);
+            outToClient.flush();
+            */
         }
-
     }
 
     public static void main(String[] args) throws Exception {

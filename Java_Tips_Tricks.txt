@@ -85,6 +85,22 @@
 79. How to fix Could not find or load main class error
 80. MVN Building app into JAR with all dependencies and running the app
 81. How to resolve Could not find or load main class Foo error
+82. Print a list using forEach
+83. How to convert Java String into byte[]?
+83b. Convert integer into byte array (Java)
+84. Is there an equivalent to memcpy() in Java?
+85. Print an integer in binary format in Java
+86. Converting Little Endian to Big Endian
+87. StringBuilder vs String
+88. How to read an unknown number of bytes from an inputStream (socket/socketServer)?
+89. Receive byte[] using ByteArrayInputStream from a socket
+90. How can I convert a 4-byte array to an integer?
+91. Java ByteBuffer to String
+92. How to convert a String into an ArrayList?
+93. Default values to arguments in function
+94. Static classes in Java
+95. What is try-with-resources
+96. Sort list of strings
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1013,6 +1029,15 @@ Check if Array is empty
     int[] arr = null;
     if (arr == null || arr.length == 0)
 
+	int[] a = new int[5]; // Array is NOT EMPTY AND NOT NULL
+	if (a == null) {
+		System.out.println("NULL"); // Won't print
+	}
+	if (a.length == 0) {
+		System.out.println("Empty"); // Won't print
+	}
+	System.out.println("Done"); // Gets printed
+
 42.
 Convert Array to ArrayList
 
@@ -1532,7 +1557,7 @@ How to fix Could not find or load main class error
     Run using java -cp . 
 
 80.
-MVN Building app into JAR with all dependencies and running the app
+MVN Building app into JAR with all dependencies and running the app - Fat JAR
     Change pom.xml to include the following
 
     Converting Java Program to Jar:
@@ -1588,3 +1613,165 @@ How to resolve Could not find or load main class Foo error
     java -cp . Foo
 
     Where Foo.java is the hello world program
+
+82. 
+Print a list using forEach
+    list.forEach(System.out::println);
+
+83.
+How to convert Java String into byte[]?
+http://stackoverflow.com/questions/18571223/how-to-convert-java-string-into-byte
+
+    byte[] b = string.getBytes();
+    byte[] b = string.getBytes(Charset.forName("UTF-8"));
+    byte[] b = string.getBytes(StandardCharsets.UTF_8); // Java 7+ only
+
+83b.
+Convert integer into byte array (Java)
+
+    ByteBuffer b = ByteBuffer.allocate(4);
+    //b.order(ByteOrder.BIG_ENDIAN); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
+    b.putInt(0xAABBCCDD);
+
+    byte[] result = b.array();
+
+84.
+Is there an equivalent to memcpy() in Java?
+http://stackoverflow.com/questions/3329163/is-there-an-equivalent-to-memcpy-in-java
+
+		byte[] src = {1, 2, 3, 4};
+		byte[] dst = Arrays.copyOf(src, src.length);
+		System.out.println(Arrays.toString(dst));
+
+	OR
+		Use System.arraycopy()
+
+		System.arraycopy(sourceArray, 
+						 sourceStartIndex,
+						 targetArray,
+						 targetStartIndex,
+						 length);
+		Example,
+
+			  String[] source = { "alpha", "beta", "gamma" };
+			  String[] target = new String[source.length];
+			  System.arraycopy(source, 0, target, 0, source.length);
+
+85.
+Print an integer in binary format in Java
+http://stackoverflow.com/questions/5263187/print-an-integer-in-binary-format-in-java
+
+	int x = 100;
+	System.out.println(Integer.toBinaryString(x));
+
+	Integer.toString(100,8) // prints 144 --octal representation
+	Integer.toString(100,2) // prints 1100100 --binary representation
+	Integer.toString(100,16) //prints 64 --Hex representation
+
+86.
+Converting Little Endian to Big Endian
+http://stackoverflow.com/questions/3842828/converting-little-endian-to-big-endian
+
+	int little2big(int i) {
+		return (i&0xff)<<24 | (i&0xff00)<<8 | (i&0xff0000)>>8 | (i>>24)&0xff;
+	}
+
+87.
+StringBuilder vs String
+http://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java
+
+    Use StringBuilder when concatenating Strings inside a loop
+    Compiler will take care of String concatenation outside the loop
+
+88.
+How to read an unknown number of bytes from an inputStream (socket/socketServer)?
+http://stackoverflow.com/questions/5690954/java-how-to-read-an-unknown-number-of-bytes-from-an-inputstream-socket-socke
+
+    byte[] resultBuff = new byte[0];
+    byte[] buff = new byte[1024];
+    int k = -1;
+    while((k = sock.getInputStream().read(buff, 0, buff.length)) > -1) {
+        byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+        System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+        System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+        resultBuff = tbuff; // call the temp buffer as your result buff
+    }
+    System.out.println(resultBuff.length + " bytes read.");
+    return resultBuff;
+
+89.
+Receive byte[] using ByteArrayInputStream from a socket
+http://stackoverflow.com/questions/10475898/receive-byte-using-bytearrayinputstream-from-a-socket
+
+    InputStream stream = socket.getInputStream();
+    byte[] data = new byte[100];
+    int count = stream.read(data);
+
+90.
+How can I convert a 4-byte array to an integer?
+http://stackoverflow.com/questions/5616052/how-can-i-convert-a-4-byte-array-to-an-integer
+
+    Big-endian:
+    int x = java.nio.ByteBuffer.wrap(bytes).getInt();
+
+    Little-endian:
+    int x = java.nio.ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
+
+91.
+Java ByteBuffer to String
+
+    StandardCharsets.UTF_8
+
+    To get the bytes from a String in a particular encoding, you can use a sibling getBytes() method:
+      byte[] bytes = k.getBytes( Charset.forName("UTF-8" ));
+
+    To put bytes with a particular encoding into a String, you can use a different String constructor:
+       String v = new String( bytes, Charset.forName("UTF-8") );
+
+92.
+How to convert a String into an ArrayList?
+
+    List<String> myList = new ArrayList<String>(Arrays.asList(s.split(",")));
+
+93.
+Default values to arguments in function
+    
+    Java does not have a way to do it
+
+94.
+Static classes in Java
+    
+    Can't create static classes without public
+
+95.
+What is try-with-resources
+
+    It was introduced because of some resources used in Java (like SQL connections or streams) being difficult to be handled properly;
+    as an example, in java 6 to handle a InputStream properly you had to do something like:
+        InputStream stream = new MyInputStream(...);
+        try {
+            // ... use stream
+        } catch(IOException e) {
+           // handle exception
+        } finally {
+            try {
+                if(stream != null) {
+                    stream.close();
+                }
+            } catch(IOException e) {
+                // handle yet another possible exception
+            }
+        }
+
+    Do you notice that ugly double try? now with try-with-resources you can do this:
+        try (InputStream stream = new MyInputStream(...)){
+            // ... use stream
+        } catch(IOException e) {
+           // handle exception
+        }
+    and close() is automatically called, if it throws an IOException
+
+96.
+Sort list of strings
+
+

@@ -19,6 +19,7 @@ class FPolicyClient
         sentence = inFromUser.readLine();
         System.out.println("6: " + sentence);
         outToServer.writeBytes(sentence + '\n');
+        outToServer.flush();
         System.out.println("7: ");
         modifiedSentence = inFromServer.readLine();
         System.out.println("FROM SERVER: " + modifiedSentence);
