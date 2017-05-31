@@ -42,7 +42,7 @@
 38. How are Java objects stored in memory
 38b. When is memory allocated
 39. Java Pass by value or Pass by reference
-40. ArrayLists
+40. Check ArrayLists is empty
 41. Check if Array is empty
 42. Convert Array to ArrayList in Java
 42b. Convert ArrayList to Array in Java
@@ -83,7 +83,7 @@
 77. String concatenation for Logging {} vs +
 78. Logging exception
 79. How to fix Could not find or load main class error
-80. MVN Building app into JAR with all dependencies and running the app
+80. Run class inside a jar, MVN Building app into JAR with all dependencies and running the app - Fat JAR
 81. How to resolve Could not find or load main class Foo error
 82. Print a list using forEach
 83. How to convert Java String into byte[]?
@@ -101,6 +101,11 @@
 94. Static classes in Java
 95. What is try-with-resources
 96. Sort list of strings
+97. Using enum
+98. Collection.containsAll()
+99. Add a list in a hashset using addAll
+100. Convert list to a set
+101. Comparing and removing elements not present in a List and array java
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1019,7 +1024,7 @@ http://stackoverflow.com/questions/40480/is-java-pass-by-reference-or-pass-by-va
     Any operations that foo performs on d are such that, for all practical purposes, they are performed on aDog itself (except d=new Dog("Boxer")).
 
 40.
-ArrayLists
+Check ArrayLists is empty
 
     isEmpty() to check if arrayList is empty.
 
@@ -1557,7 +1562,7 @@ How to fix Could not find or load main class error
     Run using java -cp . 
 
 80.
-MVN Building app into JAR with all dependencies and running the app - Fat JAR
+Run class inside a jar, MVN Building app into JAR with all dependencies and running the app - Fat JAR
     Change pom.xml to include the following
 
     Converting Java Program to Jar:
@@ -1606,6 +1611,7 @@ MVN Building app into JAR with all dependencies and running the app - Fat JAR
 		mvn clean compile assembly:single
 
     Run the jar using
+    Run java from Jar, Run class inside a jar
         java -cp jacksonXml-1.0-SNAPSHOT-jar-with-dependencies.jar prag.jacksonXml.App
 
 81.
@@ -1774,4 +1780,66 @@ What is try-with-resources
 96.
 Sort list of strings
 
+97. Using enum
 
+    private enum Color {
+        RED("RED"),
+        BLUE("BLUE");
+
+        private final String color;
+
+        private Color(String val) {
+            this.color = val;
+        }
+
+        public String getColor() {
+            return color;
+        }
+    }
+
+    main() {
+        String s = "RED";
+        System.out.println(Color.valueOf(s));
+
+        String strColor = Color.RED.name();
+        Color enumColor = Color.valueOf(s);
+
+        switch (enumColor) {
+            case RED:
+                System.out.println("Color is RED");
+                break;
+            case BLUE:
+                System.out.println("Color is BLUE");
+                break;
+            default:
+                System.out.println("Color is Invalid");
+                break;
+        }
+    }
+
+98. Collection.containsAll()
+    String elements[] = { "A", "B", "C", "D", "E" };
+    Set set = new HashSet(Arrays.asList(elements));
+
+    elements = new String[] { "A", "B", "C" };
+    Set set2 = new HashSet(Arrays.asList(elements));
+
+    System.out.println(set.containsAll(set2));
+
+99. Add a list in a hashset using addAll
+	List<Integer> a = new ArrayList<Integer>();
+	a.add(20);
+
+	List<Integer> b = new ArrayList<Integer>();
+	b.add(30);
+
+	Set<Integer> set = new HashSet<Integer>(a);
+	set.addAll(b);
+
+100. Convert list to a set
+	Set<Foo> foo = new HashSet<Foo>(myList);
+
+101. Comparing and removing elements not present in a List and array java
+    You can use the methods the List interface provides.
+    list.removeAll(Arrays.asList(array)); // Differences removed
+    list.retainAll(Arrays.asList(array)); // Same elements retained

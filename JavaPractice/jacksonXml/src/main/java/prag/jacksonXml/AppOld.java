@@ -4,23 +4,14 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.List;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
+/*
 @JacksonXmlRootElement(localName = "Header")
 class Header {
     public Header() {
@@ -251,9 +242,6 @@ public class AppOld {
             System.out.println("Socket Details: " + connectionSocket);
             // ReadBytes
             readBytes(connectionSocket);
-            /*
-            InputStreamReader reqFromNetApp = new InputStreamReader(connectionSocket.getInputStream());
-             */
             // TODO (Pragad): Check if this should be done on a separate thread
             handleRequests(null);
             // TODO (Pragad): Pass the request got from NetApp to backend
@@ -291,16 +279,7 @@ public class AppOld {
         String line;
         List<String> reqLines = (Arrays.asList(inBuffStr.split("\n\n")));
         System.out.println("Req Lines: " + reqLines);
-        /*
-        while(inBuffStr) {
-            line = line.trim(); // remove leading and trailing whitespace
-            if (!line.equals("") && !line.equals("\n")) // don't write out blank lines
-            {
-                reqLines.add(line);
-            }
-        }
-        String line1 = reqLines.get(0).substring(27);
-        */
+
         String line1 = reqLines.get(0);
         String line2 = reqLines.get(1);
         request = line2;
@@ -388,14 +367,6 @@ public class AppOld {
         finalResp[0] = finalResp[PREFIX_LEN - 1] = ASCII_DOUBLE_QUOTE;
         System.arraycopy(b, 0, finalResp, PREFIX_LEN, b.length);
 
-        // Create a byte array from an Integer and copy that byte array to final response
-        /*
-        ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.order(ByteOrder.BIG_ENDIAN);
-        bb.putInt(resp.length());
-        System.arraycopy(bb.array(), 0, finalResp, 1, 4);
-        */
-
         ByteBuffer bb = ByteBuffer.allocate(4);
         //bb.putInt(SwapEndianness(resp.length()));
         System.arraycopy(bb.array(), 0, finalResp, 1, 4);
@@ -421,78 +392,7 @@ public class AppOld {
         new AppOld();
     }
 }
-
-/*
-class City {
-    @JacksonXmlProperty(localName = "CityName")
-    String cityName;
-
-    public City(String cityName) {
-        this.cityName = cityName;
-    }
-
-    public String getcityName() {
-        return cityName;
-    }
-
-    public void setcity(String cityName) {
-        this.cityName = cityName;
-    }
-}
-
-@JacksonXmlRootElement(localName = "Person")
-class Person {
-    @JacksonXmlProperty(localName = "name")
-    private String name;
-
-    @JacksonXmlProperty(localName = "age")
-    private String age;
-
-    @JacksonXmlProperty(localName = "cities")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private List<City> cities;
-
-    public Person() { }
-
-    Person(String name, String age, List<City> cities) {
-        this.name = name;
-        this.age = age;
-        this.cities = cities;
-    }
-
-    @Override
-    public String toString() {
-        String cityStr = "";
-        for (City c : cities) {
-            cityStr = cityStr + c.cityName + ", ";
-        }
-        return "name: " + name + "; age: " + age + "; cities: " + cityStr;
-    }
-
-    public String getname() {
-        return name;
-    }
-
-    public String getage() {
-        return age;
-    }
-
-    public List<City> getcities() {
-        return cities;
-    }
-
-    public void setname(String name) {
-        this.name = name;
-    }
-
-    public void setage(String age) {
-        this.age = age;
-    }
-
-    public void setcities(List<City> cities) {
-        this.cities = cities;
-    }
-}
+*/
 
 @JacksonXmlRootElement(localName = "PersonUpper")
 class PersonUpper {
@@ -543,7 +443,80 @@ class PersonUpper {
     }
 }
 
-public class App
+class City {
+    @JacksonXmlProperty(localName = "cityName")
+    String cityName;
+
+    public City() { }
+
+    public City(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getcityName() {
+        return cityName;
+    }
+
+    public void setcity(String cityName) {
+        this.cityName = cityName;
+    }
+}
+
+@JacksonXmlRootElement(localName = "Person")
+class Person {
+    @JacksonXmlProperty(localName = "name")
+    private String name;
+
+    @JacksonXmlProperty(localName = "age")
+    private String age;
+
+    @JacksonXmlProperty(localName = "city")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<City> cities;
+
+    public Person() { }
+
+    Person(String name, String age, List<City> cities) {
+        this.name = name;
+        this.age = age;
+        this.cities = cities;
+    }
+
+    @Override
+    public String toString() {
+        String cityStr = "";
+        for (City c : cities) {
+            cityStr = cityStr + c.cityName + ", ";
+        }
+        return "name: " + name + "; age: " + age + "; cities: " + cityStr;
+    }
+
+    public String getname() {
+        return name;
+    }
+
+    public String getage() {
+        return age;
+    }
+
+    public List<City> getcities() {
+        return cities;
+    }
+
+    public void setname(String name) {
+        this.name = name;
+    }
+
+    public void setage(String age) {
+        this.age = age;
+    }
+
+    public void setcities(List<City> cities) {
+        this.cities = cities;
+    }
+}
+
+public class AppOld
 {
     public static void main( String[] args )
     {
@@ -560,7 +533,7 @@ public class App
             City c1 = new City("sfo");
             City c2 = new City("sjc");
             City c3 = new City("sea");
-            List<City> cityList = new ArrayList<City>();
+            List<City> cityList = new ArrayList<>();
             cityList.add(c1);
             cityList.add(c2);
             cityList.add(c3);
@@ -583,4 +556,3 @@ public class App
         }
     }
 }
-*/
