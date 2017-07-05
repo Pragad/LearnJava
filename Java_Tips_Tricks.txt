@@ -106,6 +106,8 @@
 99. Add a list in a hashset using addAll
 100. Convert list to a set
 101. Comparing and removing elements not present in a List and array java
+102. Convert List<String> to List<Integer> directly
+103. Communication between java threads: stopping all threads when one finishes its task
 --------------------------------------------------------------------------------------------
 
 1.
@@ -235,6 +237,14 @@ http://stackoverflow.com/questions/774357/how-does-the-garbage-collection-mechan
             - GARBAGE Collector moves through ALL THE OBJECTS and frees the ones that has ref count as ZERO
             PROBLEM:
             - Circular reference
+			class Pointy {
+				public Pointy other;
+			}
+
+			Pointy one = new Pointy();
+			Pointy two = new Pointy();
+			one.other = two;
+			two.other = one;
 
     MARK and SWEEP
         The mark and sweep algorithm works by periodically stopping the execution of the program, mark each item the program has allocated as unreachable.
@@ -1843,3 +1853,10 @@ Sort list of strings
     You can use the methods the List interface provides.
     list.removeAll(Arrays.asList(array)); // Differences removed
     list.retainAll(Arrays.asList(array)); // Same elements retained
+
+102. Convert List<String> to List<Integer> directly
+    stringList.stream().map(Integer::parseInt).collect(Collectors.toList());
+
+103. Communication between java threads: stopping all threads when one finishes its task
+    https://stackoverflow.com/questions/17166918/communication-between-java-threads-stopping-all-threads-when-one-finishes-its-t
+    https://stackoverflow.com/questions/19480162/java-threads-close-other-threads-when-first-thread-completes
