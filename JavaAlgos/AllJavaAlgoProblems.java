@@ -34,6 +34,7 @@ import java.lang.*;
  * PROBLEM 10. Find the max sub array product
  * int maxProduct(vector<int>& nums)
  * 
+ * PROBLEM 11. Find k'th smallest number in unsorted array
  */
 public class AllJavaAlgoProblems {
     // -------------------------------------------------------------------------
@@ -275,6 +276,70 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
+    // PROBLEM 11. Given a input stream of numbers, compute the median after each entry
+    // -------------------------------------------------------------------------
+    static double findMedian(int num, PriorityQueue<Integer> ascPq, PriorityQueue<Integer> dscPq) {
+        // Very first element can be inserted anywhere
+        if (dscPq.size() == 0) {
+            dscPq.add(num);
+            return dscPq.peek();
+        }
+        
+        // If the new number is smaller than top element in dscPq, it should go there
+        // If the new number is greater than top element in ascPq, it should go there
+        if (num < dscPq.peek()) {
+            dscPq.add(num);
+            if (dscPq.size() - ascPq.size() > 1) {
+                ascPq.add(dscPq.poll());
+            }
+        } else {
+            ascPq.add(num);
+            if (ascPq.size() - dscPq.size() > 1) {
+                dscPq.add(ascPq.poll());
+            }
+        }
+
+        if (ascPq.size() > dscPq.size()) {
+            return ascPq.peek();
+        } else if (dscPq.size() > ascPq.size()) {
+            return dscPq.peek();
+        } else {
+            return (ascPq.peek() + dscPq.peek()) / 2.0;
+        }
+    }
+
+    static void findMedian() {
+        ArrayList<Integer> al = new ArrayList<>(Arrays.asList(5, 2, 4, 7, 2, 9, 1, 15, -3, 8, 13, -1, 3, 1, 6));
+        // VERY IMP: Java default order of priority queue is ascending order
+        PriorityQueue<Integer> dscPq = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<Integer> ascPq = new PriorityQueue<>();
+        System.out.println(al);
+        for (Integer a : al) {
+            System.out.println(findMedian(a, ascPq, dscPq));
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 11. Find k'th smallest number in unsorted array
+    // -------------------------------------------------------------------------
+    static int findKthSmallest(ArrayList<Integer> al, int k) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        int i = 0;
+        for (; i < k; i++) {
+            pq.add(al.get(i));
+        }
+
+        for (; i < al.size(); i++) {
+            if (pq.peek() > al.get(i)) {
+                pq.poll();
+                pq.add(al.get(i));
+            }
+        }
+
+        return pq.peek();
+    }
+
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String[] args) {
@@ -338,6 +403,26 @@ public class AllJavaAlgoProblems {
                 add(Arrays.asList(1, 0, 1, 0, 1));
             }};
             System.out.println(countConnectedIslands(twoDMat));
+        }
+
+        // PROBLEM 8: Given a input stream of numbers, compute the median after each entry
+        {
+            System.out.println("\nProblem 8. Given a input stream of numbers, compute the median after each entry");
+            findMedian();
+        }
+
+        // PROBLEM 11. Find k'th smallest number in unsorted array
+        {
+            System.out.println("\nProblem 11. Find k'th smallest number in unsorted array");
+            ArrayList<Integer> al = new ArrayList<>();
+            al.add(7);
+            al.add(10);
+            al.add(4);
+            al.add(3);
+            al.add(20);
+            al.add(15);
+            System.out.println(findKthSmallest(al, 3));
+            System.out.println(findKthSmallest(al, 5));
         }
     }
 }

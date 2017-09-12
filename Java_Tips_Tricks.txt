@@ -29,6 +29,7 @@
 26. Get current date and time
 27. Priority Queue peek, element, poll, remove
 28. Priority Queue Offer vs Add
+28b. Priority Queue Reverse Order:
 29. for each loop in Java
 30. Increment Value of a HashMap's Key
 30b. Print All Key Value pairs of Hashmap in Java
@@ -108,6 +109,10 @@
 101. Comparing and removing elements not present in a List and array java
 102. Convert List<String> to List<Integer> directly
 103. Communication between java threads: stopping all threads when one finishes its task
+104. Multithreading - Callable vs Runnable and Future
+105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
+
+
 --------------------------------------------------------------------------------------------
 
 1.
@@ -777,6 +782,22 @@ Priority Queue Offer vs Add
 http://stackoverflow.com/questions/2703984/what-is-the-difference-between-the-add-and-offer-methods-in-a-queue-in-java
 
     The Queue interface specifies that add() will throw an IllegalStateException if no space is currently available (and otherwise return true) while offer() will return false if the element couldn't be inserted due to capacity restrictions.
+
+28b. Priority Queue Reverse Order:
+https://stackoverflow.com/questions/11003155/change-priorityqueue-to-max-priorityqueue
+
+    Java 8:
+    PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
+
+    PriorityQueue<Integer> pq = new PriorityQueue<>((x, y) -> y - x);
+
+	PriorityQueue<Integer> pq = new PriorityQueue<Integer>(defaultSize, new Comparator<Integer>() {
+    int compare(Integer lhs, Integer rhs) {
+        if (lhs > rhs) return +1;
+        if (lhs.equals(rhs)) return 0;
+        return -1;
+    }
+});
 
 29.
 for each loop in Java
@@ -1860,3 +1881,24 @@ Sort list of strings
 103. Communication between java threads: stopping all threads when one finishes its task
     https://stackoverflow.com/questions/17166918/communication-between-java-threads-stopping-all-threads-when-one-finishes-its-t
     https://stackoverflow.com/questions/19480162/java-threads-close-other-threads-when-first-thread-completes
+
+104. Multithreading - Callable vs Runnable and Future
+    http://www.geeksforgeeks.org/callable-future-java/
+    http://www.concretepage.com/java/java-callable-example
+    http://javarevisited.blogspot.com/2015/06/how-to-use-callable-and-future-in-java.html
+    http://howtodoinjava.com/core-java/multi-threading/threadpoolexecutor-callable-future-example/
+
+105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
+https://stackoverflow.com/questions/16748030/difference-between-arrays-aslistarray-vs-new-arraylistintegerarrays-aslist
+
+    First, let's see what this does:
+
+    Arrays.asList(ia)
+    It takes an array ia and creates a wrapper that implements List<Integer>, which makes the original array available as a list. Nothing is copied and all, only a single wrapper object is created. Operations on the list wrapper are propagated to the original array. This means that if you shuffle the list wrapper, the original array is shuffled as well, if you overwrite an element, it gets overwritten in the original array, etc. Of course, some List operations aren't allowed on the wrapper, like adding or removing elements from the list, you can only read or overwrite the elements.
+
+    Note that the list wrapper doesn't extend ArrayList - it's a different kind of object. ArrayLists have their own, internal array, in which they store their elements, and are able to resize the internal arrays etc. The wrapper doesn't have its own internal array, it only propagates operations to the array given to it.
+    On the other hand, if you subsequently create a new array as
+
+    new ArrayList<Integer>(Arrays.asList(ia))
+    then you create new ArrayList, which is a full, independent copy of the original one. Although here you create the wrapper using Arrays.asList as well, it is used only during the construction of the new ArrayList and is garbage-collected afterwards. The structure of this new ArrayList is completely independent of the original array. It contains the same elements (both the original array and this new ArrayList reference the same integers in memory), but it creates a new, internal array, that holds the references. So when you shuffle it, add, remove elements etc., the original array is unchanged.
+
