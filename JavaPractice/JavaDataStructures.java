@@ -163,5 +163,9 @@ public class JavaDataStructures
             bits2 &= bits1;
             System.out.println(Integer.toBinaryString(bits2));
         }
+
+        // 6. HashMap
+        {
+        }
     }
 }

@@ -1,6 +1,8 @@
+package com.pragad.javaproblems.JavaProblems;
+
 import java.util.*;
-//import com.google.common.collect.Multimap;
-//import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.HashMultimap;
 
 /*
  * PROBLEM 1. Print all possilbe steps down a ladder
@@ -41,14 +43,6 @@ import java.util.*;
  * int[] twoSum(int[] nums, int sum)
  *
  * PROBLEM 13. Find all pairs that add to a sum
- * List<Pair<Integer, Integer>> twoSumAllPairs(int[] nums, int sum) 
- * 
- * PROBLEM 14. Count sub arrays that will add to a sum
- * int countSubarraySum(int[] nums, int sum)
- *
- * PROBLEM 15. Find Shortest Unsorted Continuous Subarray
- * int findUnsortedSubarray(int[] nums) 
- *
  */
 
 // Pair Class
@@ -500,7 +494,6 @@ public class AllJavaAlgoProblems {
     }
 
     // Using Multi-map
-	/*
     static List<Pair<Integer, Integer>> twoSumAllPairsMultiMap(int[] nums, int sum) {
         Multimap<Integer, Integer> sumMap = HashMultimap.create();
         List<Pair<Integer, Integer>> result = new ArrayList<>();
@@ -519,78 +512,6 @@ public class AllJavaAlgoProblems {
             System.out.println(e.getKey() + ":" + e.getValue());
         }
         return result;
-    }
-	*/
-
-    // -------------------------------------------------------------------------
-    // PROBLEM 14. Count sub arrays that will add to a sum
-    //
-    // Sum :    5
-    // Idx:     0, 1,  2, 3,  4,  5, 6, 7 ,  8, 9,10, 11
-    // Arr :    4, 1, -3, 2,  6, -5, 4, 1 , -3, 2, 6 , -5
-    // Map : 0, 4, 5,  2, 4, 10,  5, 9, 10,  7, 9, 15, 10 
-    // Find: 0,-1, 0, -3,-1,  5,  0, 4,  5,  2, 4, 10,  5
-    // -------------------------------------------------------------------------
-    static int countSubarraySum2(int[] nums, int sum) {
-        Map<Integer, Integer> sumMap = new HashMap<>();
-        int subArrayCount = 0;
-        sumMap.put(0, new ArrayList<>(Arrays.asList(-1)));
-        int curSum = 0;
-        for (int i = 0; i < nums.length; i++) {
-            curSum += nums[i];
-            if (sumMap.containsKey(curSum - sum)) {
-                subArrayCount += sumMap.get(curSum - sum);
-            }
-            sumMap.put(curSum, sumMap.getOrDefault(curSum, 0) + 1);
-        }
-        return subArrayCount;
-    }
-
-    static int countSubarraySum(int[] nums, int sum) {
-        Map<Integer, List<Integer>> sumMap = new HashMap<>();
-        int subArrayCount = 0;
-        sumMap.put(0, new ArrayList<>(Arrays.asList(-1)));
-        int curSum = 0;
-        for (int i = 0; i < nums.length; i++) {
-            curSum += nums[i];
-            if (sumMap.containsKey(curSum)) {
-                sumMap.get(curSum).add(i);
-            } else {
-                sumMap.put(curSum, new ArrayList<>(Arrays.asList(i)));
-            }
-
-            if (sumMap.containsKey(curSum - sum)) {
-                for (Integer stIdx : sumMap.get(curSum - sum)) {
-                    // VERY IMP: Start index should be greater than end index
-                    if ((stIdx + 1) <= i) {
-                        System.out.println("StIdx: "  + (stIdx + 1) + " - EndIdx: " + i);
-                        subArrayCount++;
-                    }
-                }
-            }
-        }
-        return subArrayCount;
-    }
-
-    // -------------------------------------------------------------------------
-    // PROBLEM 15. Find Shortest Unsorted Continuous Subarray
-    // -------------------------------------------------------------------------
-    static int findUnsortedSubarray(int[] nums) {
-        int stIdx = 0;
-        int endIdx = 0;
-        int maxNum = nums[0];
-        int minNum = nums[nums.length - 1];
-        for (int i = 1; i < nums.length; i++) {
-            int maxNum = Math.max(maxNum, nums[i]);
-            int minNum = Math.min(minNum, nums[nums.length - i - 1]);
-            if (nums[nums.length - i - 1] > minNum) {
-                stIdx = nums.length - i - 1;
-            }
-            if (nums[i] < maxNum) {
-                endIdx = i;
-            }
-        }
-        return endIdx - stIdx + 1;
     }
 
     // -------------------------------------------------------------------------
@@ -723,22 +644,7 @@ public class AllJavaAlgoProblems {
             int[] arr2 = {5, 3, -2, 4, 3, 6, 5, 5, -1, 3, 10, 2};
             System.out.println(twoSumAllPairs(arr2, 8));
             System.out.println();
-            //System.out.println(twoSumAllPairsMultiMap(arr2, 8));
-        }
-
-        // PROBLEM 14. Count sub arrays that will add to a sum
-        {
-            System.out.println("\nPROBLEM 14. Count sub arrays that will add to a sum");
-            int[] arr = {4, 1, -3, 2,  6, -5, 4, 1 , -3, 2, 6 , -5};
-            System.out.println(countSubarraySum(arr, 5));
-        }
-
-        // PROBLEM 15. Find Shortest Unsorted Continuous Subarray
-        {
-            System.out.println("\nPROBLEM 15. Find Shortest Unsorted Continuous Subarray");
-            int[] arr = {2, 6, 4, 8, 10, 9, 15};
-            System.out.println(findUnsortedSubarray(arr));
+            System.out.println(twoSumAllPairsMultiMap(arr2, 8));
         }
     }
 }
-

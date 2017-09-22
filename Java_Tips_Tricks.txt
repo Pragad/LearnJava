@@ -33,6 +33,7 @@
 29. for each loop in Java
 30. Increment Value of a HashMap's Key
 30b. Print All Key Value pairs of Hashmap in Java
+30c. Add to an arraylist in HashMap
 31. How to split a string in Java
 32. Java String to Int and Int to String
 33. Iterating over a Map using EntrySet
@@ -111,7 +112,9 @@
 103. Communication between java threads: stopping all threads when one finishes its task
 104. Multithreading - Callable vs Runnable and Future
 105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
-
+106. Can I compile a java file with a different name than the class?
+107. Is main method compulsory in Java
+108. Java Data structures:
 
 --------------------------------------------------------------------------------------------
 
@@ -829,6 +832,10 @@ Print All Key Valye pairs of Hashmap in Java
         System.out.println(entry.getKey()+" : "+entry.getValue());
     }
 
+30c. Add to an arraylist in HashMap
+https://stackoverflow.com/questions/12134687/how-to-add-element-into-arraylist-in-hashmap
+
+
 31.
 How to split a string in Java
 http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
@@ -891,13 +898,13 @@ Signed Right Shift and Unsigned Right Shift
 http://www.geeksforgeeks.org/bitwise-shift-operators-in-java/
 
     >> (Signed right shift)
-        In Java, the operator ë>>í is signed right shift operator.
+        In Java, the operator ¬ë>>¬í is signed right shift operator.
         All integers are signed in Java, and it is fine to use >> for negative numbers.
-        The operator ë>>í uses the sign bit (left most bit) to fill the trailing positions after shift.
+        The operator ¬ë>>¬í uses the sign bit (left most bit) to fill the trailing positions after shift.
         If the number is negative, then 1 is used as a filler and if the number is positive, then 0 is used as a filler.
 
     >>> (Unsigned right shift)
-        In Java, the operator ë>>>í is unsigned right shift operator.
+        In Java, the operator ¬ë>>>¬í is unsigned right shift operator.
         It always fills 0 irrespective of the sign of the number.
 
 35.
@@ -1271,7 +1278,7 @@ C++ Features Missing in Java
     No unsigned int in Java
     No -> operator in java
     No stack allocated objects in java
-    No delete operator in java due to javaís garbage collection
+    No delete operator in java due to java¬ís garbage collection
     No destructor in java
     No typedef in java
     No global variables, no global function because java is pure OO.
@@ -1364,9 +1371,9 @@ try catch throw throws finally
     1. The throws keyword is used in method declaration, in order to explicitly specify the exceptions that a particular method might throw.
     When a method declaration has one or more exceptions defined using throws clause then the method-call must handle all the defined exceptions.
 
-    2. When defining a method you must include a throws clause to declare those exceptions that might be thrown but doesnít get caught in the method.
+    2. When defining a method you must include a throws clause to declare those exceptions that might be thrown but doesn¬ít get caught in the method.
 
-    3. If a method is using throws clause along with few exceptions then this implicitly tells other methods that ñ ì If you call me, you must handle these exceptions that I throwî.
+    3. If a method is using throws clause along with few exceptions then this implicitly tells other methods that ¬ñ ¬ì If you call me, you must handle these exceptions that I throw¬î.
 
         class MyOwnException extends Exception {
            public MyOwnException(String msg){
@@ -1902,3 +1909,122 @@ https://stackoverflow.com/questions/16748030/difference-between-arrays-aslistarr
     new ArrayList<Integer>(Arrays.asList(ia))
     then you create new ArrayList, which is a full, independent copy of the original one. Although here you create the wrapper using Arrays.asList as well, it is used only during the construction of the new ArrayList and is garbage-collected afterwards. The structure of this new ArrayList is completely independent of the original array. It contains the same elements (both the original array and this new ArrayList reference the same integers in memory), but it creates a new, internal array, that holds the references. So when you shuffle it, add, remove elements etc., the original array is unchanged.
 
+
+106. Can I compile a java file with a different name than the class?
+https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-different-name-than-the-class
+    Your Java file name should always reflect the public class defined within that file. Otherwise, you will get a compiler error. For example, test.java:
+
+    public class Foo {}
+    Trying to compile this gives:
+
+    [steven@scstop:~]% javac test.java
+    test.java:1: class Foo is public, should be declared in a file named Foo.java
+    public class Foo {
+           ^
+           1 error
+
+	But the myth can be violated in such a way to compile the above file.
+	/***** File name: Trial.java ******/
+	class Geeks
+	{
+		public static void main(String[] args) {
+			System.out.println("Hello world");
+		}
+	}
+	Run on IDE
+	Step 1: javac Trial.java
+	Step1 will create a Geeks.class (byte code) without any error message since the class is not public.
+
+	Step 2: java Geeks
+	Now the output will be Hello world
+
+	The myth about the file name and class name should be same only when the class is declared in public.
+
+107. Is main method compulsory in Java
+
+    Prior to JDK 5, main method was not mandatory in a java program.
+
+    You could write your full code under static block and it ran normally.
+    The static block is first executed as soon as the class is loaded before the main(); method is invoked and therefore before the main() is called. main is usually declared as static method and hence Java doesn‚Äôt need an object to call main method.
+     
+     However, From JDK6 main method is mandatory. If your program doesn‚Äôt contain main method, then you will get a run-time error ‚Äúmain method not found in the class‚Äù. Note that your program will successfully compile in this case, but at run-time, it will throw error.
+
+	// This program will successfully run
+	// prior to JDK 5
+	public class Test 
+	{
+		// static block
+		static
+		{
+			System.out.println("program is running without main() method");
+		}
+	}
+
+108. Java Data structures:
+    1. Arrays
+        a. arr.length;
+    2. ArrayList
+        a. add(E e)
+        b. add(int index, E element)
+        c. addAll(Collection<? extends E> c)
+        d. clear()
+        e. contains(Object o)
+        f. get(int index)
+        g. indexOf(Object o)
+        h. isEmpty()
+        i. lastIndexOf(Object o)
+        j. remove(int index)
+        k. remove(Object o)
+        l. toArray()
+    3. HashMap
+           HashMap<Integer, Integer> sumMap = new HashMap<>();
+        a. clear()
+        b. containsKey(Object key)
+        c. containsValue(Object value)
+        d. entrySet()
+        e. get(Object key)
+        f. isEmpty()
+        g. put(K key, V value)
+        h. remove(Object key)
+        i. remove(Object key, Object value)
+           // Removes the entry for the specified key only if it is currently mapped to the specified value.
+    4. HashSet
+        a. add(E e)
+        b. clear()
+        c. contains(Object o)
+        d. isEmpty()
+        e. remove(Object o)
+    5. PriorityQueue
+           PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        a. add(E e)
+        b. clear()
+        c. comparator()
+        d. contains(Object o)
+        e. offer(E e) // Does not throw an exception
+        e. add(E e) // https://stackoverflow.com/questions/2703984/what-is-the-difference-between-the-add-and-offer-methods-in-a-queue-in-java
+        f. peek()
+        g. poll()
+        h. remove(Object o)
+        i. toArray()
+    6. Queue
+        a. queue.add()
+        b. queue.remove()
+        c. queue.element() // Get first element
+        d. queue.isEmpty()
+    7. Stack
+        a. st.push()
+        b. st.pop()
+        c. st.peek()
+        d. st.empty()
+    8. LinkedHashMap
+        a. lhm.put()
+        b. lhm.containsKey()
+        c. lhm.get()
+        d. lhm.entrySet()
+    9. LinkedList
+        a. ll.add()
+        b. ll.getFirst()
+        c. ll.getLash()
+    10. Google Multimap
+           Multimap<Integer, Integer> sumMap = HashMultimap.create();
+    BitSet
