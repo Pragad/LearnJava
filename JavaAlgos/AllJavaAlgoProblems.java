@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.stream.*;
+
 //import com.google.common.collect.Multimap;
 //import com.google.common.collect.HashMultimap;
 
@@ -49,6 +51,25 @@ import java.util.*;
  * PROBLEM 15. Find Shortest Unsorted Continuous Subarray
  * int findUnsortedSubarray(int[] nums) 
  *
+ * PROBLEM 16. Finding greatest sum of elements of array which is divisible by a given number
+ *
+ * PROBLEM 17. Print Matrix Diagonally
+ *
+ * PROBLEM 18. Print Matrix Spirally
+ *
+ * PROBLEM 19. Given a string of 1s and 0s with '?' in between. A '?' can be either one or zero.
+ *
+ * PROBLEM 20. Given an integer x, find ONE digit who is equal to its adjacent digits,
+ *
+ * PROBLEM 21. Find Equilibrium Index of an array. Sum of left elements = Sum of Right elements
+ *
+ * PROBLEM 22. Find if two rectangles overlap
+ *
+ * PROBLEM 23. Find Largest Subarray with equal number of 0s and 1s
+ *
+ * PROBLEM 24. 3 number sum closest
+ *
+ * PROBLEM 25. 1 Missing and 1 Duplicate
  */
 
 // Pair Class
@@ -87,6 +108,16 @@ final class Pair<L, R> {
     @Override
     public String toString() {
         return left + " : " + right;
+    }
+}
+
+class Point {
+    public int x;
+    public int y;
+
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
 
@@ -534,7 +565,8 @@ public class AllJavaAlgoProblems {
     static int countSubarraySum2(int[] nums, int sum) {
         Map<Integer, Integer> sumMap = new HashMap<>();
         int subArrayCount = 0;
-        sumMap.put(0, new ArrayList<>(Arrays.asList(-1)));
+        //sumMap.put(0, new ArrayList<>(Arrays.asList(-1)));
+        sumMap.put(0, -1);
         int curSum = 0;
         for (int i = 0; i < nums.length; i++) {
             curSum += nums[i];
@@ -574,6 +606,11 @@ public class AllJavaAlgoProblems {
 
     // -------------------------------------------------------------------------
     // PROBLEM 15. Find Shortest Unsorted Continuous Subarray
+    // Given an integer array, you need to find one continuous subarray
+    // that if you only sort this subarray in ascending order, then the whole array
+    // will be sorted in ascending order, too.
+    //
+    // http://www.geeksforgeeks.org/minimum-length-unsorted-subarray-sorting-which-makes-the-complete-array-sorted/
     // -------------------------------------------------------------------------
     static int findUnsortedSubarray(int[] nums) {
         int stIdx = 0;
@@ -581,8 +618,8 @@ public class AllJavaAlgoProblems {
         int maxNum = nums[0];
         int minNum = nums[nums.length - 1];
         for (int i = 1; i < nums.length; i++) {
-            int maxNum = Math.max(maxNum, nums[i]);
-            int minNum = Math.min(minNum, nums[nums.length - i - 1]);
+            maxNum = Math.max(maxNum, nums[i]);
+            minNum = Math.min(minNum, nums[nums.length - i - 1]);
             if (nums[nums.length - i - 1] > minNum) {
                 stIdx = nums.length - i - 1;
             }
@@ -591,6 +628,232 @@ public class AllJavaAlgoProblems {
             }
         }
         return endIdx - stIdx + 1;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 16. Finding greatest sum of elements of array which is divisible by a given number
+    // -------------------------------------------------------------------------
+    static int greatestSumOfSubarrayDivisibleByK(int[] nums, int k) {
+        int[] sumArr1 = new int[k];
+        int[] sumArr2 = new int[k];
+
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < k; j++) {
+                int t = (sumArr1[j] + nums[i]) % k;
+                sumArr2[t] = Math.max(sumArr2[t], sumArr1[j] + nums[i]);
+            }
+            sumArr1 = sumArr2;
+        }
+
+        return sumArr1[0];
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 17. Print Matrix Diagonally
+    // -------------------------------------------------------------------------
+    static void printMatrixDiagonally(int[][] twoDMat) {
+        int rows = twoDMat.length;
+        int cols = twoDMat[0].length;
+        for (int i = 0; i < rows + cols; i++) {
+            for (int j = 0; j <= i; j++) {
+                int k = i - j;
+                if (k < rows && j < cols) {
+                    System.out.print(twoDMat[k][j] + ", ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 18. Print Matrix Spirally
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 19. Given a string of 1s and 0s with '?' in between. A '?' can be either one or zero.
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 20. Given an integer x, find ONE digit who is equal to its adjacent digits,
+    // -------------------------------------------------------------------------
+    static int largestNumByRemovingDup(int num) {
+        StringBuilder sb = new StringBuilder(String.valueOf(num));
+
+        for (int i = 0; i < sb.length(); i++) {
+            if (i + 1 < sb.length() && sb.charAt(i) == sb.charAt(i + 1)) {
+                if (i + 2 < sb.length() && (sb.charAt(i) < sb.charAt(i + 2))) {
+                    sb.deleteCharAt(i);
+                    return Integer.parseInt(sb.toString());
+                } else if (i + 2 > sb.length()) {
+                    // We have reached the last duplicate character. Safe to remove it
+                    sb.deleteCharAt(i);
+                    return Integer.parseInt(sb.toString());
+                }
+            }
+        }
+
+        for (int i = sb.length() - 1; i >= 0; i--) {
+            if (i - 1 >= 0 && sb.charAt(i) == sb.charAt(i - 1)) {
+                if (i - 2 >= 0 && sb.charAt(i) > sb.charAt(i - 2)) {
+                    sb.deleteCharAt(i);
+                    return Integer.parseInt(sb.toString());
+                }
+            }
+        }
+
+
+        for (int i = sb.length() - 1; i >= 0; i--) {
+            if (i - 1 >= 0 && sb.charAt(i) == sb.charAt(i - 1)) {
+                sb.deleteCharAt(i);
+                return Integer.parseInt(sb.toString());
+            }
+        }
+        return num;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 21. Find Equilibrium Index of an array. Sum of left elements = Sum of Right elements
+    // -------------------------------------------------------------------------
+    static int equilibriumIndex(int[] nums) {
+        int totalSum = IntStream.of(nums).sum();
+        int curSum = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            totalSum -= nums[i];
+            if (curSum == totalSum) {
+                return i;
+            }
+            curSum += nums[i];
+        }
+        return -1;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 22. Find if two rectangles overlap
+    // -------------------------------------------------------------------------
+    // Points are two diagnoals of a rectangle. a1.x > a2.x and a1.y > a2.y
+    static boolean isRectanglesOverlap(Point a1, Point a2, Point b1, Point b2) {
+        return (a1.x <= b2.x &&
+                a1.y >= b2.y &&
+                a2.x >= b1.x &&
+                a2.y <= b1.y);
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 23. Find Largest Subarray with equal number of 0s and 1s
+    // -------------------------------------------------------------------------
+    static void printLargestSubArrayZeroOne(int[] nums) {
+        Map<Integer, Integer> sumMap = new HashMap<>();
+        int total = 0;
+        int maxArr = 0;
+        int stIdx = 0;
+        int endIdx = 0;
+
+        sumMap.put(0, -1);
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                total -= 1;
+            } else if (nums[i] == 1) {
+                total += 1;
+            }
+
+            if (sumMap.containsKey(total)) {
+                if (maxArr < (i - sumMap.get(total) + 1) + 1) {
+                    stIdx = sumMap.get(total) + 1;
+                    endIdx = i;
+                    maxArr = endIdx - stIdx + 1;
+                }
+            } else {
+                sumMap.put(total, i);
+            }
+        }
+        System.out.println("St Idx: " + stIdx + "; EndIdx: " + endIdx);
+        for (int i = stIdx; i <= endIdx; i++) {
+            System.out.print(nums[i] + ", ");
+        }
+        System.out.println();
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 24. 3 number sum closest
+    // -------------------------------------------------------------------------
+    static void printThreeNumSum(int[] arr, int sum) {
+        int j;
+        int k;
+        for (int i = 0; i < arr.length - 1; i++) {
+            j = i + 1;
+            k = arr.length - 1;
+            while (j < k) {
+                if (arr[i] + arr[j] + arr[k] == sum) {
+                    System.out.println(i + ", " + j + ", " + k);
+                    return;
+                } else if (arr[i] + arr[j] + arr[k] < sum) {
+                    j++;
+                } else {
+                    k--;
+                }
+            }
+        }
+    }
+
+    static void printThreeNumSumClosest(int[] arr, int sum) {
+        int j;
+        int k;
+        int p = -1;
+        int q = -1;
+        int r = -1;
+        int closestSum = Integer.MAX_VALUE;
+        for (int i = 0; i < arr.length - 1; i++) {
+            j = i + 1;
+            k = arr.length - 1;
+            while (j < k) {
+                if (closestSum > Math.abs(arr[i] + arr[j] + arr[k] - sum)) {
+                    closestSum = Math.abs(arr[i] + arr[j] + arr[k] - sum);
+                    p = i;
+                    q = j;
+                    r = k;
+                } else if (arr[i] + arr[j] + arr[k] < sum) {
+                    j++;
+                } else {
+                    k--;
+                }
+            }
+        }
+        System.out.println(p + ", " + q + ", " + r);
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 25. 1 Missing and 1 Duplicate
+    // -------------------------------------------------------------------------
+    static void findMissingAndDuplicate(int[] nums) {
+        int currentXor = 0;
+        for (int n : nums) {
+            currentXor ^= n;
+        }
+        for (int i = 1; i <= nums.length; i++) {
+            currentXor ^= i;
+        }
+
+        int rightMostSetBit = currentXor & ~(currentXor - 1);
+        int numsWithRSB = 0;
+        int numsWithoutRSB = 0;
+        for (int n : nums) {
+            if ((n & rightMostSetBit) == 0) {
+                numsWithoutRSB ^= n;
+            } else {
+                numsWithRSB ^= n;
+            }
+        }
+
+        for (int i = 1; i <= nums.length; i++) {
+            if ((i & rightMostSetBit) == 0) {
+                numsWithoutRSB ^= i;
+            } else {
+                numsWithRSB ^= i;
+            }
+        }
+
+        System.out.println(numsWithRSB + ", " + numsWithoutRSB);
     }
 
     // -------------------------------------------------------------------------
@@ -738,6 +1001,95 @@ public class AllJavaAlgoProblems {
             System.out.println("\nPROBLEM 15. Find Shortest Unsorted Continuous Subarray");
             int[] arr = {2, 6, 4, 8, 10, 9, 15};
             System.out.println(findUnsortedSubarray(arr));
+        }
+
+        // PROBLEM 16. Finding greatest sum of elements of array which is divisible by a given number
+        {
+            System.out.println("\nPROBLEM 16. Finding greatest sum of elements of array which is divisible by a given number");
+            int[] nums = {1, 6, 2, 9};
+            int k = 4;
+            System.out.println(greatestSumOfSubarrayDivisibleByK(nums, k));
+        }
+
+        // PROBLEM 17. Print Matrix Diagonally
+        {
+            System.out.println("\nPROBLEM 17. Print Matrix Diagonally");
+            int[][] twoD = {{1, 2, 3, 4},
+                            {5, 6, 7, 8},
+                            {9, 10, 11, 12},
+                            {13, 14, 15, 16},
+                            {17, 18, 19, 20}};
+            printMatrixDiagonally(twoD);
+        }
+
+        // PROBLEM 18. Print Matrix Spirally
+        {
+            //System.out.println("\nPROBLEM 18. Print Matrix Spirally");
+            int[][] twoD = {{1, 2, 3, 4},
+                            {5, 6, 7, 8},
+                            {9, 10, 11, 12},
+                            {13, 14, 15, 16},
+                            {17, 18, 19, 20}};
+        }
+
+        // PROBLEM 19. Given a string of 1s and 0s with '?' in between. A '?' can be either one or zero.
+        {
+            //System.out.println("\nPROBLEM 19. Given a string of 1s and 0s with '?' in between. A '?' can be either one or zero.");
+            String s = "10?0?1";
+        }
+
+        // PROBLEM 20. Given an integer x, find ONE digit who is equal to its adjacent digits,
+        {
+            System.out.println("\nPROBLEM 20. Given an integer x, find ONE digit who is equal to its adjacent digits,");
+            int num1 = 12553664;
+            int num2 = 122334;
+            int num3 = 433221;
+            int num4 = 4333222;
+            int num5 = 332211;
+            System.out.println(largestNumByRemovingDup(num1));
+            System.out.println(largestNumByRemovingDup(num2));
+            System.out.println(largestNumByRemovingDup(num3));
+            System.out.println(largestNumByRemovingDup(num4));
+            System.out.println(largestNumByRemovingDup(num5));
+        }
+
+        // PROBLEM 21. Find Equilibrium Index of an array. Sum of left elements = Sum of Right elements
+        {
+            System.out.println("\nPROBLEM 21. Find Equilibrium Index of an array. Sum of left elements = Sum of Right elements");
+            int[] nums = {-7, 1, 5, 2, -4, 3, 0};
+            System.out.println(equilibriumIndex(nums));
+        }
+
+        // PROBLEM 22. Find if two rectangles overlap
+        {
+            System.out.println("\nPROBLEM 22. Find if two rectangles overlap");
+            Point a1 = new Point(0, 10);
+            Point a2 = new Point(10, 0);
+            Point b1 = new Point(15, 5);
+            Point b2 = new Point(25, 0);
+            System.out.println(isRectanglesOverlap(a1, a2, b1, b2));
+        }
+
+        // PROBLEM 23. Find Largest Subarray with equal number of 0s and 1s
+        {
+            System.out.println("\nPROBLEM 23. Find Largest Subarray with equal number of 0s and 1s");
+            int[] arr = {0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0};
+            printLargestSubArrayZeroOne(arr);
+        }
+
+        // PROBLEM 24. 3 number sum closest
+        {
+            System.out.println("\nPROBLEM 24. 3 number sum closest");
+            int[] arr = {1, 4, 6, 8, 10, 45};
+            printThreeNumSum(arr, 22);
+            printThreeNumSumClosest(arr, 21);
+        }
+
+        // PROBLEM 25. 1 Missing and 1 Duplicate
+        {
+            System.out.println("\nPROBLEM 25. 1 Missing and 1 Duplicate");
+            int[] nums = {1, 2, 2, 3};
+            findMissingAndDuplicate(nums);
         }
     }
 }

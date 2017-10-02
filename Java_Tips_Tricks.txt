@@ -115,7 +115,12 @@
 106. Can I compile a java file with a different name than the class?
 107. Is main method compulsory in Java
 108. Java Data structures:
-
+109. Difference between int[] array and int array[]
+110. How to fill an array with certain value (zero fill)
+110b. How can I initialize an ArrayList with all zeroes in Java?
+111. How do I declare and initialize an array in Java?
+112. Setting initial capacity to array list
+113. Java Streams
 --------------------------------------------------------------------------------------------
 
 1.
@@ -458,6 +463,28 @@ http://stackoverflow.com/questions/564/what-is-the-difference-between-an-int-and
 Using array vs ArrayList
 http://stackoverflow.com/questions/2843928/benefits-of-arrays
 
+    Arrays are better in the following situations:
+        you know that you will work with fixed number of elements in the array
+        you don't need to change size of the array
+    Arrays are:
+        faster than any Collection
+
+    Arrays are more efficient, both in terms of processing time and memory footprint. This particularly applies if you are operating on primitive types, such as int or long, since List requires all elements to be wrapped in an Object (such as Integer or Long). While the autoboxing features introduced by Java 5 reduces the amount of code you need for such wrapping and unwrapping, it does not remove the performance issues, as wrapper objects are still being created.
+
+    However, most applications probably do not have any performance bottlenecks related to these issues, so in most cases, List and other collections should do fine. In these cases, the ease of programming outweighs the increase in memory or CPU usage, and List is the right choice.
+
+    One thing I have not seen mentioned here: arrays can have N dimensions whereas lists are limited to one. You can use lists of lists but the syntax (List<List<...>>) is much more cumbersome than [][]
+
+    there is one subtle property of arrays that can be considered an advantage over lists. It can be illustrated by the following code:
+
+    //This works
+    Integer[] ints = new Integer[4];
+    Number[] nums = ints;
+    //This doesn't work
+    List<Integer> intList = new ArrayList<Integer>();
+    List<Number> numList = intList; //Does not compile
+    List<Number> numList2 = (List<Number>)intList; //Does not compile either
+    While an array of a subclass IS an array of the superclass, lists of subclasses are NOT lists of superclasses (and there is a good reason for it - generics would have a type safery flaw if it were allowed).
 
 14.
 How do I apply the for-each loop to every character in a String
@@ -1963,6 +1990,7 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
 108. Java Data structures:
     1. Arrays
         a. arr.length;
+
     2. ArrayList
         a. add(E e)
         b. add(int index, E element)
@@ -1976,6 +2004,7 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
         j. remove(int index)
         k. remove(Object o)
         l. toArray()
+
     3. HashMap
            HashMap<Integer, Integer> sumMap = new HashMap<>();
         a. clear()
@@ -1988,12 +2017,14 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
         h. remove(Object key)
         i. remove(Object key, Object value)
            // Removes the entry for the specified key only if it is currently mapped to the specified value.
+
     4. HashSet
         a. add(E e)
         b. clear()
         c. contains(Object o)
         d. isEmpty()
         e. remove(Object o)
+
     5. PriorityQueue
            PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
         a. add(E e)
@@ -2006,11 +2037,13 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
         g. poll()
         h. remove(Object o)
         i. toArray()
+
     6. Queue
         a. queue.add()
         b. queue.remove()
         c. queue.element() // Get first element
         d. queue.isEmpty()
+
     7. Stack
         a. st.push()
         b. st.pop()
@@ -2028,3 +2061,100 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
     10. Google Multimap
            Multimap<Integer, Integer> sumMap = HashMultimap.create();
     BitSet
+
+109. Difference between int[] array and int array[]
+    The [] is part of the TYPE, not of the NAME. For me, that's the biggest difference
+    int[] a, b;  // Both a and b are arrays of type int
+    int c[], d;  // WARNING: c is an array, but d is just a regular int
+
+
+110. How to fill an array with certain value (zero fill)
+    A default value of 0 for arrays of integral types is guaranteed by the language spec:
+        Each class variable, instance variable, or array component is initialized with a default value when it is created (§15.9, §15.10) [...] For type int, the default value is zero, that is, 0.  
+    If you want to initialize an array to a different value, you can use java.util.Arrays.fill() (which will of course use a loop internally).
+
+110b. How can I initialize an ArrayList with all zeroes in Java?
+https://stackoverflow.com/questions/5600668/how-can-i-initialize-an-arraylist-with-all-zeroes-in-java
+    Q.
+    It looks like arraylist is not doing its job for presizing:
+    // presizing 
+    ArrayList<Integer>() list = new ArrayList<Integer>(60);
+
+    Afterwards when I try to access it:
+    list.get(5) 
+
+    It shows null instead of 0
+
+    A.
+    The integer passed to the constructor represents its initial capacity, i.e., the number of elements it can hold before it needs to resize its internal array (and has nothing to do with the initial number of elements in the list).
+
+    To initialize an list with 60 zeros you do:
+    List<Integer> list = new ArrayList<Integer>(Collections.nCopies(60, 0));
+
+    If you want to create a list with 60 different objects, you could use the Stream API with a Supplier as follows:
+    List<Person> persons = Stream.generate(Person::new)
+                                 .limit(60)
+                                 .collect(Collectors.toList());
+
+
+111. How do I declare and initialize an array in Java?
+    https://stackoverflow.com/questions/1200621/how-do-i-declare-and-initialize-an-array-in-java
+
+    For primitive types:
+    int[] myIntArray = new int[3];
+    int[] myIntArray = {1,2,3};
+    int[] myIntArray = new int[]{1,2,3};
+
+    For classes, for example String, it's the same:
+    String[] myStringArray = new String[3];
+    String[] myStringArray = {"a","b","c"};
+    String[] myStringArray = new String[]{"a","b","c"};
+
+    The third way of initialising is useful when you declare the array first and then initialise it. Cast is necessary here.
+    String[] myStringArray;
+    myStringArray = new String[]{"a","b","c"};
+
+112. Setting initial capacity to array list
+    For arrays you will do, 
+        int[] a = new int[5];
+
+    Q1.
+    You can set the initial size for an ArrayList by doing
+        ArrayList<Integer> arr=new ArrayList<Integer>(10);
+        However, you can't do
+        arr.add(5, 10);
+
+    A1.
+    You're confusing the size of the array list with its capacity:
+         - the size is the number of elements in the list;
+         - the capacity is how many elements the list can potentially accommodate without reallocating its internal structures.
+        When you call new ArrayList<Integer>(10), you are setting the list's initial capacity, not its size. In other words, when constructed in this manner, the array list starts its life empty.
+
+    Q2.
+    Is there a way of setting the size of an arraylist after declaring it?
+        For example, in a traditional array, i would declare an array like this:
+        int array[];
+
+        then, i would later initialize it like this
+        array = new int[1000];
+
+        in an arraylist i am trying to do the same but I have only been able to initialize it while declaring it like below.
+        ArrayList<String> array = new ArrayList<>(1000);
+
+    A2.
+    You can use ensureCapacity(int)
+    ArrayList<Integer> al = new ArrayList<>();
+    al.ensureCapacity(1000);
+
+    It is important to note that array lists WILL dynamically resize themselves though.
+    So I would like to know if there's a way to initialize an arraylist to for example 1000 after it's been declared in a separate statement.
+
+    You could always do this, too:
+    ArrayList<Integer> al;
+    al = new ArrayList<Integer>(1000);
+    
+113. Java Streams
+http://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/
+
+    int sum = list.stream().mapToInt(Integer::intValue).sum();
+    int sum = IntStream.of(a).sum();

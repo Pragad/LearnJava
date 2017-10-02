@@ -4,13 +4,29 @@ import java.util.*;
 // https://www.tutorialspoint.com/java/lang/string_split.htm
 public class JavaStrings
 {
-    public static void main(String[] args) {
-        String str = "a d, m, i.n";
-        String[] tokens = str.split(",\\s*");
-        //String[] tokens = str.split(",\\s*");
+    static void foo (String e){ 
+        e = "bla bla";
+        System.out.println(e);
+    }
 
-        for (String tok : tokens) {
-            System.out.println(tok);
+    public static void main(String[] args) {
+        // 1.
+        {
+            String str = "a d, m, i.n";
+            String[] tokens = str.split(",\\s*");
+            //String[] tokens = str.split(",\\s*");
+
+            for (String tok : tokens) {
+                System.out.println(tok);
+            }
+        }
+
+        // 2. Mutability of Strings
+        {
+            String s = "blabla";
+            System.out.println(s);
+            foo(s);
+            System.out.println(s);
         }
     }
 }
