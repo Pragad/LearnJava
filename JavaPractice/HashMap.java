@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class JavaHashMap {
+public class HashMap {
     public static Map<String, String> foo() {
         return null;
     }

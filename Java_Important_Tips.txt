@@ -1,0 +1,20 @@
+1. Integer Max and Min values
+2. When to use Size / Length
+3. Print array and nested array
+------------------------------------------------------------------------------------------
+1. Integer.MAX_VALUE
+
+2. When to use Size / Length
+   int[] arr: arr.length
+
+3. Print array and nested array
+   - Arrays.toString
+   - Arrays.deepToString
+   String[] array = new String[] {"John", "Mary", "Bob"};
+   System.out.println(Arrays.toString(array));
+
+   String[][] deepArray = new String[][] {{"John", "Mary"}, {"Alice", "Bob"}};
+   System.out.println(Arrays.toString(deepArray));
+   //output: [[Ljava.lang.String;@106d69c, [Ljava.lang.String;@52e922]
+   System.out.println(Arrays.deepToString(deepArray));
+

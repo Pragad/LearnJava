@@ -53,7 +53,7 @@ import java.util.stream.*;
  *
  * PROBLEM 16. Finding greatest sum of elements of array which is divisible by a given number
  *
- * PROBLEM 17. Print Matrix Diagonally
+ * PROBLEM 17. Find Hamilton distance between two numbers
  *
  * PROBLEM 18. Print Matrix Spirally
  *
@@ -70,6 +70,12 @@ import java.util.stream.*;
  * PROBLEM 24. 3 number sum closest
  *
  * PROBLEM 25. 1 Missing and 1 Duplicate
+ *
+ * PROBLEM 26. Maximize stock profit
+ *
+ * PROBLEM 27. Round off seconds to minutes, hours, day, months, years
+ *
+ * PROBLEM 28. Product of all other numbers
  */
 
 // Pair Class
@@ -148,6 +154,21 @@ public class AllJavaAlgoProblems {
     // Problem 2.
     // Print matrix diagonally
     // -------------------------------------------------------------------------
+    static void printMatrixDiagonally(int[][] twoDMat) {
+        int rows = twoDMat.length;
+        int cols = twoDMat[0].length;
+        for (int i = 0; i < rows + cols; i++) {
+            for (int j = 0; j <= i; j++) {
+                int k = i - j;
+                if (k < rows && j < cols) {
+                    System.out.print(twoDMat[k][j] + ", ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+
     public static void printDiagonally(int[][] matrix) {
         for(int i=0; i<matrix.length; i++) {
             for(int j=0, k=i; j<=i; j++,k--) {
@@ -649,20 +670,17 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
-    // PROBLEM 17. Print Matrix Diagonally
+    // PROBLEM 17. Find Hamilton distance between two numbers
+    // Number of positions at which the corresponding bits are different
     // -------------------------------------------------------------------------
-    static void printMatrixDiagonally(int[][] twoDMat) {
-        int rows = twoDMat.length;
-        int cols = twoDMat[0].length;
-        for (int i = 0; i < rows + cols; i++) {
-            for (int j = 0; j <= i; j++) {
-                int k = i - j;
-                if (k < rows && j < cols) {
-                    System.out.print(twoDMat[k][j] + ", ");
-                }
-            }
-            System.out.println();
+    static int hammingDistance(int x, int y) {
+        int xorNum = x ^ y;
+        int count = 0;
+        while (xorNum != 0) {
+            xorNum &= (xorNum - 1);
+            count++;
         }
+        return count;
     }
 
     // -------------------------------------------------------------------------
@@ -857,6 +875,153 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
+    // PROBLEM 26. Maximize stock profit
+    // Assumption: All numbers are positve
+    // -------------------------------------------------------------------------
+    static int maximizeProfit(int[] stockPrice) {
+        if (stockPrice.length <= 1) {
+            return 0;
+        }
+        int curMax = stockPrice[0];
+        int curMin = stockPrice[0];
+        int maxProfit = 0;
+        for (int i = 1; i < stockPrice.length; i++) {
+            if (stockPrice[i] > curMax) {
+                curMax = stockPrice[i];
+                maxProfit = Math.max(maxProfit, curMax - curMin);
+                // IMP: Should not continue; After setting max to -1, we will come here always. We should also go and set curMin
+                // continue;
+            }
+            if (stockPrice[i] < curMin) {
+                curMin = stockPrice[i];
+                curMax = -1;
+                continue;
+            }
+        }
+        return maxProfit;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 27. Round off seconds to minutes, hours, day, months, years
+    // -------------------------------------------------------------------------
+    static void roundOffSeconds(int seconds) {
+        final int SECONDS_IN_A_MINUTE = 60;
+        final int MINUTES_IN_A_HOUR = 60;
+        final int HOURS_IN_A_DAY = 24;
+        final int DAYS_IN_A_MONTH = 30;
+        final int MONTH_IN_A_YEAR = 12;
+
+        int secs = seconds % SECONDS_IN_A_MINUTE;
+        int mins = (seconds / SECONDS_IN_A_MINUTE) % MINUTES_IN_A_HOUR;
+        int hours = ((seconds / SECONDS_IN_A_MINUTE) / MINUTES_IN_A_HOUR) % HOURS_IN_A_DAY;
+        System.out.println("H: " + hours + " M: " + mins + " S: " + secs);
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 28. Product of all other numbers
+    // -------------------------------------------------------------------------
+    static int[] productExceptSelf(int[] nums) {
+        int[] result = new int[nums.length];
+        int totalProduct = 1;
+        int zeroCount = 0;
+        int zeroPosition = -1;
+
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                zeroCount++;
+                zeroPosition = i;
+                // Don't have to proceed if we have more than two zeroes
+                if (zeroCount > 1) {
+                    break;
+                }
+                // Skip this number and go to the next number
+                continue;
+            }
+            totalProduct *= nums[i];
+        }
+
+        if (zeroCount > 1) {
+            return result;
+        }
+        if (zeroCount == 1) {
+            // Just one number is zero. So get the position of Zero and fill the
+            // product there
+            result[zeroPosition] = totalProduct;
+            return result;
+        }
+
+        // Now none of the elemnts should have 0
+        for (int i = 0; i < nums.length; i++) {
+            result[i] = totalProduct / nums[i];
+        }
+
+        return result;
+    }
+
+    static int[] productExceptSelfWithoutDiv(int[] nums) {
+        int[] result = new int[nums.length];
+        int totalProduct = 1;
+        result[0] = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+            // IMP: Multiply with nums[i] and not results[i]
+            result[i] = nums[i] * result[i - 1];
+        }
+
+        int prod = 1;
+        for (int i = nums.length - 1; i > 0; i--) {
+            result[i] = result[i - 1] * prod;
+            prod *= nums[i];
+        }
+        result[0] = prod;
+
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 28. Product of all other numbers
+    // -------------------------------------------------------------------------
+    static int highestProductOfThreeNumbers(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+
+        int firstHigh = Integer.MIN_VALUE;
+        int secondHigh = Integer.MIN_VALUE;
+        int thirdHigh = Integer.MIN_VALUE;
+        int mostMin = Integer.MAX_VALUE;
+        int leastMin = Integer.MAX_VALUE;
+
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > firstHigh) {
+                thirdHigh = secondHigh;
+                secondHigh = firstHigh;
+                firstHigh = nums[i];
+            } else if (nums[i] > secondHigh) {
+                thirdHigh = secondHigh;
+                secondHigh = nums[i];
+            } else if (nums[i] > thirdHigh) {
+                thirdHigh = nums[i];
+            }
+
+            // VERY IMP: This should be in separate if block
+            if (nums[i] < mostMin) {
+                leastMin = mostMin;
+                mostMin = nums[i];
+            } else if (nums[i] < leastMin) {
+                leastMin = nums[i];
+            }
+        }
+
+        System.out.println("FH: " + firstHigh);
+        System.out.println("SH: " + secondHigh);
+        System.out.println("TH: " + thirdHigh);
+        System.out.println("FM: " + mostMin);
+        System.out.println("SM: " + leastMin);
+        return Math.max(firstHigh * secondHigh * thirdHigh, firstHigh * mostMin * leastMin);
+    }
+
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String[] args) {
@@ -881,6 +1046,12 @@ public class AllJavaAlgoProblems {
                               {6, 7, 8, 9, 10},
                               {16, 17, 18, 19, 20} };
             printDiagonally(matrix2);
+            int[][] twoD = {{1, 2, 3, 4},
+                            {5, 6, 7, 8},
+                            {9, 10, 11, 12},
+                            {13, 14, 15, 16},
+                            {17, 18, 19, 20}};
+            printMatrixDiagonally(twoD);
         }
 
         // Problem 3. Print a matrix in Spiral order
@@ -1011,15 +1182,10 @@ public class AllJavaAlgoProblems {
             System.out.println(greatestSumOfSubarrayDivisibleByK(nums, k));
         }
 
-        // PROBLEM 17. Print Matrix Diagonally
+        // PROBLEM 17. Find Hamilton distance between two numbers
         {
-            System.out.println("\nPROBLEM 17. Print Matrix Diagonally");
-            int[][] twoD = {{1, 2, 3, 4},
-                            {5, 6, 7, 8},
-                            {9, 10, 11, 12},
-                            {13, 14, 15, 16},
-                            {17, 18, 19, 20}};
-            printMatrixDiagonally(twoD);
+            System.out.println("\nPROBLEM 17. Find Hamilton distance between two numbers");
+            System.out.println(hammingDistance(1, 4));
         }
 
         // PROBLEM 18. Print Matrix Spirally
@@ -1091,6 +1257,73 @@ public class AllJavaAlgoProblems {
             int[] nums = {1, 2, 2, 3};
             findMissingAndDuplicate(nums);
         }
+
+        // PROBLEM 26. Maximize stock profit
+        {
+            System.out.println("\nPROBLEM 26. Maximize stock profit");
+            int[] nums1 = {10, 7, 5, 8, 11, 9};
+            int[] nums2 = {7, 1, 5, 3, 6, 4};
+            int[] nums3 = {7, 6, 4, 3, 1};
+            int[] nums4 = {100, 180, 260, 310, 40, 535, 695};
+            System.out.println(maximizeProfit(nums1));
+            System.out.println(maximizeProfit(nums2));
+            System.out.println(maximizeProfit(nums3));
+            System.out.println(maximizeProfit(nums4));
+        }
+
+        // PROBLEM 27. Round off seconds to minutes, hours, day, months, years
+        {
+            System.out.println("\nPROBLEM 27. Round off seconds to minutes, hours, day, months, years");
+            roundOffSeconds(50391);
+        }
+
+        // PROBLEM 28. Product of all other numbers
+        {
+            System.out.println("\nPROBLEM 28. Product of all other numbers");
+            int[] nums1 = {1,0,0,4};
+            int[] nums2 = {1,2,3,4};
+            int[] nums3 = {0,2,3,4};
+            int[] nums4 = {1,2,0,4};
+            int[] nums5 = {2,3,4,5};
+            int[] nums6 = {2};
+            int[] nums7 = {0};
+            int[] nums8 = {2,0};
+            int[] nums9 = {2,3};
+            System.out.println(Arrays.toString(productExceptSelf(nums1)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums1)));
+            System.out.println(Arrays.toString(productExceptSelf(nums2)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums2)));
+            System.out.println(Arrays.toString(productExceptSelf(nums3)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums3)));
+            System.out.println(Arrays.toString(productExceptSelf(nums4)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums4)));
+            System.out.println(Arrays.toString(productExceptSelf(nums5)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums5)));
+            System.out.println(Arrays.toString(productExceptSelf(nums6)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums6)));
+            System.out.println(Arrays.toString(productExceptSelf(nums7)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums7)));
+            System.out.println(Arrays.toString(productExceptSelf(nums8)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums8)));
+            System.out.println(Arrays.toString(productExceptSelf(nums9)));
+            System.out.println(Arrays.toString(productExceptSelfWithoutDiv(nums9)));
+        }
+
+        // PROBLEM 29. Highest product of three numbers
+        {
+            System.out.println("\nPROBLEM 29. Highest product of three numbers");
+            int[] nums1 = {10, 3, 5, 6, 20};
+            int[] nums2 = {-10, -3, -5, -6, -20};
+            int[] nums3 = {1, -4, 3, -6, 7, 0};
+            int[] nums4 = {-5, -1, 1, 2, 3};
+            int[] nums5 = {5, 4, 5, 10, -6};
+            System.out.println(highestProductOfThreeNumbers(nums1));
+            System.out.println(highestProductOfThreeNumbers(nums2));
+            System.out.println(highestProductOfThreeNumbers(nums3));
+            System.out.println(highestProductOfThreeNumbers(nums4));
+            System.out.println(highestProductOfThreeNumbers(nums5));
+        }
     }
+
 }
 

@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 // https://www.tutorialspoint.com/java/lang/string_split.htm
-public class JavaStrings
+public class Strings
 {
     static void foo (String e){ 
         e = "bla bla";

@@ -121,6 +121,12 @@
 111. How do I declare and initialize an array in Java?
 112. Setting initial capacity to array list
 113. Java Streams
+114. Static nested class in Java, why
+114b. Java inner class and static nested class
+115. ExecutorService Shutdown
+116. Catch multiple exceptions
+117. Concatenate strings using System.out.println
+118. Print an array
 --------------------------------------------------------------------------------------------
 
 1.
@@ -1617,6 +1623,54 @@ Try Catch Throws - Komprise
 77.
 String concatenation for Logging {} vs +
 http://stackoverflow.com/questions/2245088/how-to-display-stack-trace-on-a-caught-exception
+https://stackoverflow.com/questions/8755063/concatenation-operator-vs-concat
+
+    The concat method always produces a new String with the result of concatenation.
+
+    The plus operator is backed by StringBuilder creation, appending all String values you need and further toString() calling on it.
+
+    So, if you need to concatenate two values, concat() will be better choice. If you need to concatenate 100 values, you should use the plus operator or explicitly use StringBuilder (e.g. in case of appending in a cycle).
+
+	--------
+	In fact s1 + s2 and s1.concat(s2) are very different.
+
+	s1 + s2 is converted by javac into
+
+	(new StringBuilder(String.valueOf(s1)).append(s2).toString();
+	You can see it if you decompile .class. This construct is not very efficient; it involves up to three new char[] allocations and three char[] copy operations.
+
+	s1.concat(s2) is always one new char[] + one copy operation, see String.java
+
+	public String concat(String str) {
+		int otherLen = str.length();
+		if (otherLen == 0) {
+			return this;
+		}
+		char buf[] = new char[count + otherLen];
+		getChars(0, count, buf, 0);
+		str.getChars(0, otherLen, buf, count);
+		return new String(0, count + otherLen, buf);
+	}
+	Note that new String(int, int, char[]) is String's package private constructor. It uses char buf[] directly, without the usual copying to ensure the buf invisibility for the String immutability.
+	--------
+	I believe the 'style' of concatenation is going to make a difference.
+
+	For concat(), it internally creates a new char array buffer, and returns a new string based on that char array.
+
+	For the + operator, the compiler in fact translate it to use StringBuffer/StringBuilder.
+
+	Therefore, if you are concatenating two strings, concat() is definitely a better choice because the number of objects created is only the result String (and the char buffer used inside), while using the  + operator will be translated to:
+
+	result = strA + strB;
+	-- translate to -->
+	result = new StringBuilder(strA).append(strB).toString();
+	An extra StringBuilder instance is created.
+
+	However, if you are concatenating, for example five strings in a row, each concat() will create a new String object. While using the + operator, the compiler will translate the statement to one StringBuilder with multiple append operations. It is definitely saving a lot of unnecessary temporary object instance:
+
+	result = strA + strB + strC + strD + strE;
+	-- translate to -->
+	result = new StringBuilder(strA).append(strB).append(strC).append(strD).append(strE).toString();
 
 78.
 Logging exception
@@ -2158,3 +2212,108 @@ http://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/
 
     int sum = list.stream().mapToInt(Integer::intValue).sum();
     int sum = IntStream.of(a).sum();
+
+114. Static nested class in Java, why
+https://stackoverflow.com/questions/253492/static-nested-class-in-java-why
+TIJ - 4th edition
+
+    A nested class is a member of its enclosing class. Non-static nested classes (inner classes) have access to other members of the enclosing class, even if they are declared private. Static nested classes do not have access to other members of the enclosing class.
+
+    Note: A static nested class interacts with the instance members of its outer class (and other classes) just like any other top-level class. In effect, a static nested class is behaviorally a top-level class that has been nested in another top-level class for packaging convenience.
+
+	Top-level classes can't be declared static, only nested classes can be:
+	class OuterClass {
+		...
+		static class StaticNestedClass {
+			...
+		}
+		class InnerClass {
+			...
+		}
+	}
+
+	The difference is that:
+		non-static nested classes (inner classes) have access to other members of the enclosing class, even if they are declared private;
+		static nested classes do not have access to other members of the enclosing class.
+
+    A nested class means:
+    1. You don’t need an outer-class object inorder to create an object of a nested class
+    2. You can’t access a non-static outer-class object from an object of a nested class
+    Nested classes are different from ordinary inner classes in another way, as well. Fields and methods in ordinary inner classes can only be at the outer level of a class, so ordinary inner classes cannot have static data, static fields, or nested classes. However, nested classes can have all of these
+
+    Normally, you can’t put any code inside an interface, but a nested class can be part of an interface. Any class you put inside an interface is automatically public and static. Since the class is static, it doesn’t violate the rules for interfaces—the nested class is only placed inside the namespace of the interface. You can even implement the surrounding interface in the inner class
+
+114b. Java inner class and static nested class
+https://stackoverflow.com/questions/70324/java-inner-class-and-static-nested-class
+
+	From the Java Tutorial:
+	Nested classes are divided into two categories: static and non-static. Nested classes that are declared static are simply called static nested classes. Non-static nested classes are called inner classes.
+	Static nested classes are accessed using the enclosing class name:
+
+	OuterClass.StaticNestedClass
+	For example, to create an object for the static nested class, use this syntax:
+
+	OuterClass.StaticNestedClass nestedObject = new OuterClass.StaticNestedClass();
+	Objects that are instances of an inner class exist within an instance of the outer class. Consider the following classes:
+
+	class OuterClass {
+		...
+		class InnerClass {
+			...
+		}
+	}
+	An instance of InnerClass can exist only within an instance of OuterClass and has direct access to the methods and fields of its enclosing instance.
+
+	To instantiate an inner class, you must first instantiate the outer class. Then, create the inner object within the outer object with this syntax:
+
+	OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+	see: Java Tutorial - Nested Classes
+
+	For completeness note that there is also such a thing as an inner class without an enclosing instance:
+
+	class A {
+	  int t() { return 1; }
+	  static A a =  new A() { int t() { return 2; } };
+	}
+	Here, new A() { ... } is an inner class defined in a static context and does not have an enclosing instance.
+
+115. ExecutorService Shutdown
+http://tutorials.jenkov.com/java-util-concurrent/executorservice.html
+https://stackoverflow.com/questions/18425026/shutdown-and-awaittermination-which-first-call-have-any-difference
+
+    When you are done using the ExecutorService you should shut it down, so the threads do not keep running.
+
+    For instance, if your application is started via a main() method and your main thread exits your application, the application will keep running if you have an active ExexutorService in your application. The active threads inside this ExecutorService prevents the JVM from shutting down.
+
+    To terminate the threads inside the ExecutorService you call its shutdown() method. The ExecutorService will not shut down immediately, but it will no longer accept new tasks, and once all threads have finished current tasks, the ExecutorService shuts down. All tasks submitted to the ExecutorService before shutdown() is called, are executed.
+
+    If you want to shut down the ExecutorService immediately, you can call the shutdownNow() method. This will attempt to stop all executing tasks right away, and skips all submitted but non-processed tasks. There are no guarantees given about the executing tasks. Perhaps they stop, perhaps the execute until the end. It is a best effort attempt.
+
+shutdown and awaitTermination which first call have any difference?
+    You should call shutdown first. Otherwise, you might be waiting for a very long time, since awaitTermination doesn't actually shut down your executor.
+
+    If you wanted to wait for tasks to complete, rather than wait for the executor to shut down, then you should use invokeAll
+
+116. Catch multiple exceptions
+    catch (IOException | SQLException ex)
+
+117. Concatenate strings using System.out.println
+https://stackoverflow.com/questions/11035026/system-out-printlnabc32-why-output-is-abc32-and-not-abc5
+    Q:
+    System.out.println("abc"+3+2); // Output: abc32
+    System.out.println(3+2+"abc"); //Output: 5abc
+
+    A:
+    "abc"+3
+    converts 3 to a String
+
+    "abc3"
+    Then
+
+    "abc3" + 2
+    Converts 2 to a String as well
+
+    "abc32"
+    To get a numeric result do
+
+    "abc" + (3 + 2)

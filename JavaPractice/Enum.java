@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class JavaEnum {
+public class Enum {
 
     private enum OpenFlags {
         NO_OVERWRITE (0), OVERWRITE (1);
