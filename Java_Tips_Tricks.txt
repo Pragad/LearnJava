@@ -2736,3 +2736,4 @@ BufferedReader is Faster then Scanner
     String s = "abcdefà";
     Pattern p = Pattern.compile("[^a-zA-Z0-9]");
     boolean hasSpecialChar = p.matcher(s).find();
+
