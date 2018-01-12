@@ -1,6 +1,13 @@
 1. Integer Max and Min values
 2. When to use Size / Length
 3. Print array and nested array
+4. Create array of certain size such that it can't grow beyond that
+5. Read from Console using Scanner and BufferedReader
+6. Convert ArrayList to Array in Java
+7. Read multiple lines from console
+8. Find index of String in another string
+9. Get substring from a String
+10. How do I apply the for-each loop to every character in a String
 ------------------------------------------------------------------------------------------
 1. Integer.MAX_VALUE
 
@@ -17,4 +24,106 @@
    System.out.println(Arrays.toString(deepArray));
    //output: [[Ljava.lang.String;@106d69c, [Ljava.lang.String;@52e922]
    System.out.println(Arrays.deepToString(deepArray));
+
+4. Create array of certain size such that it can't grow beyond that
+https://stackoverflow.com/questions/5196113/any-way-to-set-max-size-of-a-collection
+
+        // In the below list "add" and "remove" won't work
+        List<Integer> bl = Arrays.asList(new Integer[3]);
+        // bl.add(5); // This throws UnsupportedOperationException
+        bl.set(0, 6);
+        bl.set(1, 7);
+        bl.set(2, 8);
+        // bl.set(3, 9); // This gives ArrayIndexOutOfBoundsException
+ 
+5. Read from Console using Scanner and BufferedReader
+https://stackoverflow.com/questions/8668073/get-integer-array-input-from-user-in-java
+https://stackoverflow.com/questions/23506429/java-reading-multiple-ints-from-a-single-line
+
+    1. Using BufferedReader
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    String  lines = br.readLine();    
+    String[] strs = lines.trim().split("\\s+");
+    for (int i = 0; i < strs.length; i++) {
+        a[i] = Integer.parseInt(strs[i]);
+    }
+
+    2. Using scanner
+    public static int [] readNumsFromCommandLine() {
+        Scanner s = new Scanner(System.in);
+
+        int count = s.nextInt();
+        s.nextLine(); // throw away the newline.
+
+        int [] numbers = new int[count];
+        Scanner numScanner = new Scanner(s.nextLine());
+        for (int i = 0; i < count; i++) {
+            if (numScanner.hasNextInt()) {
+                numbers[i] = numScanner.nextInt();
+            } else {
+                System.out.println("You didn't provide enough numbers");
+                break;
+            }
+        }
+
+        return numbers;
+    }
+
+6. Convert ArrayList to Array in Java
+
+    String[] dsf = new String[al.size()];
+    al.toArray(dsf);
+
+    String names[]=list.toArray(new String[list.size()])
+
+Integer[] to int[]
+    1. Unfortunately, I don't believe there really is a better way of doing this due to the nature of Java's handling of primitive types, boxing, arrays and generics. In particular:
+
+    List<T>.toArray won't work because there's no conversion from Integer to int
+
+    2. Using strams:
+        int[] array = list.stream().mapToInt(i->i).toArray();
+
+    3. 
+    In addition to Commons Lang, you can do this with Guava's method Ints.toArray(Collection<Integer> collection):
+
+        List<Integer> list = ...
+        int[] ints = Ints.toArray(list);
+
+    4. 
+        int[] toIntArray(List<Integer> list)  {
+            int[] ret = new int[list.size()];
+            int i = 0;
+            for (Integer e : list)  
+                ret[i++] = e.intValue();
+            return ret;
+        }
+
+7. Read multiple lines from console
+        List<String> lines = new ArrayList<>();
+        Scanner s = new Scanner(System.in);
+        while (s.hasNextLine()) {
+            String line = s.nextLine();
+            if (line.isEmpty()) {
+                break;
+            }
+            lines.add(line);
+        }
+
+8. Find index of String in another string
+    String.indexOf(String str)
+    Boolean found = text.contains(word);
+
+9. Get substring from a String
+    line.substring(line.indexOf("//") + 1);
+
+10. How do I apply the for-each loop to every character in a String
+    for (char ch: "xyz".toCharArray()) {
+    }
+
+    String s = "xyz";
+    for(int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+    }
+
 

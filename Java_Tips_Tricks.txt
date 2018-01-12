@@ -111,6 +111,9 @@
 102. Convert List<String> to List<Integer> directly
 103. Communication between java threads: stopping all threads when one finishes its task
 104. Multithreading - Callable vs Runnable and Future
+104b1. Multithreading - “implements Runnable” vs. “extends Thread”
+104b2. Creating new Threads
+104c. CountdownLatch
 105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
 106. Can I compile a java file with a different name than the class?
 107. Is main method compulsory in Java
@@ -126,7 +129,24 @@
 115. ExecutorService Shutdown
 116. Catch multiple exceptions
 117. Concatenate strings using System.out.println
-118. Print an array
+118. Create array of certain size such that it can't grow beyond that
+119. How can I pass a parameter to a Java Thread
+120. Java Blocking Queue
+121. Default Methods In Java
+122. Interface with default methods vs Abstract class in Java 8
+123. Java Scanner vs BufferedReader
+124. Scanner method to get a char
+125. Scanner is skipping nextLine() after using next(), nextInt() or other nextFoo()?
+126. Read array using Scanner and BufferedReader
+127. Read multiple lines from console
+128. STRING OPERATIONS
+128a. Find index of String in another string
+128b. Get substring
+128c. Java indexOf method for multiple matches in String
+129. How can I clear or empty a StringBuilder?
+130. What is the best way to tell if a character is a letter or number in Java without using regexes?
+131. How to determine if a String has non-alphanumeric characters
+
 --------------------------------------------------------------------------------------------
 
 1.
@@ -497,6 +517,11 @@ How do I apply the for-each loop to every character in a String
 http://stackoverflow.com/questions/2451650/how-do-i-apply-the-for-each-loop-to-every-character-in-a-string
 
     for (char ch: "xyz".toCharArray()) {
+    }
+
+    String s = "xyz";
+    for(int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
     }
 
 15.
@@ -1124,6 +1149,34 @@ Convert ArrayList to Array in Java
 
     String[] dsf = new String[al.size()];
     al.toArray(dsf);
+
+    String names[]=list.toArray(new String[list.size()])
+
+42c. 
+How to convert List<Integer> to int[] in Java?
+https://stackoverflow.com/questions/960431/how-to-convert-listinteger-to-int-in-java
+
+    1. Unfortunately, I don't believe there really is a better way of doing this due to the nature of Java's handling of primitive types, boxing, arrays and generics. In particular:
+
+    List<T>.toArray won't work because there's no conversion from Integer to int
+
+    2. Using strams:
+        int[] array = list.stream().mapToInt(i->i).toArray();
+
+    3. 
+    In addition to Commons Lang, you can do this with Guava's method Ints.toArray(Collection<Integer> collection):
+
+        List<Integer> list = ...
+        int[] ints = Ints.toArray(list);
+
+    4. 
+        int[] toIntArray(List<Integer> list)  {
+            int[] ret = new int[list.size()];
+            int i = 0;
+            for (Integer e : list)  
+                ret[i++] = e.intValue();
+            return ret;
+        }
 
 43.
 Integer MAX_VALUE
@@ -1976,6 +2029,136 @@ Sort list of strings
     http://javarevisited.blogspot.com/2015/06/how-to-use-callable-and-future-in-java.html
     http://howtodoinjava.com/core-java/multi-threading/threadpoolexecutor-callable-future-example/
 
+    There are two ways of creating threads – one by extending the Thread class and other by creating a thread with a Runnable. However, one feature lacking in  Runnable is that we cannot make a thread return result when it terminates, i.e. when run() completes. For supporting this feature, the Callable interface is present in Java.
+
+
+    1. For implementing Runnable, the run() method needs to be implemented which does not return anything, while for a Callable, the call() method needs to be implemented which returns a result on completion. Note that a thread can’t be created with a Callable, it can only be created with a Runnable
+    2. Another difference is that the call() method can throw an exception whereas run() cannot.
+
+
+104b1. Multithreading - “implements Runnable” vs. “extends Thread”
+    https://stackoverflow.com/questions/541487/implements-runnable-vs-extends-thread
+    
+    Implements Runnable is the preferred way to do it, IMO. You're not really specialising the thread's behaviour. You're just giving it something to run. That means composition is the philosophically "purer" way to go.
+
+    Caveat: Around here, I strongly discourage the use of raw Threads. I much prefer the use of Callables and FutureTasks (From the javadoc: "A cancellable asynchronous computation"). The integration of timeouts, proper cancelling and the thread pooling of the modern concurrency support are all much more useful to me than piles of raw Threads.
+
+    Follow-up: there is a FutureTask constructor that allows you to use Runnables (if that's what you are most comfortable with) and still get the benefit of the modern concurrency tools. To quote the javadoc:
+
+    Moral of the story:
+    Inherit only if you want to override some behavior.
+    Or rather it should be read as:
+    Inherit less, interface more.
+
+104b2. Creating new Threads
+http://tutorials.jenkov.com/java-concurrency/creating-and-starting-threads.html
+    Creating a thread in Java is done like this:
+       Thread thread = new Thread();
+
+    To start the Java thread you will call its start() method, like this:
+        thread.start();
+
+    Method 1:
+        public class MyThread extends Thread {
+            public void run(){
+               System.out.println("MyThread running");
+            }
+        }
+
+        MyThread myThread = new MyThread();
+        myTread.start();
+
+    You can also create an anonymous subclass of Thread like this:
+        Thread thread = new Thread(){
+            public void run(){
+              System.out.println("Thread Running");
+            }
+        }
+        thread.start();
+
+    Method 2:
+        public class MyRunnable implements Runnable {
+            public void run(){
+               System.out.println("MyRunnable running");
+            }
+        }
+        Thread thread = new Thread(new MyRunnable());
+        thread.start();
+
+    You can also create an anonymous implementation of Runnable, like this:
+        Runnable myRunnable = new Runnable(){
+            public void run(){
+                System.out.println("Runnable running");
+            }
+        }
+        Thread thread = new Thread(myRunnable);
+        thread.start();
+
+    Using Lambda:
+http://www.codejava.net/java-core/the-java-language/java-8-lambda-runnable-example
+    // Lambda Runnable
+    Runnable task2 = () -> { System.out.println("Runnable running"); };
+     
+     // start the thread
+     new Thread(task2).start();
+104c. CountdownLatch
+http://www.geeksforgeeks.org/countdownlatch-in-java/
+https://stackoverflow.com/questions/17827022/how-is-countdownlatch-used-in-java-multithreading
+https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CountDownLatch.html
+
+    A synchronization aid that allows one or more threads to wait until a set of operations being performed in other threads completes.
+
+    A CountDownLatch is initialized with a given count. The await methods block until the current count reaches zero due to invocations of the countDown() method, after which all waiting threads are released and any subsequent invocations of await return immediately. This is a one-shot phenomenon -- the count cannot be reset. If you need a version that resets the count, consider using a CyclicBarrier.
+
+    A CountDownLatch is a versatile synchronization tool and can be used for a number of purposes. A CountDownLatch initialized with a count of one serves as a simple on/off latch, or gate: all threads invoking await wait at the gate until it is opened by a thread invoking countDown(). A CountDownLatch initialized to N can be used to make one thread wait until N threads have completed some action, or some action has been completed N times.
+
+    A useful property of a CountDownLatch is that it doesn't require that threads calling countDown wait for the count to reach zero before proceeding, it simply prevents any thread from proceeding past an await until all threads could pass. 
+
+104d. Thread Signaling - wait(), notify() and notifyAll()
+http://tutorials.jenkov.com/java-concurrency/thread-signaling.html
+    A thread that calls wait() on any object becomes inactive until another thread calls notify() on that object. In order to call either wait() or notify the calling thread must first obtain the lock on that object. In other words, the calling thread must call wait() or notify() from inside a synchronized block.
+
+        public class MonitorObject{
+        }
+
+        public class MyWaitNotify{
+
+          MonitorObject myMonitorObject = new MonitorObject();
+
+          public void doWait(){
+            synchronized(myMonitorObject){
+              try{
+                myMonitorObject.wait();
+              } catch(InterruptedException e){...}
+            }
+          }
+
+          public void doNotify(){
+            synchronized(myMonitorObject){
+              myMonitorObject.notify();
+            }
+          }
+        }
+
+    Missed Signals
+    The methods notify() and notifyAll() do not save the method calls to them in case no threads are waiting when they are called. The notify signal is then just lost. Therefore, if a thread calls notify() before the thread to signal has called wait(), the signal will be missed by the waiting thread. This may or may not be a problem, but in some cases this may result in the waiting thread waiting forever, never waking up, because the signal to wake up was missed.
+
+    Spurious Wakeups
+    For inexplicable reasons it is possible for threads to wake up even if notify() and notifyAll() has not been called. This is known as spurious wakeups. Wakeups without any reason.
+
+    If a spurious wakeup occurs in the MyWaitNofity2 class's doWait() method the waiting thread may continue processing without having received a proper signal to do so! This could cause serious problems in your application.
+
+    To guard against spurious wakeups the signal member variable is checked inside a while loop instead of inside an if-statement. Such a while loop is also called a spin lock.
+
+    As you can see both the waiting and notifying thread calls wait() and notify() from within a synchronized block. This is mandatory! A thread cannot call wait(), notify() or notifyAll() without holding the lock on the object the method is called on. If it does, an IllegalMonitorStateException is thrown.
+
+	Facts about CountDownLatch:
+
+    Creating an object of CountDownLatch by passing an int to its constructor (the count), is actually number of invited parties (threads) for an event.
+    The thread, which is dependent on other threads to start processing, waits on until every other thread has called count down. All threads, which are waiting on await() proceed together once count down reaches to zero.
+    countDown() method decrements the count and await() method blocks until count == 0
+
+
 105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
 https://stackoverflow.com/questions/16748030/difference-between-arrays-aslistarray-vs-new-arraylistintegerarrays-aslist
 
@@ -2071,6 +2254,8 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
         h. remove(Object key)
         i. remove(Object key, Object value)
            // Removes the entry for the specified key only if it is currently mapped to the specified value.
+        j. Map.Entry<KeyType, ValueType> e : map.entrySet()
+               e.getKey(), e.getValue()
 
     4. HashSet
         a. add(E e)
@@ -2317,3 +2502,237 @@ https://stackoverflow.com/questions/11035026/system-out-printlnabc32-why-output-
     To get a numeric result do
 
     "abc" + (3 + 2)
+
+118. Create array of certain size such that it can't grow beyond that
+https://stackoverflow.com/questions/5196113/any-way-to-set-max-size-of-a-collection
+
+        // In the below list "add" and "remove" won't work
+        List<Integer> bl = Arrays.asList(new Integer[3]);
+        // bl.add(5); // This throws UnsupportedOperationException
+        bl.set(0, 6);
+        bl.set(1, 7);
+        bl.set(2, 8);
+        // bl.set(3, 9); // This gives ArrayIndexOutOfBoundsException
+ 
+119. How can I pass a parameter to a Java Thread
+https://stackoverflow.com/questions/877096/how-can-i-pass-a-parameter-to-a-java-thread
+
+    You need to pass the parameter in the constructor to the thread object:
+        public class MyThread implements Runnable {
+           public MyThread(Object parameter) {
+               // store parameter for later user
+           }
+
+           public void run() {
+           }
+        }
+
+    and invoke it thus:
+        Runnable r = new MyThread(param_value);
+        new Thread(r).start();
+
+120. Java Blocking Queue
+https://www.journaldev.com/1034/java-blockingqueue-example
+http://javarevisited.blogspot.com/2012/02/producer-consumer-design-pattern-with.html
+
+    BlockingQueue put() method will block if Queue is full in case of Bounded Queue and take() will block if Queue is empty.
+
+    Java BlockingQueue doesn’t accept null values and throw NullPointerException if you try to store null value in the queue.
+    Java BlockingQueue implementations are thread-safe. All queuing methods are atomic in nature and use internal locks or other forms of concurrency control.
+    Java provides several BlockingQueue implementations such as ArrayBlockingQueue, LinkedBlockingQueue, PriorityBlockingQueue, SynchronousQueue etc.
+
+121. Default Methods In Java
+http://www.geeksforgeeks.org/default-methods-java/
+
+    Java 8 introduces “Default Method” or (Defender methods) new feature, which allows developer to add new methods to the interfaces without breaking the existing implementation of these interface.
+    It provides flexibility to allow interface define implementation which will use as default in the situation where a concrete class fails to provide an implementation for that method.
+
+    Why Defaut Method?
+        Reengineering an existing JDK framework is always very complex. Modify one interface in JDK framework breaks all classes that extends the interface which means that adding any new method could break millions of lines of code. Therefore, default methods have introduced as a mechanism to extending interfaces in a backward compatible way.
+
+        Default methods can be provided to an interface without affecting implementing classes as it includes an implementation. 
+
+        // A simple program to Test Interface default
+        // methods in java
+        interface TestInterface {
+            // abstract method
+            public void square(int a);
+         
+            // default method
+            default void show() {
+              System.out.println("Default Method Executed");
+            }
+        }
+         
+        class TestClass implements TestInterface {
+            // implementation of square abstract method
+            public void square(int a) {
+                System.out.println(a*a);
+            }
+         
+            public static void main(String args[]) {
+                TestClass d = new TestClass();
+                d.square(4);
+         
+                // default method executed
+                d.show();
+            }
+        }
+
+122. Interface with default methods vs Abstract class in Java 8
+https://stackoverflow.com/questions/19998454/interface-with-default-methods-vs-abstract-class-in-java-8
+
+    There's a lot more to abstract classes than default method implementations (such as private state), but as of Java 8, whenever you have the choice of either, you should go with the defender (aka. default) method in the interface.
+
+    The constraint on the default method is that it can be implemented only in the terms of calls to other interface methods, with no reference to a particular implementation's state. So the main use case is higher-level and convenience methods.
+
+    The good thing about this new feature is that, where before you were forced to use an abstract class for the convenience methods, thus constraining the implementor to single inheritance, now you can have a really clean design with just the interface and a minimum of implementation effort forced on the programmer.
+
+    These two are quite different:
+    - Default methods are to add external functionality to existing classes without changing their state.
+    - And abstract classes are a normal type of inheritance, they are normal classes which are intended to be extended.
+        
+    There are a few technical differences. Abstract classes can still do more in comparison to Java 8 interfaces:
+        Abstract class can have a constructor.
+        Abstract classes are more structured and can hold a state.
+    Conceptually, main purpose of defender methods is a backward compatibility after introduction of new features (as lambda-functions) in Java 8.
+
+123. Default Method and Multiple Inheritance Ambiguity Problems
+https://dzone.com/articles/interface-default-methods-java
+
+    Since java class can implement multiple interfaces and each interface can define default method with same method signature, therefore, the inherited methods can conflict with each other.
+
+123. Java Scanner vs BufferedReader
+https://stackoverflow.com/questions/17637032/bufferedreader-vs-console-vs-scanner
+
+    Scanner is used for parsing tokens from the contents of the stream while BufferedReader just reads the stream and does not do any special parsing.
+    As to the choice, use the Scanner if you want to parse the file, use the BufferedReader if you want to read the file line by line.
+
+    A scanner on the other hand has a lot more cheese built into it; it can do all that a BufferedReader can do and at the same level of efficiency as well. However, in addition a Scanner can parse the underlying stream for primitive types and strings using regular expressions. It can also tokenize the underlying stream with the delimiter of your choice. It can also do forward scanning of the underlying stream disregarding the delimiter!
+    A scanner however is not thread safe, it has to be externally synchronized.
+
+    Even while reading the input, if want to accept user input line by line and say just add it to a file, a BufferedReader is good enough. On the other hand if you want to accept user input as a command with multiple options, and then intend to perform different operations based on the command and options specified, a Scanner will suit better.
+
+    BufferedReader
+        Since Java 1.1
+        Throws checked exceptions
+        Can read chars, char arrays, and lines
+        Fast
+
+    Scanner
+        Since Java 1.5
+        Doesn't throw checked exceptions
+        Can read lines, whitespace-delimited tokens, regex-delimited tokens, and numbers
+        Difficult to read single characters
+
+    Console
+        Since Java 1.6
+        Doesn't throw checked exceptions
+        Can read lines
+        Underlying reader can read chars and char arrays (stops at line bounds)
+        Not always available (e.g. Eclipse)
+        Can read passwords (i.e. read without displaying the characters)
+
+    Recommendation: Scanner
+    The methods for reading numbers are very useful. The exceptions are unchecked, so you do not have to write boilerplate try/catch blocks.
+
+124. Scanner method to get a char
+https://stackoverflow.com/questions/2597841/scanner-method-to-get-a-char/2597939#2597939
+
+    To get a char from a Scanner, you can use the findInLine method.
+
+        Scanner sc = new Scanner("abc");
+        char ch = sc.findInLine(".").charAt(0);
+        System.out.println(ch); // prints "a"
+        System.out.println(sc.next()); // prints "bc"
+
+    If you need a bunch of char from a Scanner, then it may be more convenient to (perhaps temporarily) change the delimiter to the empty string. This will make next() returns a length-1 string every time.
+        Scanner sc = new Scanner("abc");
+        sc.useDelimiter("");
+        while (sc.hasNext()) {
+            System.out.println(sc.next());
+        } // prints "a", "b", "c"
+
+125. Scanner is skipping nextLine() after using next(), nextInt() or other nextFoo()?
+https://stackoverflow.com/questions/13102045/scanner-is-skipping-nextline-after-using-next-nextint-or-other-nextfoo
+
+    That's because the Scanner.nextInt method does not consume the last newline character of your input, and thus that newline is consumed in the next call to Scanner.nextLine.
+
+    You will encounter the similar behaviour when you use Scanner.nextLine after Scanner.next() or any Scanner.nextFoo method (except nextLine itself).
+
+    Workaround:
+        Either fire a blank Scanner.nextLine call after Scanner.nextInt or Scanner.nextFoo to consume rest of that line including newline
+            int option = input.nextInt();
+            input.nextLine();  // Consume newline left-over
+            String str1 = input.nextLine();
+
+        Or, it would be even better, if you read the input through Scanner.nextLine and convert your input to the proper format you need. For examples, to an integer using Integer.parseInt(String) method.
+            int option = 0;
+            try {
+                option = Integer.parseInt(input.nextLine());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            String str1 = input.nextLine();
+
+126. Read array using Scanner and BufferedReader
+https://stackoverflow.com/questions/14635136/read-integers-separated-with-whitespace-into-int-array
+
+You could use Scanner:
+    Scanner scanner = new Scanner(System.in);
+    List<Integer> list = new ArrayList<Integer>();
+    while (scanner.hasNextInt())
+      list.add(scanner.nextInt());
+    int[] arr = list.toArray(new int[0]);
+
+BufferedReader is Faster then Scanner
+    Using BufferedReader and then splitting and parsing each Integer value is much Faster then using nextInt() method of Scanner.
+
+        BufferedReader bi = new BufferedReader(new InputStreamReader(System.in));
+        int num[] = new int[1000];
+        String[] strNums;    
+        strNums = bi.readLine().split("\\s");
+        for(int i=0; i<strNums.length; i++) {
+            num[i] = Integer.parseInt(strNums[i]);
+        }
+
+127. Read multiple lines from console
+
+        List<String> lines = new ArrayList<>();
+        Scanner s = new Scanner(System.in);
+        while (s.hasNextLine()) {
+            String line = s.nextLine();
+            if (line.isEmpty()) {
+                break;
+            }
+            lines.add(line);
+        }
+
+128a. Find index of String in another string
+    String.indexOf(String str)
+    Boolean found = text.contains(word);
+
+128b. Get substring
+    line.substring(line.indexOf("//") + 1);
+
+128c. Java indexOf method for multiple matches in String
+    i = str.indexOf('x');
+    while(i >= 0) {
+         System.out.println(i);
+         i = str.indexOf('x', i+1);
+    }
+
+129. How can I clear or empty a StringBuilder?
+    stringBuilderObj.setLength(0)
+
+130. What is the best way to tell if a character is a letter or number in Java without using regexes?
+    private static boolean isLetterOrDigit(char c) {
+        return (c >= 'a' && c <= 'z') ||
+               (c >= 'A' && c <= 'Z') ||
+               (c >= '0' && c <= '9');
+    }
+
+131. How to match letters only using java regex, matches method?
+    String s = "abcdefà";
+    Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+    boolean hasSpecialChar = p.matcher(s).find();

@@ -1,5 +1,6 @@
-import java.util.List;
-import java.util.Arrays;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Streams 
 {
@@ -22,12 +23,39 @@ public class Streams
         return skipNfsRequest(source) || skipNfsRequest(target);
     }
 
+    public static List<String> getPersonNames(List<Person> persons) {
+        return persons.stream().map(p -> p.name).collect(Collectors.toList());
+    }
+
     public static void main(String[] args) 
     {
-        System.out.println("Hello Streams");
-        String src = "/.komprise_move_reserved/being_moved/-1060194705";
-        String tgt = "/Data/1_new/2/pdfs/z.pdf";
-		System.out.println(skipNfsRequest(src,tgt));
+        {
+            System.out.println("Hello Streams");
+            String src = "/.komprise_move_reserved/being_moved/-1060194705";
+            String tgt = "/Data/1_new/2/pdfs/z.pdf";
+            System.out.println(skipNfsRequest(src,tgt));
+        }
+
+        {
+            List<Person> persons = new ArrayList<>();
+            /*
+            persons.add(new Person("abc", 5));
+            persons.add(new Person("def", 6));
+            persons.add(new Person("qwerty", 7));
+            persons.add(new Person("zx", 8));
+            */
+            List<String> personNames = getPersonNames(persons);
+            System.out.println(getPersonNames(persons));
+        }
     }
 }
 
+class Person {
+    String name;
+    int age;
+
+    Person (String name, int age) {
+        this.name = name;
+        this.age= age;
+    }
+}

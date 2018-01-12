@@ -65,6 +65,8 @@ import java.util.stream.*;
  *
  * PROBLEM 22. Find if two rectangles overlap
  *
+ * PROBLEM 22b. Find overlapping rectangle
+ *
  * PROBLEM 23. Find Largest Subarray with equal number of 0s and 1s
  *
  * PROBLEM 24. 3 number sum closest
@@ -75,7 +77,16 @@ import java.util.stream.*;
  *
  * PROBLEM 27. Round off seconds to minutes, hours, day, months, years
  *
- * PROBLEM 28. Product of all other numbers
+ * PROBLEM 29. Find rotation index
+ *
+ * PROBLEM 30. Search in rotated sorted array
+ *
+ * PROBLEM 31. Find shortest route
+ *
+ * PROBLEM 32. Find unique number in 4billion ints to web crawler visited pages
+ *
+ * PROBLEM 33. Find if two numbers add to a sum
+ *
  */
 
 // Pair Class
@@ -167,7 +178,6 @@ public class AllJavaAlgoProblems {
             System.out.println();
         }
     }
-
 
     public static void printDiagonally(int[][] matrix) {
         for(int i=0; i<matrix.length; i++) {
@@ -297,6 +307,20 @@ public class AllJavaAlgoProblems {
 
         for (int i = 0; i < s.length(); i++) {
             if (charMap.get(s.charAt(i)) == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int firstUniqueCharacter2(String s) {
+        int[] charMap = new int[256];
+        for (char c : s.toCharArray()) {
+            charMap[c]++;
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+            if (charMap[s.charAt(i)] == 1) {
                 return i;
             }
         }
@@ -757,6 +781,47 @@ public class AllJavaAlgoProblems {
                 a2.y <= b1.y);
     }
 
+    // TODO
+    // -------------------------------------------------------------------------
+    // PROBLEM 22b. Find overlapping rectangle
+    // https://www.interviewcake.com/question/java/rectangular-love
+    // -------------------------------------------------------------------------
+    /*
+    public static class Rectangle {
+
+        // coordinates of bottom left corner
+        private int leftX;
+        private int bottomY;
+
+        // dimensions
+        private int width;
+        private int height;
+
+        public Rectangle(int leftX, int bottomY, int width, int height) {
+            this.leftX = leftX;
+            this.bottomY = bottomY;
+            this.width  = width;
+            this.height = height;
+        }
+
+        public int getLeftX() {
+            return leftX;
+        }
+
+        public int getBottomY() {
+            return bottomY;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+    }
+    */
+
     // -------------------------------------------------------------------------
     // PROBLEM 23. Find Largest Subarray with equal number of 0s and 1s
     // -------------------------------------------------------------------------
@@ -1022,6 +1087,51 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
+    // PROBLEM 29. Find rotation index
+    // https://www.interviewcake.com/question/java/find-rotation-point
+    // -------------------------------------------------------------------------
+    static int indexOfRotatedSortedArray() {
+        return 0;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 30. Search in rotated sorted array
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 31. Find shortest route
+    // https://www.interviewcake.com/question/java/mesh-message
+    // -------------------------------------------------------------------------
+    /*
+        Map<String, String[]> network = new HashMap<String, String[]>() {{
+            put("Min",     new String[] { "William", "Jayden", "Omar" });
+            put("William", new String[] { "Min", "Noam" });
+            put("Jayden",  new String[] { "Min", "Amelia", "Ren", "Noam" });
+            put("Ren",     new String[] { "Jayden", "Omar" });
+            put("Amelia",  new String[] { "Jayden", "Adam", "Miguel" });
+            put("Adam",    new String[] { "Amelia", "Miguel", "Sofia", "Lucas" });
+            put("Miguel",  new String[] { "Amelia", "Adam", "Liam", "Nathan" });
+            put("Noam",    new String[] { "Nathan", "Jayden", "William" });
+            put("Omar",    new String[] { "Ren", "Min", "Scott" });
+            ...
+        }};
+    */
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 32. Find unique number in 4billion ints to web crawler visited pages
+    //
+    // Find a way to optimize visited pages of web for a crawler
+    // https://www.interviewcake.com/question/python/compress-url-list
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 33. Find if two numbers add to a sum
+    // https://www.interviewcake.com/question/python/inflight-entertainment
+    // -------------------------------------------------------------------------
+    static boolean isSumPresent(List<Integer> movieTimes, List<Integer> flightLength) {
+        return false;
+    }
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String[] args) {
@@ -1077,6 +1187,7 @@ public class AllJavaAlgoProblems {
             System.out.println("\nProblem 6. Find the unique character present in a string");
             String s = "GeeksForGeeks";
             System.out.println(s.charAt(firstUniqueCharacter(s)));
+            System.out.println(s.charAt(firstUniqueCharacter2(s)));
         }
 
         // Problem 7. Count the number of islands in a 2D matrix
