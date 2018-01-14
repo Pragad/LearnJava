@@ -80,6 +80,9 @@
  * Problem 24. Nth largest element in a binary search tree
  * int NthLargestInBST(Node root, uint32_t n)
  *
+ * Problem 24b. 2nd largest element in a binary search tree
+ * int SecondLargestInBST(Node root)
+ *
  * Problem 25 In Order Successor in Binary Search Tree
  * Node InorderSuccessorWithParent(Node node)
  *
@@ -493,6 +496,59 @@ public class BinaryTreeProblems {
     }
 
     // -------------------------------------------------------------------------
+    // Problem 14. Given a Binary Tree, find the maximum sum path from a leaf to root.
+    // -------------------------------------------------------------------------
+    static int maxSumLeafToRoot(Node root, int curSum) {
+        if (root == null) {
+            // Can't return 0. 
+            return Integer.MIN_VALUE;
+        }
+        if (root.left == null && root.right == null) {
+            return curSum + root.data;
+        }
+        int leftSum = maxSumLeafToRoot(root.left, curSum);
+        int rightSum = maxSumLeafToRoot(root.right, curSum);
+        return Math.max(leftSum, rightSum) + root.data;
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 15. Given a Binary Tree, find the maximum sum path from a leaf to root
+    //
+    // res : Max sum between two leaves
+    // Return value: Max sum of left , right + root.data
+    // -------------------------------------------------------------------------
+    static class Result {
+        int value;
+    }
+
+    static int maxSumLeafToLeafRec(Node root, Result res) {
+        if (root == null) {
+            // Can't return 0. 
+            return Integer.MIN_VALUE;
+        }
+        if (root.left == null && root.right == null) {
+            return root.data;
+        }
+        int leftSum = maxSumLeafToLeafRec(root.left, res);
+        int rightSum = maxSumLeafToLeafRec(root.right, res);
+        if (root.left != null && root.right != null) {
+            res.value = Math.max(leftSum + rightSum + root.data, res.value);
+        }
+        return Math.max(leftSum, rightSum) + root.data;
+    }
+
+    static int maxSumLeafToLeaf(Node root) {
+        if (root == null || root.left == null || root.right == null) {
+            return Integer.MIN_VALUE;
+        } else {
+            Result res = new Result();
+            maxSumLeafToLeafRec(root, res);
+            return res.value;
+        }
+    }
+
+
+    // -------------------------------------------------------------------------
     // Problem 18. Print Tree in Level Order
     // -------------------------------------------------------------------------
     static void printLevelOrderTraversal(Node root) {
@@ -525,7 +581,92 @@ public class BinaryTreeProblems {
     }
 
     // -------------------------------------------------------------------------
-    // Problem 19. Convert doubly linkedlist to binary tree
+    // Problem 19. Print Tree in Spiral Order
+    // -------------------------------------------------------------------------
+    static void printSpiralOrder(Node root) {
+        Stack<Node> leftStack = new Stack<>();
+        Stack<Node> rightStack = new Stack<>();
+        if (root == null) {
+            return;
+        }
+        rightStack.push(root);
+        while (!leftStack.empty() || !rightStack.empty()) {
+            while (!rightStack.empty()) {
+                Node tmp = rightStack.pop();
+                System.out.print(tmp.data + " ");
+                if (tmp.right != null) {
+                    leftStack.push(tmp.right);
+                }
+                if (tmp.left != null) {
+                    leftStack.push(tmp.left);
+                }
+            }
+            System.out.println();
+            while (!leftStack.empty()) {
+                Node tmp = leftStack.pop();
+                System.out.print(tmp.data + " ");
+                if (tmp.left != null) {
+                    rightStack.push(tmp.left);
+                }
+                if (tmp.right != null) {
+                    rightStack.push(tmp.right);
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 20. Print Tree in Vertical Order
+    // -------------------------------------------------------------------------
+    static void printVerticalOrderRec(Node root, Map<Integer, List<Node>> map, int count) {
+        if (root == null) {
+            return;
+        }
+        if (map.containsKey(count)) {
+            map.get(count).add(root);
+        } else {
+            List<Node> l = new ArrayList<Node>();
+            l.add(root);
+            map.put(count, l);
+        }
+        printVerticalOrderRec(root.left, map, count - 1);
+        printVerticalOrderRec(root.right, map, count + 1);
+        
+    }
+
+    static void printVerticalOrder(Node root) {
+        Map<Integer, List<Node>> map = new HashMap<>();
+        printVerticalOrderRec(root, map, 0);
+        List<Integer> sortedKeys = new ArrayList<>(map.keySet());
+        Collections.sort(sortedKeys);
+
+        for (int i : sortedKeys) {
+            for (Node n : map.get(i)) {
+                System.out.print(n.data + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 22. Find largest element smaller than K in a BST
+    // -------------------------------------------------------------------------
+    static int findLargestNumSmallerThanKey(Node root, int k) {
+        int result = Integer.MIN_VALUE;
+        while (root != null) {
+            if (root.data >= k) {
+                root = root.left;
+            } else {
+                result = root.data;
+                root = root.right;
+            }
+        }
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 24b. 2nd largest element in a binary search tree
     // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
@@ -639,15 +780,40 @@ public class BinaryTreeProblems {
             findDistanceBetweenNodes(root, root.right.right.left, root.right.right.right);
         }
 
-        // 
+        // Problem 14. Given a Binary Tree, find the maximum sum path from a leaf to root
         {
-            System.out.println("");
+            System.out.println("Problem 14. Given a Binary Tree, find the maximum sum path from a leaf to root");
+            System.out.println(maxSumLeafToRoot(root, 0));
+        }
+
+        // Problem 15. Given a Binary Tree, find the maximum sum path from a leaf to root
+        {
+            System.out.println("Problem 15. Given a Binary Tree, find the maximum sum path from a leaf to leaf");
+            System.out.println(maxSumLeafToLeaf(root));
         }
 
         // Problem 18. Print Tree in Level Order
         {
             System.out.println("Problem 18. Print Tree in Level Order");
             printLevelOrderTraversal(root);
+        }
+
+        // Problem 19. Print Tree in Spiral Order
+        {
+            System.out.println("Problem 19. Print Tree in Spiral Order");
+            printSpiralOrder(root);
+        }
+
+        // Problem 20. Print Tree in Vertical Order
+        {
+            System.out.println("Problem 20. Print Tree in Vertical Order");
+            printVerticalOrder(root);
+        }
+
+        // Problem 22. Find largest element smaller than K in a BST
+        {
+            System.out.println("Problem 22. Find largest element smaller than K in a BST");
+            System.out.println(findLargestNumSmallerThanKey(root, 6));
         }
     }
 

@@ -1097,6 +1097,69 @@ public class AllJavaAlgoProblems {
     // -------------------------------------------------------------------------
     // PROBLEM 30. Search in rotated sorted array
     // -------------------------------------------------------------------------
+    boolean findInSortedRotatedArray(int[] arr, int num) {
+        int low = 0;
+        int high = arr.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (arr[mid] == num || arr[low] == num || arr[high] == num) {
+                return true;
+            }
+
+            // Check if first part is sorted
+            if (arr[mid] >= arr[low]) {
+                // 1st part is sorted. Check if the number lies there
+                if (num > arr[low] && num < arr[mid]) {
+                    high = mid - 1;
+                    low = low + 1;
+                    continue;
+                } else {
+                    low = mid + 1;
+                    continue;
+                }
+            } else {
+                // 1st part is not sorted. 2nd part is sorted
+                if (num > arr[mid] && num < arr[high]) {
+                    low = mid + 1;
+                    high = high - 1;
+                    continue;
+                } else {
+                    high = mid - 1;
+                    continue;
+                }
+            }
+        }
+        return false;
+    }
+
+    boolean binarySearch(int[] arr, int num) {
+        int low = 0;
+        int high = arr.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (arr[mid] == num) {
+                return true;
+            } else if (arr[mid] > num) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+    }
+
+    boolean binarySearchRec(int[] arr, int stIdx, int endIdx, int num) {
+        if (stIdx > endIdx) {
+            return false;
+        }
+        int midIdx = stIdx + ((endIdx - stIdx) / 2);
+        if (arr[midIdx] == num) {
+            return true;
+        } else if (arr[midIdx] > num) {
+            binarySearchRec(arr, stIdx, midIdx - 1, num);
+        } else {
+            binarySearchRec(arr, midIdx + 1, endIdx, num);
+        }
+    }
 
     // -------------------------------------------------------------------------
     // PROBLEM 31. Find shortest route

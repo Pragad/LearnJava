@@ -146,7 +146,8 @@
 129. How can I clear or empty a StringBuilder?
 130. What is the best way to tell if a character is a letter or number in Java without using regexes?
 131. How to determine if a String has non-alphanumeric characters
-
+132. Don't assign one list to another
+133. How to sort Map values by key in Java
 --------------------------------------------------------------------------------------------
 
 1.
@@ -2736,3 +2737,29 @@ BufferedReader is Faster then Scanner
     String s = "abcdefà";
     Pattern p = Pattern.compile("[^a-zA-Z0-9]");
     boolean hasSpecialChar = p.matcher(s).find();
+
+132. Don't assign one list to another
+    If you do, then modifying one list will modify another list too
+
+    1.
+    ArrayList<String> newArrayList = (ArrayList<String>) oldArrayList.clone();
+
+    2.
+    List<String> strs;
+    ...
+    List<String> newStrs = new ArrayList<>(strs);
+
+    3.
+    List<String> list2 = list1.stream().collect(Collectors.toList());
+
+133. How to sort Map values by key in Java
+https://stackoverflow.com/questions/922528/how-to-sort-map-values-by-key-in-java
+
+    Use a TreeMap. This is precisely what its for.
+
+    Remember when using a TreeMap or TreeSet that it will have different performance characteristics than HashMap or HashSet. Roughly speaking operations that find or insert an element will go from O(1) to O(Log(N)).
+
+    Assuming TreeMap is not good for you (and assuming you can't use generics):
+        List sortedKeys=new ArrayList(yourMap.keySet());
+        Collections.sort(sortedKeys);
+        // Do what you need with sortedKeys.

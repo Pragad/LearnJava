@@ -8,6 +8,7 @@
 8. Find index of String in another string
 9. Get substring from a String
 10. How do I apply the for-each loop to every character in a String
+11. Don't assign one list to another
 ------------------------------------------------------------------------------------------
 1. Integer.MAX_VALUE
 
@@ -126,4 +127,17 @@ Integer[] to int[]
         char c = s.charAt(i);
     }
 
+11. Don't assign one list to another
+    If you do, then modifying one list will modify another list too
+
+    1.
+    ArrayList<String> newArrayList = (ArrayList<String>) oldArrayList.clone();
+
+    2.
+    List<String> strs;
+    ...
+    List<String> newStrs = new ArrayList<>(strs);
+
+    3.
+    List<String> list2 = list1.stream().collect(Collectors.toList());
 
