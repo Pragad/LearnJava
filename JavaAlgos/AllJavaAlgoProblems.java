@@ -87,10 +87,27 @@ import java.util.stream.*;
  *
  * PROBLEM 33. Find if two numbers add to a sum
  *
+ * PROBLEM 34. Sorting almost sorted array misplaced by k elements
+ *
+ * PROBLEM 35. Merge all overlapping intervals
+ *
+ * PROBLEM 36. Convert number to words
+ *
+ * PROBLEM 37. Phone number permutations
+ *
+ * PROBLEM 38. Reverse words in a sentence
+ *
+ * PROBLEM 39. Love rectangle - Overlapping rectanlge
+ *
+ * PROBLEM 40. Binary to Decimal and Decimal to binary
+ *
+ * PROBLEM 41. Roman to decimal and decimal to roman
  */
 
+// -----------------------------------------------------------------------------
 // Pair Class
 // https://stackoverflow.com/questions/521171/a-java-collection-of-value-pairs-tuples
+// -----------------------------------------------------------------------------
 final class Pair<L, R> {
     private final L left;
     private final R right;
@@ -128,6 +145,9 @@ final class Pair<L, R> {
     }
 }
 
+// -----------------------------------------------------------------------------
+// Point class
+// -----------------------------------------------------------------------------
 class Point {
     public int x;
     public int y;
@@ -137,6 +157,44 @@ class Point {
         this.y = y;
     }
 }
+
+// -----------------------------------------------------------------------------
+// Rectangle class
+// https://www.interviewcake.com/question/java/rectangular-love
+// -----------------------------------------------------------------------------
+class Rectangle {
+    // coordinates of bottom left corner
+    private int leftX;
+    private int bottomY;
+
+    // dimensions
+    private int width;
+    private int height;
+
+    public Rectangle(int leftX, int bottomY, int width, int height) {
+        this.leftX = leftX;
+        this.bottomY = bottomY;
+        this.width  = width;
+        this.height = height;
+    }
+
+    public int getLeftX() {
+        return leftX;
+    }
+
+    public int getBottomY() {
+        return bottomY;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+}
+
 
 public class AllJavaAlgoProblems {
     // -------------------------------------------------------------------------
@@ -1145,6 +1203,7 @@ public class AllJavaAlgoProblems {
                 low = mid + 1;
             }
         }
+        return false;
     }
 
     boolean binarySearchRec(int[] arr, int stIdx, int endIdx, int num) {
@@ -1155,9 +1214,9 @@ public class AllJavaAlgoProblems {
         if (arr[midIdx] == num) {
             return true;
         } else if (arr[midIdx] > num) {
-            binarySearchRec(arr, stIdx, midIdx - 1, num);
+            return binarySearchRec(arr, stIdx, midIdx - 1, num);
         } else {
-            binarySearchRec(arr, midIdx + 1, endIdx, num);
+            return binarySearchRec(arr, midIdx + 1, endIdx, num);
         }
     }
 
@@ -1194,6 +1253,288 @@ public class AllJavaAlgoProblems {
     static boolean isSumPresent(List<Integer> movieTimes, List<Integer> flightLength) {
         return false;
     }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 34. Sorting almost sorted array misplaced by k elements
+    //      
+    //      {2, 6, 3, 12, 56, 8}
+    //
+    // http://stackoverflow.com/questions/2726785/sorting-an-almost-sorted-array-elements-misplaced-by-no-more-than-k
+    // -------------------------------------------------------------------------
+    static int[] sortKMessedArray(int[] arr, int k) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>(k + 1);
+        for (int i = 0; i <= k; i++) {
+            pq.add(arr[i]);
+        }
+        for (int i = 0, j = k + 1; i < arr.length - k - 1; i++, j++) {
+            arr[i] = pq.poll();
+            pq.add(arr[j]);
+        }
+        for (int i = arr.length - k - 1; i < arr.length; i++) {
+            arr[i] = pq.poll();
+        }
+        return arr;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 35. Merge all overlapping intervals
+    // -------------------------------------------------------------------------
+    static class Interval {
+        int start;
+        int end;
+
+        Interval() {
+            start = 0;
+            end = 0;
+        }
+
+        Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
+
+    static List<Interval> mergeOverlappingIntervals(List<Interval> intervals) {
+        // Sort by start time
+        Collections.sort(intervals, new Comparator<Interval>() {
+            public int compare(Interval a, Interval b) {
+                return a.start > b.start ? 1 : a.start < b.start ? -1 : 0;
+            }
+        });
+
+        int stIdx = 0;
+        for (int i = 1; i < intervals.size(); ) {
+            if (intervals.get(stIdx).end >= intervals.get(i).start) {
+                // Merge these two
+                if (intervals.get(i).end > intervals.get(stIdx).end) {
+                    intervals.get(stIdx).end = intervals.get(i).end;
+                }
+                intervals.remove(i);
+            } else {
+                stIdx++;
+                i++;
+            }
+        }
+
+        for (Interval i : intervals) {
+            System.out.println("S: " + i.start + "; E: " + i.end);
+        }
+        return intervals;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 36. Convert number to words
+    // https://leetcode.com/problems/integer-to-english-words/discuss/70625
+    // -------------------------------------------------------------------------
+    static String convertThreeNumToWords(Integer num) {
+        StringBuilder sb = new StringBuilder();
+        String[] ones = {"", "one", "two", "three", "four", "five", "six", "seven", "eight",
+                         "nine", "ten", "eleven", "twelve", "thirteen", "forteen", "fifteen",
+                         "sixteen", "seventeen", "eighteen", "nineteen"};
+        String[] tens = {"", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+        boolean isHundredSeen = false;
+        while (num != 0) {
+            if (isHundredSeen) {
+                sb.append("and ");
+                isHundredSeen = false;
+            }
+            if (num < 20) {
+                sb.append(ones[num])
+                  .append(" ");
+                break;
+            } else if (num < 100) {
+                sb.append(tens[num / 10])
+                  .append(" ");
+                num = num % 10;
+            } else {
+                sb.append(ones[num / 100])
+                  .append(" hundred ");
+                num = num % 100;
+                isHundredSeen = true;
+            }
+        }
+        return sb.toString();
+    }
+
+    static String convertNumToWords(int num) {
+        String[] thousands = {"", "thousand", "million", "billion"};
+        int count = 0;
+        String tmp = "";
+        while (num != 0) {
+            int rem = num % 1000;
+            if (rem != 0) {
+                tmp = convertThreeNumToWords(rem) + thousands[count] + " " + tmp;
+            }
+            num /= 1000;
+            count++;
+        }
+        return tmp;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 37. Phone number permutations
+    // -------------------------------------------------------------------------
+    static void printPhoneNumberPermutationsRec(int[] nums, int stIdx, Map<Integer, String> numMap, StringBuilder res) {
+        if (stIdx == nums.length) {
+            System.out.println(res.toString());
+            return;
+        }
+        for (int i = 0; i < numMap.get(nums[stIdx]).length(); i++) {
+            /*
+            System.out.println("S: " + stIdx);
+            System.out.println("N: " + nums[stIdx]);
+            System.out.println("M: " + numMap.get(nums[stIdx]));
+            System.out.println("C: " + numMap.get(nums[stIdx]).charAt(i));
+            */
+            res.append(numMap.get(nums[stIdx]).charAt(i));
+            printPhoneNumberPermutationsRec(nums, stIdx + 1, numMap, res);
+            res.setLength(res.length() - 1);
+
+            if (numMap.get(nums[stIdx]).charAt(i) == '0' || numMap.get(nums[stIdx]).charAt(i) == '1') {
+                return;
+            }
+        }
+    }
+
+    static void printPhoneNumberPermutations(int[] nums) {
+        StringBuilder sb = new StringBuilder();
+        Map<Integer, String> numMap = new HashMap<>();
+        numMap.put(0, "0");
+        numMap.put(1, "1");
+        numMap.put(2, "abc");
+        numMap.put(3, "def");
+        numMap.put(4, "ghi");
+        numMap.put(5, "jkl");
+        numMap.put(6, "mno");
+        numMap.put(7, "pqrs");
+        numMap.put(8, "tuv");
+        numMap.put(9, "wxyz");
+        printPhoneNumberPermutationsRec(nums, 0, numMap, sb);
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 38. Reverse words in a sentence
+    // -------------------------------------------------------------------------
+    static void reverseString(StringBuilder sb) {
+        for (int i = 0; i < sb.length() / 2; i++) {
+            char c = sb.charAt(i);
+            sb.setCharAt(i, sb.charAt(sb.length() - i - 1));
+            sb.setCharAt((sb.length() - i - 1), c);
+        }
+    }
+
+    static void reverseString(StringBuilder sb, int stIdx, int endIdx) {
+        if (stIdx < 0 || stIdx >= sb.length() || endIdx < 0 || endIdx >= sb.length()) {
+            System.out.println("Invalid Index");
+            return;
+        }
+        for (; stIdx < endIdx; stIdx++, endIdx --) {
+            char c = sb.charAt(stIdx);
+            sb.setCharAt(stIdx, sb.charAt(endIdx));
+            sb.setCharAt((endIdx), c);
+        }
+    }
+
+    static String reverseWords(String sentence) {
+        StringBuilder sb = new StringBuilder(sentence);
+        reverseString(sb, 0, sb.length() - 1);
+
+        int stIdx = 0;
+        for (int i = 0; i < sb.length(); i++) {
+            if (sb.charAt(i) == ' ') {
+                if (stIdx < i) {
+                    reverseString(sb, stIdx, i - 1);
+                }
+                stIdx = i + 1;
+            }
+        }
+        if (stIdx < sb.length()) {
+            reverseString(sb, stIdx, sb.length() - 1);
+        }
+
+        // Delete beginning spaces
+        int cnt = 0;
+        for (int i = 0; i < sb.length(); i++) {
+            if (sb.charAt(i) == ' ') {
+                cnt++;
+            } else {
+                break;
+            }
+        }
+        return sb.substring(cnt);
+
+        // Delete ending spaces
+        /*
+        int cnt = 0;
+        for (int i = 0; i < sb.length(); i++) {
+            if (sb.charAt(i) == ' ') {
+                cnt++;
+            } else {
+                break;
+            }
+        }
+        */
+
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 39. Love rectangle - Overlapping rectanlge
+    // https://www.interviewcake.com/question/java/rectangular-love
+    // -------------------------------------------------------------------------
+    static Rectangle findOverlappingRectangle(Rectangle r1, Rectangle r2) {
+        if ((r1.getLeftX() < r2.getLeftX() + r2.getWidth()) &&
+            (r1.getBottomY() < r2.getBottomY() + r2.getHeight()) &&
+            (r1.getLeftX() + r1.getWidth() > r2.getLeftX()) &&
+            (r1.getBottomY() + r1.getHeight() > r2.getBottomY())) {
+
+            int lowX = Math.max(r1.getLeftX(), r2.getLeftX());
+            int lowY = Math.max(r1.getBottomY(), r2.getBottomY());
+            int highX = Math.min(r1.getLeftX() + r1.getWidth(), r2.getLeftX() + r1.getWidth());
+            int highY = Math.min(r1.getBottomY() + r1.getHeight(), r2.getBottomY() + r2.getHeight());
+
+            // Overlap
+            Rectangle result = new Rectangle(lowX, lowY, highX - lowX, highY - lowY);
+            return result;
+        }
+        return null;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 40. Binary to Decimal and Decimal to binary
+    // -------------------------------------------------------------------------
+    static int binaryToDecimal(String binNum) {
+        int result = 0;
+        for (int i = binNum.length() - 1, j = 0; i >= 0; i--, j++) {
+            result += (binNum.charAt(i) - '0') * Math.pow(2, j);
+        }
+        return result;
+    }
+
+    static String decimalToBinary(int num) {
+        StringBuilder sb = new StringBuilder();
+        while (num != 0) {
+            int rem = num % 2;
+            sb.append(String.valueOf(rem));
+            num = num / 2;
+        }
+        return sb.reverse().toString();
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 41. Roman to decimal and decimal to roman
+    // -------------------------------------------------------------------------
+    static int romanToDecimal(String roman) {
+        return 0;
+    }
+
+    static String decimalToRoman(int num) {
+        List<String> ones = Arrays.asList("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX");
+        List<String> tens = Arrays.asList("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC");
+        List<String> hundreds = Arrays.asList("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM");
+
+        return "";
+    }
+
     // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
@@ -1497,7 +1838,89 @@ public class AllJavaAlgoProblems {
             System.out.println(highestProductOfThreeNumbers(nums4));
             System.out.println(highestProductOfThreeNumbers(nums5));
         }
-    }
 
+        // PROBLEM 34. Sorting almost sorted array misplaced by k elements
+        {
+            System.out.println("\nPROBLEM 34. Sorting almost sorted array misplaced by k elements");
+            int[] nums1 = {1, 4, 5, 2, 3, 7, 8, 6, 10, 9};
+            System.out.println(Arrays.toString(sortKMessedArray(nums1, 2)));
+        }
+
+        // PROBLEM 35. Merge all overlapping intervals
+        {
+            System.out.println("\nPROBLEM 35. Merge all overlapping intervals");
+            List<Interval> intervals = new ArrayList<>();
+            intervals.add(new Interval(0, 1));
+            intervals.add(new Interval(3, 5));
+            intervals.add(new Interval(4, 8));
+            intervals.add(new Interval(10, 12));
+            intervals.add(new Interval(9, 10));
+            mergeOverlappingIntervals(intervals);
+        }
+
+        // PROBLEM 36. Convert number to words
+        {
+            System.out.println("\nPROBLEM 36. Convert number to words");
+            int num = 12345678;
+            System.out.println(convertNumToWords(num));
+        }
+
+        // PROBLEM 37. Phone number permutations
+        {
+            System.out.println("\nPROBLEM 37. Phone number permutations");
+            int[] nums1 = {0, 2, 1};
+            int[] nums2 = {3, 2, 4};
+            printPhoneNumberPermutations(nums1);
+        }
+        
+        // PROBLEM 38. Reverse words in a sentence
+        {
+            System.out.println("\nPROBLEM 38. Reverse words in a sentence");
+            String s = "  hello how    are  , you! !!  ";
+            System.out.println(s);
+            System.out.println(reverseWords(s));
+        }
+
+        // PROBLEM 39. Love rectangle - Overlapping rectanlge
+        {
+            System.out.println("\nPROBLEM 39. Love rectangle - Overlapping rectanlge");
+            Rectangle A1 = new Rectangle(4, 4, 6, 4);
+            Rectangle B1 = new Rectangle(6, 7, 6, 3);
+            Rectangle B2 = new Rectangle(2, 7, 6, 3);
+            Rectangle B3 = new Rectangle(2, 7, 12, 3);
+            Rectangle B4 = new Rectangle(2, 2, 6, 4);
+            Rectangle B5 = new Rectangle(5, 5, 2, 2);
+            Rectangle r1 = findOverlappingRectangle(A1, B1);
+            System.out.println("X: " +r1.getLeftX() + "; Y: " +r1.getBottomY() + "; W: " + r1.getWidth() + "; H: " + r1.getHeight());
+            /*
+            Rectangle r2 = findOverlappingRectangle(A1, B2);
+            System.out.println("X: " +r2.getLeftX() + "; Y: " +r2.getBottomY() + "; W: " + r2.getWidth() + "; H: " + r2.getHeight());
+            Rectangle r3 = findOverlappingRectangle(A1, B3);
+            System.out.println("X: " +r3.getLeftX() + "; Y: " +r3.getBottomY() + "; W: " + r3.getWidth() + "; H: " + r3.getHeight());
+            Rectangle r4 = findOverlappingRectangle(A1, B4);
+            System.out.println("X: " +r4.getLeftX() + "; Y: " +r4.getBottomY() + "; W: " + r4.getWidth() + "; H: " + r4.getHeight());
+            Rectangle r5 = findOverlappingRectangle(A1, B5);
+            System.out.println("X: " +r5.getLeftX() + "; Y: " +r5.getBottomY() + "; W: " + r5.getWidth() + "; H: " + r5.getHeight());
+            */
+        }
+
+        // PROBLEM 40. Binary to Decimal and Decimal to binary
+        {
+            System.out.println("\nPROBLEM 40. Binary to Decimal and Decimal to binary");
+            System.out.println(binaryToDecimal("101"));
+            System.out.println(decimalToBinary(7));
+        }
+
+        // PROBLEM 41. Roman to decimal and decimal to roman
+        {
+            System.out.println("\nPROBLEM 41. Roman to decimal and decimal to roman");
+            System.out.println(decimalToRoman(14));
+            System.out.println(decimalToRoman(2900));
+            System.out.println(decimalToRoman(3549));
+            System.out.println(romanToDecimal("MMMDXLIX"));
+            System.out.println(romanToDecimal("MMCM"));
+            System.out.println(romanToDecimal("XIV"));
+        }
+    }
 }
 

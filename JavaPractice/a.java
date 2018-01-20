@@ -4,8 +4,13 @@ import java.util.*;
 public class a {
     public static void main(String[] args) {
         List<Person> persons = new ArrayList<>();
-        persons.add(new Person("abc", 5, null));
+        persons.add(new Person("abc", 5, 0));
         System.out.println(persons.get(0));
+        Double d = 1.1;
+        Integer i = 2;
+        Integer j = null;
+        System.out.println("D: " + d + "; " + i);
+        System.out.println("D: " + d + "; " + j);
     }
 }
 

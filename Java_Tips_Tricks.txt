@@ -47,6 +47,7 @@
 40. Check ArrayLists is empty
 41. Check if Array is empty
 42. Convert Array to ArrayList in Java
+42a. How to convert int[] into List<Integer> in Java?
 42b. Convert ArrayList to Array in Java
 43. Integer MAX_VALUE
 44. Char array to String
@@ -141,13 +142,29 @@
 127. Read multiple lines from console
 128. STRING OPERATIONS
 128a. Find index of String in another string
-128b. Get substring
+128b. Get substring from String / StringBuilder
 128c. Java indexOf method for multiple matches in String
 129. How can I clear or empty a StringBuilder?
 130. What is the best way to tell if a character is a letter or number in Java without using regexes?
 131. How to determine if a String has non-alphanumeric characters
 132. Don't assign one list to another
 133. How to sort Map values by key in Java
+134. Arrays.fill with multidimensional array in Java
+135. Implement Comparator function
+136. Possible Lossy conversion from long to int
+137. How do I convert from int to Long in Java?
+138. Do containsAll() and retainAll() in the Collection interface address cardinality?
+139. Simple way to find if two different lists contain exactly the same elements?
+140. CompareTo with primitives -> Integer / int
+141. Initialization of an ArrayList in one line
+142. How to convert int[] into List<Integer> in Java?
+143. How to set a default value for items list / array?
+144. Get Size of data types
+145. Remove last character from String and StringBuilder
+146. Convert int to int array
+147. Change char in a StringBuilder
+148. String equals
+149. String.charAt() goes out of bound if index is beyond string length
 --------------------------------------------------------------------------------------------
 
 1.
@@ -936,6 +953,14 @@ http://stackoverflow.com/questions/3335737/integer-tostringint-i-vs-string-value
 		String t = String.valueOf(i);
 		System.out.println(t);
 
+32b. Difference between parseInt and valueOf in java?
+    Well, the API for Integer.valueOf(String) does indeed say that the String is interpreted exactly as if it were given to Integer.parseInt(String). However, valueOf(String) returns a new Integer() object whereas parseInt(String) returns a primitive int
+
+    If you want to enjoy the potential caching benefits of Integer.valueOf(int), you could also use this eyesore:
+        Integer k = Integer.valueOf(Integer.parseInt("123"))
+
+    Now, if what you want is the object and not the primitive, then using valueOf(String) may be more attractive than making a new object out of parseInt(String) because the former is consistently present across Integer, Long, Double, etc
+
 33.
 Iterating over a Map using EntrySet
 http://stackoverflow.com/questions/5428897/why-do-we-use-entryset-method-and-use-the-retured-set-to-iterate-a-map
@@ -1144,6 +1169,15 @@ Check if Array is empty
 Convert Array to ArrayList
 
     new ArrayList<Element>(Arrays.asList(array))
+
+42a. How to convert int[] into List<Integer> in Java?
+    There is no shortcut for converting from int[] to List<Integer> as Arrays.asList does not deal with boxing and will just create a List<int[]> which is not what you want. 
+
+    List<Integer> Ints.asList(int...)
+    
+    int[] ints = {1,2,3};
+    List<Integer> list = Arrays.stream(ints).boxed().collect(Collectors.toList());
+
 
 42b.
 Convert ArrayList to Array in Java
@@ -2226,6 +2260,21 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
 	}
 
 108. Java Data structures:
+
+                Add         Get             Remove          Update      isPresent       Size        isEmpty     Clear
+ArrayList       add         get                             set         indexOf         size        isEmpty     clear
+Stack           push        pop/peek                                    search          size        empty
+Queue           add/offer   element/peek   remove/poll                                              isEmpty
+PiorityQueue    add/offer   peek           remove/poll                  contains        size        isEmpty     clear
+LinkedList      add/offer   element/peek   remove/poll                                              isEmpty
+HashSet         add                        remove                       contains        size        isEmpty     clear
+HashMap         put         get            remove           put         containsKey     size        isEmpty     clear
+LinkedHashMap   put         get            remove           put         containsKey     size        isEmpty     clear
+
+String: chatAt, equals, compareTo, indexOf, isEmpty, length, valueOf, substring, startsWith, split
+Arrays: asList, binarySearch, fill, equals, sort
+
+
     1. Arrays
         a. arr.length;
 
@@ -2279,10 +2328,17 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
         i. toArray()
 
     6. Queue
-        a. queue.add()
-        b. queue.remove()
+        a. queue.add() // Throws exception
+        b. queue.remove() // Throws exception
         c. queue.element() // Get first element
         d. queue.isEmpty()
+        d. queue.poll() // Does not throw exception
+
+    I guess the difference is in the contract, that when element can not be added to collection the add method throws an exception and offer doesn't.
+
+    If a collection refuses to add a particular element for any reason other than that it already contains the element, it must throw an exception (rather than returning false). This preserves the invariant that a collection always contains the specified element after this call returns.
+
+    Inserts the specified element into this queue, if possible. When using queues that may impose insertion restrictions (for example capacity bounds), method offer is generally preferable to method Collection.add(E), which can fail to insert an element only by throwing an exception.
 
     7. Stack
         a. st.push()
@@ -2297,7 +2353,7 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
     9. LinkedList
         a. ll.add()
         b. ll.getFirst()
-        c. ll.getLash()
+        c. ll.getLast()
     10. Google Multimap
            Multimap<Integer, Integer> sumMap = HashMultimap.create();
     BitSet
@@ -2713,7 +2769,7 @@ BufferedReader is Faster then Scanner
     String.indexOf(String str)
     Boolean found = text.contains(word);
 
-128b. Get substring
+128b. Get substring from String / StringBuilder
     line.substring(line.indexOf("//") + 1);
 
 128c. Java indexOf method for multiple matches in String
@@ -2763,3 +2819,116 @@ https://stackoverflow.com/questions/922528/how-to-sort-map-values-by-key-in-java
         List sortedKeys=new ArrayList(yourMap.keySet());
         Collections.sort(sortedKeys);
         // Do what you need with sortedKeys.
+
+134. Arrays.fill with multidimensional array in Java
+    // Fill each row with 1.0
+    for (double[] row: matrix)
+        Arrays.fill(row, 1.0);
+
+135. Implement Comparator function
+https://stackoverflow.com/questions/5805602/how-to-sort-list-of-objects-by-some-property
+        Collections.sort(intervals, new Comparator<Interval>() {
+            public int compare(Interval a, Interval b) {
+                return a.start > b.start ? 1 : a.start < b.start ? -1 : 0;
+            }
+        });
+
+    Either make ActiveAlarm implement Comparable<ActiveAlarm> or implement Comparator<ActiveAlarm> in a separate class. Then call:
+        Collections.sort(list);
+    or
+        Collections.sort(list, comparator);
+
+    In general, it's a good idea to implement Comparable<T> if there's a single "natural" sort order... otherwise (if you happen to want to sort in a particular order, but might equally easily want a different one) it's better to implement Comparator<T>. This particular situation could go either way, to be honest... but I'd probably stick with the more flexible Comparator<T> option
+
+136. Possible Lossy conversion from long to int
+    Array index is an integer in Java and the compiler will advice you. So maximum array size is (aproximately) Integer.MAX_VALUE. For bigger arrays you should use ArrayList.
+
+137. How do I convert from int to Long in Java?
+    Note that there is a difference between a cast to long and a cast to Long. If you cast to long (a primitive value) then it should be automatically boxed to a Long (the reference type that wraps it)
+
+    Long.valueOf(int);
+
+138. Do containsAll() and retainAll() in the Collection interface address cardinality?
+    No
+
+    Using containsAll(). This option is not ideal, in my opinion, because it offers worst case performance, O(n^2).
+
+    There are two variations to this:
+    2a) If you don't care about maintaining the order ofyour lists... use Collections.sort() on both list. Then use the equals(). This is O(nlogn), because you do two sorts, and then an O(n) comparison.
+
+139. Simple way to find if two different lists contain exactly the same elements?
+    If you care about order, then just use the equals method:
+        list1.equals(list2)
+
+140. CompareTo with primitives -> Integer / int
+    Integer.compare(int, int)
+
+    int cmp = a > b ? +1 : a < b ? -1 : 0;
+
+140. Java: is there an easy way to select a subset of an array?
+    Arrays.copyOfRange(array, 1, array.length);
+
+141. Initialization of an ArrayList in one line
+    Actually, probably the "best" way to initialize the ArrayList is the method you wrote, as it does not need to create a new List in any way:
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("A");
+        list.add("B");
+        list.add("C");
+
+142. How to convert int[] into List<Integer> in Java?
+
+    There is no shortcut for converting from int[] to List<Integer> as Arrays.asList does not deal with boxing and will just create a List<int[]> which is not what you want. You have to make a utility method.
+
+        int[] ints = {1, 2, 3};
+        List<Integer> intList = new ArrayList<Integer>();
+        for (int index = 0; index < ints.length; index++)
+        {
+            intList.add(ints[index]);
+        }
+
+
+    Actually, probably the "best" way to initialize the ArrayList is the method you wrote, as it does not need to create a new List in any way:
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("A");
+        list.add("B");
+        list.add("C");
+
+143. How to set a default value for items list / array?
+
+    Integer[] integers = new Integer[10];
+    Arrays.fill(integers, 0);
+
+    Collections.nCopies is your friend if you need a list instead of an array:
+        List<Integer> list = Collections.nCopies(10, 0);
+    If a mutable list is needed, wrap it:
+        List<Integer> list = new ArrayList<>(Collections.nCopies(10, 0));
+
+144. Get Size of data types
+    Since Java 8, all wrapper classes of primitive types (except Boolean) have a BYTES field
+        Double.BYTES 
+        Integer.BYTES
+
+    Pre Java 8 - Get size in bits and conver to bytes
+        Double.SIZE / Byte.SIZE
+        Integer.SIZE / Byte.SIZE
+
+145. Remove last character from String and StringBuilder
+    sb.setLength(sb.length() - 1);
+    str = str.substring(0, str.length() - 1);
+
+146. Convert int to int array
+        String temp = Integer.toString(guess);
+        int[] newGuess = new int[temp.length()];
+        for (int i = 0; i < temp.length(); i++)
+        {
+            newGuess[i] = temp.charAt(i) - '0';
+        }
+
+147. Change char in a StringBuilder
+    setCharAt()
+
+148. String equals
+    == tests for reference equality (whether they are the same object).
+    .equals() tests for value equality (whether they are logically "equal").
+
+149. String.charAt() goes out of bound if index is beyond string length

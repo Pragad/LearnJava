@@ -9,6 +9,14 @@ public class Strings
         System.out.println(e);
     }
 
+    static void reverseWord(StringBuilder sb) {
+        for (int i = 0; i < sb.length() / 2; i++) {
+            char t = sb.charAt(i);
+            sb.setCharAt(i, sb.charAt(sb.length() - i - 1));
+            sb.setCharAt(sb.length() - i - 1, t);
+        }
+    }
+
     public static void main(String[] args) {
         // 1.
         {
@@ -27,6 +35,14 @@ public class Strings
             System.out.println(s);
             foo(s);
             System.out.println(s);
+        }
+
+        // 3. String builder mutability
+        {
+            StringBuilder sb = new StringBuilder("name");
+            System.out.println(sb.toString());
+            reverseWord(sb);
+            System.out.println(sb.toString());
         }
     }
 }

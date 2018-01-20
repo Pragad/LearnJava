@@ -80,9 +80,6 @@
  * Problem 24. Nth largest element in a binary search tree
  * int NthLargestInBST(Node root, uint32_t n)
  *
- * Problem 24b. 2nd largest element in a binary search tree
- * int SecondLargestInBST(Node root)
- *
  * Problem 25 In Order Successor in Binary Search Tree
  * Node InorderSuccessorWithParent(Node node)
  *
@@ -124,6 +121,18 @@ class Node {
     int data;
     Node left;
     Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+
+    Node() {
+        this.data = 0;
+        left = null;
+        right = null;
+    }
 }
 
 public class BinaryTreeProblems {
@@ -334,8 +343,7 @@ public class BinaryTreeProblems {
         }
         Node tmpLeft = root.left;
         Node tmpRight = root.right;
-        Node tmp = new Node();
-        tmp.data = root.data;
+        Node tmp = new Node(root.data);
         tmp.left = root.left;
 
         root.left = tmp;
@@ -666,9 +674,236 @@ public class BinaryTreeProblems {
     }
 
     // -------------------------------------------------------------------------
-    // Problem 24b. 2nd largest element in a binary search tree
+    // Problem 24. Nth largest element in a binary search tree
+    // https://www.geeksforgeeks.org/kth-largest-element-in-bst-when-modification-to-bst-is-not-allowed/
     // -------------------------------------------------------------------------
+    static class Result24 {
+        int nthLargest;
+    }
 
+    static int nthLargestInBST(Node root, int n) {
+        Result24 res = new Result24();
+        nthLargestInBST(root, n, res);
+        return res.nthLargest;
+    }
+
+    static int nthLargestInBST(Node root, int n, Result24 res) {
+        if (root == null) {
+            return n;
+        }
+        n = nthLargestInBST(root.right, n, res);
+        n--;
+        if (n == 0) {
+            res.nthLargest = root.data;
+            return n;
+        }
+        return nthLargestInBST(root.left, n, res);
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 30. Serialize a tree
+    // https://leetcode.com/problems/serialize-and-deserialize-binary-tree/discuss/74253/
+    // https://stackoverflow.com/questions/4611555/how-to-serialize-binary-tree
+    // -------------------------------------------------------------------------
+    static String serialize(Node root) {
+        StringBuilder sb = new StringBuilder();
+        serializeRec(root, sb);
+        return sb.toString();
+    }
+
+    static void serializeRec(Node root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("NULL")
+              .append(", ");
+            return;
+        }
+        sb.append(root.data).append(", ");
+        serializeRec(root.left, sb);
+        serializeRec(root.right, sb);
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 31. Deserialize a tree
+    // -------------------------------------------------------------------------
+    static Node deserialize(String data) {
+        Queue<String> nodes = new LinkedList<>(Arrays.asList(data.split(", ")));
+        System.out.println(nodes);
+        return deserializeRec(nodes);
+    }
+
+    static Node deserializeRec(Queue<String> nodes) {
+        if (nodes.isEmpty()) {
+            return null;
+        }
+        String s = nodes.remove();
+        if (s.equals("NULL")) {
+            return null;
+        }
+        Node n = new Node(Integer.parseInt(s));
+        n.left = deserializeRec(nodes);
+        n.right = deserializeRec(nodes);
+        return n;
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 32. Convert Tree into a Double Linked List
+    // https://www.geeksforgeeks.org/convert-a-given-binary-tree-to-doubly-linked-list-set-2/
+    // -------------------------------------------------------------------------
+    static Node convertTreeToDoubleList(Node root) {
+        Node tmp = root;
+        Node prev = null;
+        fixPrevPointer(tmp, prev);
+        fixNextPointer(root);
+
+        // Print the list
+        while (root != null) {
+            System.out.print(root.data + " ");
+            root = root.right;
+        }
+        System.out.println();
+        return root;
+    }
+
+    static Node fixPrevPointer(Node root, Node prev) {
+        if (root == null) {
+            return null;
+        }
+        Node tmp = fixPrevPointer(root.left, prev);
+        if (tmp != null) {
+            root.left = tmp;
+        } else {
+            root.left = prev;
+        }
+        prev = root;
+        fixPrevPointer(root.right, prev);
+        return prev;
+    }
+
+    static Node fixNextPointer(Node root) {
+        // Goto right most node
+        if (root == null) {
+            return null;
+        }
+        while (root.right != null) {
+            root = root.right;
+        }
+        while (root.left != null) {
+            Node prev = root.left;
+            prev.right = root;
+            root = prev;
+        }
+        return root;
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 32b. Convert Tree into a Double Linked List
+    // https://www.geeksforgeeks.org/convert-given-binary-tree-doubly-linked-list-set-3/
+    // -------------------------------------------------------------------------
+    /*
+    static Node head = null;
+    static Node convertTreeToDoubleList2(Node root) {
+        Node prev = null;
+        Node tmpHead = root;
+        convertTreeToDoubleListRec2(tmpHead, prev);
+
+        // This is to avoid using the above static head
+        while (tmpHead.left != null) {
+            tmpHead = tmpHead.left;
+        }
+
+        // Print the list to make sure double linked list is correct
+        while (tmpHead != null) {
+            System.out.print(tmpHead.data + " ");
+            tmpHead = tmpHead.right;
+        }
+        System.out.println();
+
+        return tmpHead;
+    }
+    
+    static Node convertTreeToDoubleListRec2(Node root, Node prev) {
+        if (root == null) {
+            return null;
+        }
+
+        Node tmp = convertTreeToDoubleListRec2(root.left, prev);
+        // Fix the prev pointer
+        prev = tmp != null ? tmp : prev;
+        // If this is the least node, the set head to this node
+        if (prev == null) {
+            // This will be the head of the linked list. But this is a static variable
+            // Alternate way to get head will be to get the root and the traverse left to find the head
+            head = root;
+        } else {
+            // Fix the next pointer
+            prev.right = root;
+        }
+
+        root.left = prev;
+        prev = root;
+        tmp = convertTreeToDoubleListRec2(root.right, prev);
+        prev = tmp != null ? tmp : prev;
+        return prev;
+    }
+    */
+
+    static class Result2 {
+        Node head;
+    }
+
+    static Node convertTreeToDoubleList2(Node root) {
+        Node prev = null;
+        Node tmpHead = root;
+        Result2 res2 = new Result2();
+        convertTreeToDoubleListRec2(tmpHead, prev, res2);
+
+        // This is to avoid using the above static head
+        /*
+        while (tmpHead.left != null) {
+            tmpHead = tmpHead.left;
+        }
+
+        // Print the list to make sure double linked list is correct
+        while (tmpHead != null) {
+            System.out.print(tmpHead.data + " ");
+            tmpHead = tmpHead.right;
+        }
+        System.out.println();
+        */
+
+        while (res2.head != null) {
+            System.out.print(res2.head.data + " ");
+            res2.head = res2.head.right;
+        }
+        System.out.println();
+        return res2.head;
+    }
+    
+    static Node convertTreeToDoubleListRec2(Node root, Node prev, Result2 res2) {
+        if (root == null) {
+            return null;
+        }
+
+        Node tmp = convertTreeToDoubleListRec2(root.left, prev, res2);
+        // Fix the prev pointer
+        prev = tmp != null ? tmp : prev;
+        // If this is the left most node, set head to this node
+        if (prev == null) {
+            // This will be the head of the linked list. But this is a static variable
+            // Alternate way to get head will be to get the root and the traverse left to find the head
+            res2.head = root;
+        } else {
+            // Fix the next pointer
+            prev.right = root;
+        }
+
+        root.left = prev;
+        prev = root;
+        tmp = convertTreeToDoubleListRec2(root.right, prev, res2);
+        prev = tmp != null ? tmp : prev;
+        return prev;
+    }
+    
     // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
@@ -815,7 +1050,32 @@ public class BinaryTreeProblems {
             System.out.println("Problem 22. Find largest element smaller than K in a BST");
             System.out.println(findLargestNumSmallerThanKey(root, 6));
         }
-    }
 
+        // Problem 24. Nth largest element in a binary search tree
+        {
+            System.out.println("Problem 24. Nth largest element in a binary search tree");
+            System.out.println(nthLargestInBST(root, 3));
+        }
+
+        // Problem 30. Serialize a tree
+        {
+            System.out.println("Problem 30. Serialize a tree");
+            System.out.println(serialize(root));
+        }
+
+        // Problem 31. Deserialize a tree
+        {
+            System.out.println("Problem 31. Deserialize a tree");
+            printLevelOrderTraversal(deserialize(serialize(root)));
+        }
+
+        // Problem 32. Convert Tree into a Double Linked List
+        {
+            System.out.println("Problem 32. Convert Tree into a Double Linked List");
+            //convertTreeToDoubleList(root);
+            //printLevelOrderTraversal(root);
+            convertTreeToDoubleList2(root);
+        }
+    }
 }
 
