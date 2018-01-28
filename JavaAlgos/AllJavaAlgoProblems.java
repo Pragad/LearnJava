@@ -102,6 +102,15 @@ import java.util.stream.*;
  * PROBLEM 40. Binary to Decimal and Decimal to binary
  *
  * PROBLEM 41. Roman to decimal and decimal to roman
+ *
+ * PROBLEM 42. Find smallest range containing elements from k lists
+ *
+ * PROBLEM 43. Rotate a matrix clockwise by 90degrees
+ *
+ * PROBLEM 44. Top K Frequent Elements
+ *
+ * PROBLEM 45a. Convert decimal to any base
+ * PROBLEM 45b. Convert any base to decimal
  */
 
 // -----------------------------------------------------------------------------
@@ -109,8 +118,8 @@ import java.util.stream.*;
 // https://stackoverflow.com/questions/521171/a-java-collection-of-value-pairs-tuples
 // -----------------------------------------------------------------------------
 final class Pair<L, R> {
-    private final L left;
-    private final R right;
+    private L left;
+    private R right;
 
     public Pair (L left, R right) {
         this.left = left;
@@ -123,6 +132,14 @@ final class Pair<L, R> {
 
     public R getRight() {
         return right;
+    }
+
+    public void setLeft(L left) {
+        this.left = left;
+    }
+
+    public void setRight(R right) {
+        this.right = right;
     }
 
     @Override
@@ -356,11 +373,14 @@ public class AllJavaAlgoProblems {
     public static int firstUniqueCharacter(String s) {
         HashMap<Character, Integer> charMap = new HashMap<>();
         for (char c : s.toCharArray()) {
+            charMap.put(c, charMap.getOrDefault(c, 0) + 1);
+            /*
             if (charMap.containsKey(c)) {
                 charMap.put(c, charMap.get(c) + 1);
             } else {
                 charMap.put(c, 1);
             }
+            */
         }
 
         for (int i = 0; i < s.length(); i++) {
@@ -918,6 +938,38 @@ public class AllJavaAlgoProblems {
     // -------------------------------------------------------------------------
     // PROBLEM 24. 3 number sum closest
     // -------------------------------------------------------------------------
+    static List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        // Copy into Set to remove duplicates
+        Set<List<Integer>> result = new HashSet<>();
+        List<List<Integer>> resultList = new ArrayList<List<Integer>>();
+        for (int i = 0; i < nums.length; i++)
+        {
+            int k = nums.length - 1;
+            // VERY IMPORTANT. This hugely saves time
+            if (i != 0 && nums[i] == nums[i-1]) {
+                continue;
+            }
+            for (int j = i + 1; j < k; )
+            {
+                if (nums[i] + nums[j] + nums[k] == 0)
+                {
+                    result.add(new ArrayList<>(Arrays.asList(nums[i], nums[j], nums[k])));
+                    j++;
+                    k--;
+                }
+                else if (nums[i] + nums[j] + nums[k] > 0)
+                {
+                    k--;
+                }
+                else
+                {
+                    j++;
+                }
+            }
+        }
+        return new ArrayList<List<Integer>>(result);       
+    }
     static void printThreeNumSum(int[] arr, int sum) {
         int j;
         int k;
@@ -1536,6 +1588,242 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
+    // PROBLEM 42. Find smallest range containing elements from k lists
+    // -------------------------------------------------------------------------
+    static Pair findSmallestRange(List<List<Integer>> lists) {
+        Pair<Integer, Integer> range = new Pair<>(0, Integer.MAX_VALUE);
+        PriorityQueue<Pair<Integer, Pair<Integer, Integer>>> pqNums = new PriorityQueue<>(lists.size(), new Comparator<Pair<Integer, Pair<Integer, Integer>>>() {
+            public int compare(Pair<Integer, Pair<Integer, Integer>> p1, Pair<Integer, Pair<Integer, Integer>> p2) {
+                //return p1.getLeft() > p2.getLeft() ? 1 : p1.getLeft() < p2.getLeft() ? -1 : 0;
+                return p1.getLeft().compareTo(p2.getLeft());
+            }
+        });
+        int maxNum = Integer.MIN_VALUE;
+        for (int i = 0; i < lists.size(); i++) {
+            maxNum = Math.max(maxNum, lists.get(i).get(0));
+            pqNums.add(new Pair(lists.get(i).get(0), new Pair(i, 0)));
+        }
+
+        while (true) {
+            Pair<Integer, Pair<Integer, Integer>> curNum = pqNums.remove();
+            if (maxNum - curNum.getLeft() < range.getRight() - range.getLeft()) {
+                range.setLeft(curNum.getLeft());
+                range.setRight(maxNum);
+            }
+            // Check if we reached the end of the list
+            if (lists.get(curNum.getRight().getLeft()).size() == curNum.getRight().getRight() + 1) {
+                return range;
+            } else {
+                int num = lists.get(curNum.getRight().getLeft()).get(curNum.getRight().getRight() + 1);
+                pqNums.add(new Pair(num, new Pair(curNum.getRight().getLeft(), curNum.getRight().getRight() + 1)));
+                maxNum = Math.max(maxNum, num);
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 43. Rotate a matrix clockwise by 90degrees
+    // -------------------------------------------------------------------------
+    static void transposeMatrix(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = i + 1; j < matrix[i].length; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+    }
+    
+    static void reverseRows(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length / 2; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[i][matrix[i].length - j - 1];
+                matrix[i][matrix[i].length - j - 1] = temp;
+            }
+        }
+    }
+    
+    static void printMatrix(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();        
+    }
+    
+    static void rotateMatrix(int[][] matrix) {
+        //printMatrix(matrix);
+        transposeMatrix(matrix);
+        reverseRows(matrix);
+        //printMatrix(matrix);
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 44. Top K Frequent Elements
+    // Can be done in O(N) using Bucket Sort
+    // https://stackoverflow.com/questions/3260653/algorithm-to-find-top-10-search-terms
+    // https://stackoverflow.com/questions/185697/the-most-efficient-way-to-find-top-k-frequent-words-in-a-big-word-sequence
+    //
+    // Instead of creating a freqMap, find the maxCount of a number and create
+    // an array of that size
+    // List<Integer, List<Integers>> where first Integer is the freq and second is
+    // all elements with that freq
+    // -------------------------------------------------------------------------
+    static List<Integer> topKFrequent(int[] nums, int k) {
+        if (nums.length == 0 || k <= 0) {
+            return new ArrayList<>();
+        }
+        Map<Integer, Integer> numMap = new HashMap<>();
+        for (int num : nums) {
+            numMap.put(num, numMap.getOrDefault(num, 0) + 1);
+        }
+        
+        Map<Integer, List<Integer>> freqMap = new TreeMap<>(Collections.reverseOrder());
+        for (Map.Entry<Integer, Integer> e : numMap.entrySet()) {
+            if (freqMap.containsKey(e.getValue())) {
+                freqMap.get(e.getValue()).add(e.getKey());
+            } else {
+                freqMap.put(e.getValue(), new ArrayList<>(Arrays.asList(e.getKey())));
+            }
+        }
+
+        List<Integer> topKItems = new ArrayList<>();
+        for (Map.Entry<Integer, List<Integer>> e : freqMap.entrySet()) {
+            topKItems.addAll(e.getValue());
+            if (topKItems.size() >= k) { 
+                break;
+            }
+        }
+        if (topKItems.size() > k) {
+            topKItems.subList(k, topKItems.size()).clear();
+        }
+        return topKItems;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 45a. Convert decimal to any base
+    // https://stackoverflow.com/questions/742013/how-to-code-a-url-shortener
+    // -------------------------------------------------------------------------
+    static String convertDecimalToAnyBase(int num, int base) {
+        if (base > 62) {
+            return "";
+        }
+        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder sb = new StringBuilder();
+        while (num != 0) {
+            sb.append(chars.charAt(num % base));
+            num = num / base;
+        }
+        return sb.reverse().toString();
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 45b. Convert any base to decimal
+    // https://github.com/delight-im/ShortURL/blob/master/Java/ShortURL.java
+    // -------------------------------------------------------------------------
+    static int convertAnyBaseToDecimal(String num, int base) {
+        if (base > 62) {
+            return -1;
+        }
+        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int result = 0;
+        for (char c : num.toCharArray()) {
+            result = result * base + chars.indexOf(c);
+        }
+        /*
+        for (int i = num.length() - 1, j = 0; i >= 0; i--, j++) {
+            int index = chars.indexOf(num.charAt(i));
+            result += index * Math.pow(base, j);
+        }
+        */
+
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 46. ZigZag conversion
+    // -------------------------------------------------------------------------
+    static String zigzagConversion(String s, int numRows) {
+        List<Integer> al = new ArrayList<>();
+        List<StringBuilder> strLines = new ArrayList<>(numRows);
+        for (int i = 0; i < numRows; i++) {
+            strLines.add(new StringBuilder(""));
+        }
+
+        for (int x = 0; x < s.length(); ) {
+            for (int i = 0; i < numRows && x < s.length(); i++) {
+                StringBuilder sb = strLines.get(i);
+                strLines.set(i, sb.append(s.charAt(x)));
+                x++;
+            }
+            for (int i = numRows - 2; i >= 1 && x < s.length(); i--) {
+                strLines.get(i).append(s.charAt(x));
+                x++;
+            }
+        }
+        for (int i = 1; i < strLines.size(); i++) {
+            strLines.get(0).append(strLines.get(i));
+        }
+        return strLines.get(0).toString();
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 47. Minimun length between numbers with max frequency
+    // -------------------------------------------------------------------------
+    static class NumDetails {
+        int count;
+        int stIdx;
+        int endIdx;
+        int len;
+        
+        NumDetails(int count, int stIdx, int endIdx) {
+            this.count = count;
+            this.stIdx = stIdx;
+            this.endIdx = endIdx;
+            this.len = endIdx - stIdx + 1;
+        }
+
+        @Override
+        public String toString() {
+            return "Cnt: " + this.count + "; St: " + this.stIdx + "; End: "
+                   + this.endIdx + "; Len: " + len;
+        }
+    }
+
+    static int minLengthMaxFrequencyNumbers(int[] arr) {
+        HashMap<Integer, NumDetails> hmap = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            NumDetails tmp = hmap.get(arr[i]);
+            hmap.put(arr[i], tmp != null ? new NumDetails(tmp.count + 1, tmp.stIdx, i) : new NumDetails(1, i, i));
+        }
+
+        List<Map.Entry<Integer, NumDetails>> list = new ArrayList<Map.Entry<Integer, NumDetails>>(hmap.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<Integer, NumDetails>>() {
+            public int compare(Map.Entry<Integer, NumDetails> o1, Map.Entry<Integer, NumDetails> o2) {
+                // This sorts in reverse order
+                return (o2.getValue().count) - (o1.getValue().count);
+            }
+        });
+
+        int maxFreq = Integer.MIN_VALUE;
+        int minNum = Integer.MAX_VALUE;
+        for (Map.Entry<Integer, NumDetails> e : list) {
+            if (e.getValue().count >= maxFreq) {
+                maxFreq = e.getValue().count;
+                //minNum = Math.min(e.getValue().endIdx - e.getValue().stIdx + 1, minNum);
+                minNum = Math.min(e.getValue().len, minNum);
+            } else {
+                break;
+            }
+        }
+
+        return minNum;
+    }
+
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String[] args) {
@@ -1920,6 +2208,67 @@ public class AllJavaAlgoProblems {
             System.out.println(romanToDecimal("MMMDXLIX"));
             System.out.println(romanToDecimal("MMCM"));
             System.out.println(romanToDecimal("XIV"));
+        }
+
+        // PROBLEM 42. Find smallest range containing elements from k lists
+        {
+            System.out.println("\nPROBLEM 42. Find smallest range containing elements from k lists");
+
+            List<Integer> l1 = new ArrayList<>(Arrays.asList(4, 7, 9, 12, 15));
+            List<Integer> l2 = new ArrayList<>(Arrays.asList(0, 8, 10, 14, 20));
+            List<Integer> l3 = new ArrayList<>(Arrays.asList(6, 12, 16, 30, 50));
+            List<List<Integer>> lists = new ArrayList<List<Integer>>();
+            lists.add(l1);
+            lists.add(l2);
+            lists.add(l3);
+            System.out.println(findSmallestRange(lists));
+        }
+
+        // PROBLEM 43. Rotate a matrix clockwise by 90degrees 
+        {
+            System.out.println("\nPROBLEM 43. Rotate a matrix clockwise by 90degrees ");
+            int[][] matrix = {
+                              { 5, 1, 9,11},
+                              { 2, 4, 8,10},
+                              {13, 3, 6, 7},
+                              {15,14,12,16}
+                             };
+            printMatrix(matrix);
+            rotateMatrix(matrix);
+            printMatrix(matrix);
+        }
+
+        // PROBLEM 44. Top K Frequent Elements
+        {
+            System.out.println("\nPROBLEM 44. Top K Frequent Elements");
+            int[] nums = {1,1,1,2,2,3};
+            int k = 2;
+            System.out.println(topKFrequent(nums, k));
+        }
+
+        // PROBLEM 45. Convert any base to any base
+        {
+            System.out.println("\nPROBLEM 45. Convert any base to any base");
+            int num = 56789;
+            int base = 62;
+            String result1 = convertDecimalToAnyBase(num, base);
+            int result2 = convertAnyBaseToDecimal(result1, base);
+            System.out.println("Res1: " + result1 + ", Res2: " + result2);
+        }
+
+        // PROBLEM 46. ZigZag conversion
+        {
+            System.out.println("\nPROBLEM 46. ZigZag conversion");
+            String s = "PAYPALISHIRING";
+            System.out.println(zigzagConversion(s, 4));
+        }
+
+        // PROBLEM 47. Minimun length between numbers with max frequency
+        {
+            System.out.println("\nPROBLEM 47. Minimun length between numbers with max frequency");
+            int[] nums1 = {1, 2, 3, 4, 2, 2, 3};
+            int[] nums2 = {1, 2, 2, 3, 1};
+            System.out.println(minLengthMaxFrequencyNumbers(nums2));
         }
     }
 }

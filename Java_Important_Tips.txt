@@ -29,6 +29,19 @@
 27. String equals
 28. String.charAt() goes out of bound if index is beyond string length
 29. Everything except stack has isEmpty() while stack has empty()
+30. Print a list using forEach
+31. Generating Random Number
+32. Sort HashMap by values
+32b. Comparator for TreeMap and TreeSet
+33. How to initialize HashSet values by construction?
+34. Hashmap getOrDefault
+35. List of lists
+36. Directly return an array
+37. Remove range of elements from a list
+38. Int to Char and Char to int
+39. Sort list of strings
+39b. Sort array
+40. Convert HashSet to List
 ------------------------------------------------------------------------------------------
 1. Integer.MAX_VALUE
 
@@ -223,17 +236,30 @@ https://stackoverflow.com/questions/5805602/how-to-sort-list-of-objects-by-some-
 18. CompareTo with primitives -> Integer / int
     Integer.compare(int, int)
 
+    Integer i1 = 5;
+    Integer i2 = 6;
+    i1.compareTo(i2);
+
     int cmp = a > b ? +1 : a < b ? -1 : 0;
 
 19. Java: is there an easy way to select a subset of an array?
     Arrays.copyOfRange(array, 1, array.length);
 
 20. Initialization of an ArrayList in one line
+        List<Integer> l1 = new ArrayList<>(Arrays.asList(4, 7, 9, 12, 15));
+        List<Integer> l2 = Arrays.asList(4, 7, 9, 12, 15);
+        l1.add(17);
+        l2.add(17); // UnsupportedOperationException
+
     Actually, probably the "best" way to initialize the ArrayList is the method you wrote, as it does not need to create a new List in any way:
         ArrayList<String> list = new ArrayList<String>();
         list.add("A");
         list.add("B");
         list.add("C");
+
+    List<String> strings = Arrays.asList("foo", "bar", "baz");
+
+    ArrayList<String> places = new ArrayList<>(Arrays.asList("Buenos Aires", "Córdoba", "La Plata"));
 
 21. How to convert int[] into List<Integer> in Java?
 
@@ -286,7 +312,7 @@ https://stackoverflow.com/questions/5805602/how-to-sort-list-of-objects-by-some-
 
 28. String.charAt() goes out of bound if index is beyond string length
 
-29. Java Datastructures
+29. Java Datastructures / Data structures
                 Add         Get             Remove          Update      isPresent       Size        isEmpty     Clear
 ArrayList       add         get                             set         indexOf         size        isEmpty     clear
 Stack           push        pop/peek                                    search          size        empty
@@ -297,8 +323,143 @@ HashSet         add                        remove                       contains
 HashMap         put         get            remove           put         containsKey     size        isEmpty     clear
 LinkedHashMap   put         get            remove           put         containsKey     size        isEmpty     clear
 
+PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
+
 String: chatAt, equals, compareTo, indexOf, isEmpty, length, valueOf, substring, startsWith, split
 StringBuilder: reverse
 Arrays: asList, binarySearch, fill, equals, sort
 
 29. Everything except stack has isEmpty() while stack has empty()
+
+30. Print a list using forEach
+    list.forEach(System.out::println);
+
+31. Generating Random Number
+    Seed for random:
+        Random random = new Random(System.currentTimeMillis());
+
+    0. Generating Random Number between 1 and N
+        a. Math.random
+            random() method returns a random number between 0.0 and 0.999
+
+            double random = Math.random() * 50 + 1;
+            or
+            int random = (int )(Math.random() * 50 + 1);
+
+        b.
+            Random rand = new Random(); 
+            int value = rand.nextInt(50);
+
+            This will give value from 0 to 49.
+            For 1 to 50: rand.nextInt((max - min) + 1) + min;
+
+    1. Generating Random Number in a Range between Min and Max
+        a.
+            Min + (int)(Math.random() * ((Max - Min) + 1))
+            This returns a value in the range [0,Max-Min), where 'Max-Min' is not included.
+
+32. Sort HashMap by values
+
+        List<Map.Entry<Integer, NumDetails>> list = new ArrayList<Map.Entry<Integer, NumDetails>>(hmap.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<Integer, NumDetails>>() {
+            public int compare(Map.Entry<Integer, NumDetails> o1, Map.Entry<Integer, NumDetails> o2) {
+                return (o1.getValue().count) - (o2.getValue().count);
+            }
+        });
+
+    public static <K, V extends Comparable<? super V>> Map<K, V> 
+        sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+        Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
+            public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+                return (o1.getValue()).compareTo( o2.getValue() );
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
+32b. Comparator for TreeMap and TreeSet
+    SortedMap<String, Double> myMap = 
+        new TreeMap<String, Double>(new Comparator<String>()
+        {
+            public int compare(String o1, String o2)
+            {
+                return o1.compareTo(o2);
+            } 
+    });
+
+33. How to initialize HashSet values by construction?
+    Set<String> h = new HashSet<>(Arrays.asList("a", "b"));
+    Again, this is not time efficient since you are constructing an array, converting to a list and using that list to create a set
+
+    Set<String> h = new HashSet<String>() {{
+        add("a");
+        add("b");
+    }};
+
+    Set<String> set = Stream.of("a", "b").collect(Collectors.toSet());
+
+34. Hashmap getOrDefault
+        The below code can be replaced with
+            if (charMap.containsKey(c)) {
+                charMap.put(c, charMap.get(c) + 1);
+            } else {
+                charMap.put(c, 1);
+            }
+
+        This one
+            charMap.put(c, charMap.getOrDefault(c, 0) + 1);
+
+        Another way:
+                Integer count = map.get(i);
+                map.put(i, count != null ? count+1 : 0);
+
+35. List of lists
+    List<List<Integer>> lists = new ArrayList<List<Integer>>();
+
+36. Directly return an array
+    return new int[]{start, start+dur}
+    return new int[]{}
+
+37. Remove range of elements from a list
+    list.subList(start, end).clear();
+    This actually calls removeRange behind the scenes
+
+38. Int to Char and Char to int
+https://stackoverflow.com/questions/17984975/convert-int-to-char-in-java
+    int a = 1;
+    char b = (char) a;
+    System.out.println(b);
+
+    will print out the char with ascii value 1 (start-of-heading char, which isn't printable).
+
+    int a = '1';
+    char b = (char) a;
+    System.out.println(b);
+
+    will print out the char with ascii value 49 (one corresponding to '1')
+
+    If you want to convert a digit (0-9), you can add 48 to it and cast, or something like Character.forDigit(a, 10);.
+
+https://stackoverflow.com/questions/16458564/convert-character-to-ascii-numeric-value-in-java
+    char character = name.charAt(0); // This gives the character 'a'
+    int ascii = (int) character; // ascii is now 97.
+
+    Though cast is not required explicitly, but its improves readability.
+
+    int ascii = character; // Even this will do the trick.
+
+39. Sort list of strings
+    Collections.sort(al, Collections.reverseOrder());
+    Collections.sort(al);
+
+39b. Sort array
+    Arrays.sort(arr);
+
+40. Convert HashSet to List
+    List<String> list = new ArrayList<String>(listOfTopicAuthors);

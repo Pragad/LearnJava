@@ -110,6 +110,8 @@
  *
  * Problem 34. Count Leaf Nodes
  * int countLeafNodes(Node root)
+ *
+ * Problem 35. Find max width of tree
  */
 
 import java.io.*;
@@ -166,10 +168,15 @@ public class BinaryTreeProblems {
         n7.data = 8;
         n7.left = null;
         n7.right = null;
+        Node n8 = new Node();
+        n8.data = 4;
+        n8.left = null;
+        n8.right = null;
 
         root.left = n2;
         root.right = n3;
         n2.right = n4;
+        n3.left = n8;
         n3.right = n5;
         n5.left = n6;
         n5.right = n7;
@@ -903,7 +910,43 @@ public class BinaryTreeProblems {
         prev = tmp != null ? tmp : prev;
         return prev;
     }
-    
+
+    // -------------------------------------------------------------------------
+    // Problem 35. Find max width of tree
+    // https://www.geeksforgeeks.org/maximum-width-of-a-binary-tree/
+    // -------------------------------------------------------------------------
+    static int maxWidth(Node root) {
+        if (root == null) {
+            return 0;
+        }
+        Queue<Node> nodeQueue = new LinkedList<>();
+        int currentLevelCount = 0;
+        int nextLevelCount = 0;
+
+        nodeQueue.add(root);
+        currentLevelCount++;
+        int maxWidth = currentLevelCount;
+
+        while (!nodeQueue.isEmpty()) {
+            Node curNode = nodeQueue.remove();
+            currentLevelCount--;
+            if (curNode.left != null) {
+                nodeQueue.add(curNode.left);
+                nextLevelCount++;
+            }
+            if (curNode.right != null) {
+                nodeQueue.add(curNode.right);
+                nextLevelCount++;
+            }
+            if (currentLevelCount == 0) {
+                maxWidth = Math.max(maxWidth, nextLevelCount);                
+                currentLevelCount = nextLevelCount;
+                nextLevelCount = 0;
+            }
+        }
+        return maxWidth;
+    }
+
     // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
@@ -1074,7 +1117,20 @@ public class BinaryTreeProblems {
             System.out.println("Problem 32. Convert Tree into a Double Linked List");
             //convertTreeToDoubleList(root);
             //printLevelOrderTraversal(root);
-            convertTreeToDoubleList2(root);
+            //convertTreeToDoubleList2(root);
+        }
+
+        // Problem 35. Find max width of tree
+        {
+            System.out.println("Problem 35. Find max width of tree");
+            System.out.println(maxWidth(root));
+        }
+
+        // Problem 36. Select a node at random
+        // https://stackoverflow.com/questions/32011232/randomly-select-a-node-from-a-binary-tree
+        {
+            System.out.println("Problem 36. Select a node at random");
+            //System.out.println(maxWidth(root));
         }
     }
 }

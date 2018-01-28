@@ -148,6 +148,11 @@ public class Graph<T> {
         System.out.println();
     }
 
+    /*
+    static Graph cloneGraph(Graph g) {
+    }
+    */
+
     public static void main(String[] args) {
 
         /*
@@ -193,6 +198,8 @@ public class Graph<T> {
         g.printGraphBfs(1);
         g.printGraphDfs(1);
         g.printGraphDfsRecursive(1);
+
+        Graph<String> newGraph = cloneGraph(g);
     }
 
 }

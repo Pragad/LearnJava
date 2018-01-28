@@ -16,9 +16,13 @@ import java.util.stream.*;
  * uint32_t longestCommonSubSequenceRec(string str1, string str2)
  * uint32_t longestCommonSubSequenceDP(string str1, string str2)
  *
- * PROBLEM 5. Coin change problem
+ * PROBLEM 5. Min Coin change problem
  * uint32_t minCoinChangeRec(uint32_t coins[], uint32_t num, uint32_t val)
  * uint32_t minCoinChangeDP(uint32_t coins[], uint32_t num, uint32_t val)
+ *
+ * PROBLEM 6. All possible ways to make coin denominations
+ *
+ * PROBLEM 7. Word break problem
  *
  */ 
 
@@ -252,7 +256,7 @@ public class DynamicProgramming  {
     }
 
     // ---------------------------------------------------------------------------------------
-    // PROBLEM 5. Coin change problem
+    // PROBLEM 5. Min Coin change problem
     // http://algorithms.tutorialhorizon.com/dynamic-programming-coin-change-problem/
     //            coins[] = {25, 10, 5}, V = 30
     //            Ans: 2
@@ -350,6 +354,52 @@ public class DynamicProgramming  {
     }
 
     // -------------------------------------------------------------------------
+    // PROBLEM 7. Word break problem
+    // https://www.geeksforgeeks.org/dynamic-programming-set-32-word-break-problem/
+    // -------------------------------------------------------------------------
+    static boolean isWordBreakPossibleRec(String word, Set<String> dict) {
+        if (word.length() == 0) {
+            return true;
+        }
+
+        for (int i = 1; i <= word.length(); i++) {
+            if (dict.contains(word.substring(0, i)) && isWordBreakPossibleRec(word.substring(i, word.length()), dict)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean isWordBreakPossible(String word, Set<String>dict) {
+        boolean[] dpArr = new boolean[word.length() + 1];
+        List<String> words = new ArrayList<>();
+        dpArr[0] = true;
+
+        for (int i = 1; i <= word.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                if (dpArr[j] && dict.contains(word.substring(j, i))) {
+                    dpArr[i] = true;
+                }
+            }
+        }
+
+        // Get words
+        if (dpArr[word.length()]) {
+            int prevIdx = 0;
+            for (int i = 1; i < dpArr.length; i++) {
+                if (dpArr[i]) {
+                    words.add(word.substring(prevIdx, i));
+                    prevIdx = i;
+                }
+            }
+            System.out.println(words);
+        } else {
+            System.out.println("No words can be formed");
+        }
+        return dpArr[word.length()];
+    }
+
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String [] args) {
@@ -400,7 +450,7 @@ public class DynamicProgramming  {
 
         // Problem 5: Coin Change Problem
         {
-            System.out.println("\nProblem 5: Coin Change Problem");
+            System.out.println("\nProblem 5: Min Coin Change Problem");
             int[] coins = {1, 8, 6, 5};
             System.out.println(minCoinChangeRec(coins, 12));
             System.out.println(minCoinChangeDP(coins, 12));
@@ -408,11 +458,22 @@ public class DynamicProgramming  {
 
         // PROBLEM 6. All possible ways to make coin denominations
         {
-            System.out.println("\nPROBLEM 36. All possible ways to make coin denominations");
+            System.out.println("\nPROBLEM 6. All possible ways to make coin denominations");
             long[] c = {1, 2, 3};
             long n = 4;
             System.out.println(getCoinChangeWays(n, c));
             System.out.println(getCoinChangeWaysDP(n, c));
+        }
+
+        // PROBLEM 7. Word break problem
+        {
+            System.out.println("\nPROBLEM 7. Word break problem");
+            //String word = "whoisthis";
+            //String word = "whoisthis";
+            String word = "ilikesam";
+            Set<String> dict = Stream.of("who", "is", "this", "i", "like", "sam").collect(Collectors.toSet());
+            System.out.println("Rec: " + isWordBreakPossibleRec(word, dict));
+            System.out.println("Itr: " + isWordBreakPossible(word, dict));
         }
     }
 }

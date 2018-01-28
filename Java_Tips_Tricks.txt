@@ -34,6 +34,9 @@
 30. Increment Value of a HashMap's Key
 30b. Print All Key Value pairs of Hashmap in Java
 30c. Add to an arraylist in HashMap
+30d. Sort HashMap by values
+30e. Comparator for TreeMap and TreeSet
+30f. Hashmap getOrDefault
 31. How to split a string in Java
 32. Java String to Int and Int to String
 33. Iterating over a Map using EntrySet
@@ -104,6 +107,7 @@
 94. Static classes in Java
 95. What is try-with-resources
 96. Sort list of strings
+96b. Sort array
 97. Using enum
 98. Collection.containsAll()
 99. Add a list in a hashset using addAll
@@ -165,6 +169,12 @@
 147. Change char in a StringBuilder
 148. String equals
 149. String.charAt() goes out of bound if index is beyond string length
+150. How to initialize HashSet values by construction?
+151. List of lists
+152. Directly return an array
+153. Remove range of elements from a list
+154. Int to Char and Char to int
+155. Convert HashSet to List
 --------------------------------------------------------------------------------------------
 
 1.
@@ -446,7 +456,6 @@ http://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhas
         Hashtable is synchronized, in contrast to HashMap. It has an overhead for synchronization.
 
         This is the reason that HashMap should be used if the program is thread-safe. 
-
 11b.
 LinkedHashMap Complexity and Usage
 
@@ -910,7 +919,50 @@ Print All Key Valye pairs of Hashmap in Java
 
 30c. Add to an arraylist in HashMap
 https://stackoverflow.com/questions/12134687/how-to-add-element-into-arraylist-in-hashmap
+    map.get(key).add(value)
 
+30d. Sort HashMap by values
+https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
+    public static <K, V extends Comparable<? super V>> Map<K, V> 
+        sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+        Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
+            public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+                return (o1.getValue()).compareTo( o2.getValue() );
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
+30e. Comparator for TreeMap and TreeSet
+    SortedMap<String, Double> myMap = 
+        new TreeMap<String, Double>(new Comparator<String>()
+        {
+            public int compare(String o1, String o2)
+            {
+                return o1.compareTo(o2);
+            } 
+    });
+
+30f. Hashmap getOrDefault
+        The below code can be replaced with
+            if (charMap.containsKey(c)) {
+                charMap.put(c, charMap.get(c) + 1);
+            } else {
+                charMap.put(c, 1);
+            }
+
+        This one
+            charMap.put(c, charMap.getOrDefault(c, 0) + 1);
+
+        Another way:
+                Integer count = map.get(i);
+                map.put(i, count != null ? count+1 : 0);
 
 31.
 How to split a string in Java
@@ -1058,14 +1110,31 @@ http://stackoverflow.com/questions/25055375/when-is-memory-allocated-during-inst
 Java Pass by value or Pass by reference
 http://stackoverflow.com/questions/40480/is-java-pass-by-reference-or-pass-by-value
 
-    The key to understanding this is that something like
+    static void foo(Node root) {
+        root = root.left;
+        System.out.println("Inside foo: " + root.data); // Prints 3
+    }
 
+    static void bar(Node root) {
+        root.data = 100;
+        System.out.println("Inside bar: " + root.data); // Prints 100
+    }
+
+    System.out.println("B4 foo: " + root.data); // Prints 3
+    foo(root);
+    System.out.println("After foo: " + root.data); // Prints 3
+
+    System.out.println("B4 bar: " + root.data); // Prints 3
+    bar(root);
+    System.out.println("After bar: " + root.data); // Prints 100
+
+
+    The key to understanding this is that something like
         Dog myDog;
 
     is not a Dog; it's actually a pointer to a Dog.
 
     What that means, is when you have you're essentially passing the address of the created Dog object to the foo method.
-
         Dog myDog = new Dog("Rover");
         foo(myDog);
 
@@ -1253,6 +1322,9 @@ How to use Iterator in Java
 Generating Random Number
 http://stackoverflow.com/questions/363681/generating-random-integers-in-a-specific-range 
 http://stackoverflow.com/questions/5887709/getting-random-numbers-in-java
+
+    Seed for random:
+        Random random = new Random(System.currentTimeMillis());
 
     0. Generating Random Number between 1 and N
         a. Math.random
@@ -1831,6 +1903,10 @@ How to resolve Could not find or load main class Foo error
 Print a list using forEach
     list.forEach(System.out::println);
 
+82b.
+For each to on String 
+    for (char c : str.toCharArray())
+
 83.
 How to convert Java String into byte[]?
 http://stackoverflow.com/questions/18571223/how-to-convert-java-string-into-byte
@@ -1986,6 +2062,11 @@ What is try-with-resources
 
 96.
 Sort list of strings
+    Collections.sort(al, Collections.reverseOrder());
+    Collections.sort(al);
+
+96b. Sort array
+    Arrays.sort(arr);
 
 97. Using enum
 
@@ -2932,3 +3013,53 @@ https://stackoverflow.com/questions/5805602/how-to-sort-list-of-objects-by-some-
     .equals() tests for value equality (whether they are logically "equal").
 
 149. String.charAt() goes out of bound if index is beyond string length
+
+150. How to initialize HashSet values by construction?
+    Set<String> h = new HashSet<>(Arrays.asList("a", "b"));
+    Again, this is not time efficient since you are constructing an array, converting to a list and using that list to create a set
+
+    Set<String> h = new HashSet<String>() {{
+        add("a");
+        add("b");
+    }};
+
+    Set<String> set = Stream.of("a", "b").collect(Collectors.toSet());
+
+151. List of lists
+https://stackoverflow.com/questions/12861726/why-cant-you-have-a-listliststring-in-java
+    List<List<Integer>> lists = new ArrayList<List<Integer>>();
+
+152. Directly return an array
+    return new int[]{start, start+dur}
+    return new int[]{}
+
+153. Remove range of elements from a list
+    list.subList(start, end).clear();
+    This actually calls removeRange behind the scenes
+
+154. Int to Char and Char to int
+https://stackoverflow.com/questions/17984975/convert-int-to-char-in-java
+    int a = 1;
+    char b = (char) a;
+    System.out.println(b);
+
+    will print out the char with ascii value 1 (start-of-heading char, which isn't printable).
+
+    int a = '1';
+    char b = (char) a;
+    System.out.println(b);
+
+    will print out the char with ascii value 49 (one corresponding to '1')
+
+    If you want to convert a digit (0-9), you can add 48 to it and cast, or something like Character.forDigit(a, 10);.
+
+https://stackoverflow.com/questions/16458564/convert-character-to-ascii-numeric-value-in-java
+    char character = name.charAt(0); // This gives the character 'a'
+    int ascii = (int) character; // ascii is now 97.
+
+    Though cast is not required explicitly, but its improves readability.
+
+    int ascii = character; // Even this will do the trick.
+
+155. Convert HashSet to List
+    List<String> list = new ArrayList<String>(listOfTopicAuthors);

@@ -63,6 +63,15 @@ class LinkedList {
         System.out.println();
     }
 
+    void printListMoveHead() {
+        System.out.println();
+        while (head != null) {
+            System.out.print(head.data + " ");
+            head = head.next;
+        }
+        System.out.println();
+    }
+
     // -----------------------------------------------------------------------------------------
     // Front back split
     // -----------------------------------------------------------------------------------------
@@ -114,6 +123,21 @@ public class LinkedListProblems {
         ll.push(4);
         ll.push(3);
         ll.printList();
+        if (ll.head != null) {
+            System.out.println("Head is not null");
+            System.out.println(ll.head.data);
+        } else {
+            System.out.println("Head is null");
+        }
+        /*
+        ll.printListMoveHead();
+        if (ll.head != null) {
+            System.out.println("Head is not null");
+            System.out.println(ll.head.data);
+        } else {
+            System.out.println("Head is null");
+        }
+        */
         ll.reverse();
         ll.printList();
         ll.reverseRec();
