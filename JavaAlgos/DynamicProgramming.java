@@ -24,6 +24,9 @@ import java.util.stream.*;
  *
  * PROBLEM 7. Word break problem
  *
+ * PROBLEM 8. Longest Arithmetic Progression
+ *
+ * Problem 9. Largest Rectangle in Histogram
  */ 
 
 public class DynamicProgramming  {
@@ -32,16 +35,31 @@ public class DynamicProgramming  {
     // PROBLEM 1. Minimum jump to reach end
     // http://www.geeksforgeeks.org/minimum-number-jumps-reach-endset-2on-solution/
     // O(n^2) solution
+    //
+    // Can be done in O(n)
+    // https://stackoverflow.com/questions/27858356/how-to-find-minimum-number-of-jumps-to-reach-the-end-of-the-array-in-on-time
+    //
+    // Input :  arr[] = {1, 3, 5, 8, 9, 2, 6, 7, 6, 8, 9}
+    // Output :  3 (1-> 3 -> 8 -> 9)
+    //
+    // Logic: Start with i = 1 to n
+    //           Go from j = 0 to i
+    //             Check if arr[j] + j >= i
+    //               If yes, then minJumps[i] = minJumps[j] + 1
+    // Arr   :  2,  3,  1,  1,  2,  4,  2,  0,  1,  1
+    // Dp Arr:  0,  1,  1,  2,  
     // -------------------------------------------------------------------------
     static int minJumpToReachEnd(int[] nums) {
-        if (nums.length == 0) {
+        if (nums.length == 0 || nums[0] == 0) {
             return -1;
         }
         int[] minJumps = new int[nums.length];
         for (int i = 1; i < nums.length; i++) {
+            // To handle 0 in the array
+            minJump[i] = Integer.MAX_VALUE;
             for (int j = 0; j < i; j++) {
-                if (nums[j] >= i) {
-                    minJumps[i] = minJumps[j] + 1;
+                if (nums[j]  + j >= i && nums[j] != Integer.MAX_VALUE) {
+                    minJumps[i] = Math.min(minJumps[j] + 1, minJumps[i]);
                     break;
                 }
             }
@@ -300,6 +318,21 @@ public class DynamicProgramming  {
 
     // -------------------------------------------------------------------------
     // PROBLEM 6. All possible ways to make coin denominations
+    //
+    // Val = 4
+    // Arr = 1, 2, 3
+    //
+    // DP: Idx: 0, 1, 2, 3, 4
+    //       1: 1, 1, 1, 1, 1
+    //       2: 1, 1, 2, 2, 3
+    //       3: 1, 1, 2, 3, 4
+    //
+    //        dp[0] = 1
+    // Logic: For each coin from 0 to n-1, --> i
+    //          For each value from 1 to n --> j
+    //              dp[i] = dp[i] + dp[j - coins[i]]
+    //              i.e. Number of way to get value i = number of ways to get i before
+    //              plus number of way to get value - coins[j]
     // -------------------------------------------------------------------------
     static class Result {
         int val;
@@ -356,6 +389,61 @@ public class DynamicProgramming  {
     // -------------------------------------------------------------------------
     // PROBLEM 7. Word break problem
     // https://www.geeksforgeeks.org/dynamic-programming-set-32-word-break-problem/
+    // https://www.programcreek.com/2014/03/leetcode-word-break-ii-java/
+    //
+    // 0, 1, 2, 3, 4, 5, 6, 7
+    // I, l, i, k, e, S, a ,m
+    //
+    // Logic:
+    // First take length = 1 and take all single char and see if they are word in dic
+    // I - T, l - F, i - T, k - F, e - F, S - F, a - T, m - f
+    // Update these along the diagonals 0,0; 1,1; 2,2 etc
+    //
+    // L = 2
+    // Check if "Il" belongs in a dict -> No
+    // If NO then check if "I" and "l" belong in dict
+    // Only word that belongs is "am" so update (6,7) to T and rest to F
+    //
+    // L = 3
+    // Only word that belongs is "Sam" so update (5,7) to T and rest to F
+    //
+    // L = 5
+    // Ilike: Not in dict
+    // Not try splitting at multiple points
+    // I, like -> Check if 0,0 is T and 1,4 is True -> yes. So 0,4 is True
+    //
+    // L = 7
+    // IlikeSam: Not in dict
+    // Keep splitting:
+    //      I, likeSam -> F
+    //      Il, ikeSam -> F
+    //      Ili, keSam -> F
+    //      Ilik, eSam -> F
+    //      Ilike, Sam -> ? Now check if 0,4 is True and 5, 7 is True. So it is true
+    //    0,  1,  2,  3,  4,  5,  6,  7
+    // 0  T   F   F   F   T   F   F   T
+    // 1      F   F   F   T   F   F   F
+    // 2          T   F   F   F   F   F
+    // 3              F   F   F   F   F
+    // 4                  F   F   F   F
+    // 5                      F   F   T
+    // 6                          T   T
+    // 7                              F
+    //
+    // Tracking Word back from DP table
+    // Along with "T", should also recrod the point at which split has happened
+    // That way we can trace back
+    //
+    // DP table is filled diagonally. Below is a partially filled table after L = 3
+    //    0,  1,  2,  3,  4,  5,  6,  7
+    // 0  T   F   F
+    // 1      F   F   F
+    // 2          T   F   F
+    // 3              F   F   F
+    // 4                  F   F  F
+    // 5                      F  F   T
+    // 6                         T   T
+    // 7                             F
     // -------------------------------------------------------------------------
     static boolean isWordBreakPossibleRec(String word, Set<String> dict) {
         if (word.length() == 0) {
@@ -397,6 +485,99 @@ public class DynamicProgramming  {
             System.out.println("No words can be formed");
         }
         return dpArr[word.length()];
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 8. Longest Arithmetic Progression
+    // -------------------------------------------------------------------------
+    // 1. Brute Force Time complexity: O(N^3)
+    // In this approach, for every pair I am trying to find if there exists a AP
+    static int longestArithmeticSequence(int[] nums) {
+        if (nums.length <= 1) {
+            return 0;
+        }
+
+        int maxLen = Integer.MIN_VALUE;
+        int currentLen = 0;
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = i - 1; j >= 0; j--) {
+                int diff = nums[i] - nums[j];
+                currentLen = 2;
+                int currentEntry = nums[j];
+                for (int k = j - 1; k >= 0; k--) {
+                    if (nums[k] + diff == currentEntry) {
+                        currentLen++;
+                        currentEntry = nums[k];
+                    }
+                }
+                maxLen = Math.max(maxLen, currentLen);
+            }
+        }
+        return maxLen;
+    }
+
+    // This is very similar to the brute force approach but using a list of hash
+    // tables to avoid the inner most loop. This reduces the time complexity to
+    // O(N^2).
+    static int longestArithmeticSequenceOptimized(int[] nums) {
+        if(nums.length <= 1) {
+            return 0;
+        }
+
+        // I am creating a list of hashMaps. For each i, this list will contain
+        // a diff and corresponding count. If I have seen the count before, I can
+        // increment it
+        List<Map<Integer, Integer>> diffMapsList = new ArrayList<>(nums.length);
+        for (int i = 0; i < nums.length; i++) {
+            // Create a new HashMap and insert it into the list
+            diffMapsList.add(new HashMap<>());
+        }
+
+        Map<Integer, Integer> tmpMap;
+        int maxLen = Integer.MIN_VALUE;
+        for(int i = 1; i < nums.length; i++) {
+            tmpMap = diffMapsList.get(i);
+            //for(int j = i - 1; j >= 0; j--) {
+            // VERY IMP: j should go from 0 to i and NOT from i-1 to 0
+            for(int j = 0; j < i; j++) {
+                int diff = nums[i] - nums[j];
+                if(!diffMapsList.get(j).containsKey(diff)) {
+                    tmpMap.put(diff, 2);
+                } else {
+                    tmpMap.put(diff, diffMapsList.get(j).get(diff) + 1);
+                }
+                maxLen = Math.max(maxLen, tmpMap.get(diff));
+            }
+        }
+        return maxLen;
+    }
+
+
+    // -------------------------------------------------------------------------
+    // Problem 9. Largest Rectangle in Histogram
+    // https://leetcode.com/problems/largest-rectangle-in-histogram/description/
+    // https://stackoverflow.com/questions/4311694/maximize-the-rectangular-area-under-histogram
+    // -------------------------------------------------------------------------
+    public int largestRectangleArea(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+        
+        int[][] dpArr = new int[heights.length][heights.length];
+        int maxArea = Integer.MIN_VALUE;
+        for (int width = 1; width <= heights.length; width++) {
+            for (int start = 0; start + width -1 < heights.length; start++) {
+                int end = start + width - 1;
+                if (width == 1) {
+                    dpArr[start][start] = heights[start];
+                    maxArea = Math.max(maxArea, dpArr[start][start]);
+                } else {
+                    dpArr[start][end] = Math.min(dpArr[start][end - 1], heights[end]);
+                    maxArea = Math.max(maxArea, dpArr[start][end] * width);
+                }
+            }
+        }
+        return maxArea;
     }
 
     // -------------------------------------------------------------------------
@@ -475,6 +656,38 @@ public class DynamicProgramming  {
             System.out.println("Rec: " + isWordBreakPossibleRec(word, dict));
             System.out.println("Itr: " + isWordBreakPossible(word, dict));
         }
+        
+        // PROBLEM 8. Longest Arithmetic Progression
+        {
+            System.out.println("\nPROBLEM 8. Longest Arithmetic Progression");
+            int[] nums1 = {1, 3, 9, 5, 7};
+            int[] nums2 = {1, 2, 4, 8, 16, 32};
+            int[] nums3 = {2, 4, 6, 100, 8, 102};
+            int[] nums4 = {9, 1, 7, 3, 5};
+            int[] nums5 = {9};
+            int[] nums6 = {9, 8};
+            int[] nums7 = {9, 9, 9, 9, 9, 9, 9};
+            int[] nums8 = {};
+            System.out.println(longestArithmeticSequence(nums1));
+            System.out.println(longestArithmeticSequenceOptimized(nums1));
+            System.out.println(longestArithmeticSequence(nums2));
+            System.out.println(longestArithmeticSequenceOptimized(nums2));
+            System.out.println(longestArithmeticSequence(nums3));
+            System.out.println(longestArithmeticSequenceOptimized(nums3));
+            System.out.println(longestArithmeticSequence(nums4));
+            System.out.println(longestArithmeticSequenceOptimized(nums4));
+            System.out.println(longestArithmeticSequence(nums5));
+            System.out.println(longestArithmeticSequenceOptimized(nums5));
+            System.out.println(longestArithmeticSequence(nums6));
+            System.out.println(longestArithmeticSequenceOptimized(nums6));
+            System.out.println(longestArithmeticSequence(nums7));
+            System.out.println(longestArithmeticSequenceOptimized(nums7));
+            System.out.println(longestArithmeticSequence(nums8));
+            System.out.println(longestArithmeticSequenceOptimized(nums8));
+        }
+
+        // Problem 9. Largest Rectangle in Histogram
+        {
+        }
     }
 }
-

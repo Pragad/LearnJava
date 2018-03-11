@@ -159,20 +159,73 @@ public class MultithreadProblems {
             SharedList sharedList = new SharedList(3);
             int iterationCount = 10;
             Thread th1 = new Thread(new Producer(sharedList, iterationCount));
-            Thread th2 = new Thread(new Consumer(sharedList, iterationCount));
+            Thread th2 = new Thread(new Producer(sharedList, iterationCount));
             Thread th3 = new Thread(new Consumer(sharedList, iterationCount));
-            th1.setName("th1");
-            th2.setName("th2");
-            th3.setName("th3");
+            Thread th4 = new Thread(new Consumer(sharedList, iterationCount));
+            Thread th5 = new Thread(new Consumer(sharedList, iterationCount));
+            th1.setName("pro1");
+            th2.setName("pro2");
+            th3.setName("con3");
+            th4.setName("con4");
+            th5.setName("con5");
             th1.start();
             th2.start();
             th3.start();
+            th4.start();
+            th5.start();
             th1.join();
             th2.join();
             th3.join();
+            th4.join();
+            th5.join();
         } catch (Exception e) {
             System.err.println("Producer Cosumer exception");
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 5. Producer Consumer Problem using blocking queue
+    // https://howtodoinjava.com/core-java/multi-threading/producer-consumer-problem-using-blockingqueue/
+    // -------------------------------------------------------------------------
+    static void producerConsumerBQ() {
+        try {
+            BlockingQueue<Integer> bq = new ArrayBlockingQueue<>(5);
+            // ConsumerBQ con = new ConsumerBQ(bq);
+            // ProducerBQ pro = new ProducerBQ(bq);
+            int proThreadSize = 3;
+            int conThreadSize = 5;
+            Thread[] proThreads = new Thread[proThreadSize];
+            Thread[] conThreads = new Thread[conThreadSize];
+            for (int i = 0; i < proThreadSize; i++) {
+                proThreads[i] = new Thread(new ProducerBQ(bq));
+                proThreads[i].start();
+            }
+            for (int i = 0; i < conThreadSize; i++) {
+                conThreads[i] = new Thread(new ConsumerBQ(bq));
+                conThreads[i].start();
+            }
+            for (int i = 0; i < proThreadSize; i++) {
+                proThreads[i].join();
+            }
+            for (int i = 0; i < conThreadSize; i++) {
+                conThreads[i].join();
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 6. N words and M threads. Each thread should print a word
+    // -------------------------------------------------------------------------
+    static void multiThreadWordProcessing(List<String> words, int currentIndex, List<String> result) {
+        if (currentIndex == words.size()) {
+            return;
+        }
+        result.add(words.get(currentIndex));
+        currentIndex++;
+    }
+
+    static void processWords(List<String> words, int numThreads) {
     }
 
     // -------------------------------------------------------------------------
@@ -202,6 +255,19 @@ public class MultithreadProblems {
         {
             System.out.println("\nPROBLEM 4. Producer Consumer problem");
             producerConsumer();
+        }
+
+        // PROBLEM 5. Producer Consumer problem blocking queue
+        {
+            System.out.println("\nPROBLEM 5. Producer Consumer problem blocking queue");
+            //producerConsumerBQ();
+        }
+
+        // PROBLEM 6. N words and M threads. Each thread should print a word
+        {
+            System.out.println("\nPROBLEM 6. Producer Consumer problem blocking queue");
+            List<String> words = {"My", "name", "is", "pragad", ".", "This", "is", "my", "sample", "thread", "problem"};
+            void processWords(words, 5);
         }
     }
 
@@ -244,8 +310,8 @@ class Producer implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < iterationCount; i++) {
-            System.out.println("Producer '" + Thread.currentThread().getName()  + "' iteration i: " + i);
+            //for (int i = 0; i < iterationCount; i++) {
+        while (true) {
             synchronized (sl) {
                 while (sl.getList().size() == sl.getCapacity()) {
                     try {
@@ -254,14 +320,11 @@ class Producer implements Runnable {
                     } catch (Exception e) {
                     }
                 }
-                sl.getList().add(i);
-                System.out.println("Produced: " + i + "; thread: " + Thread.currentThread().getName());
+                sl.getList().add(5);
+                System.out.println("Produced: 5; thread: " + Thread.currentThread().getName());
                 // Notify the consumer once we have added one item to the list
-                if (sl.getList().size() == 1) {
-                    sl.notifyAll();
-                }
+                sl.notify();
                 try {
-                    //System.out.println("Producer sleeping for a second");
                     Thread.sleep(500);
                 } catch (Exception e) {
                 }
@@ -285,8 +348,7 @@ class Consumer implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < iterationCount; i++) {
-            System.out.println("Consumer '" + Thread.currentThread().getName()  + "' iteration i: " + i);
+        while (true) {
             synchronized (sl) {
                 // Wait if the list is empty
                 while (sl.getList().isEmpty()) {
@@ -297,18 +359,63 @@ class Consumer implements Runnable {
                     }
                 }
                 // Remove the first element
+                if (sl.getList().get(0) == -1) {
+                    break;
+                }
                 System.out.println("Consumed: " + sl.getList().remove(0) + "; thread: " +  Thread.currentThread().getName());
                 // Notify the producer once we have space left for one item
-                if (sl.getList().size() == sl.getCapacity() - 1) {
-                    sl.notifyAll();
-                }
+                sl.notify();
                 try {
-                    //System.out.println("Consumer sleeping for a second");
                     // Commenting the below line makes Consumer to wait
                     //Thread.sleep(500);
                 } catch (Exception e) {
                 }
+            }
+        }
+    }
+}
 
+/**
+ * Consumer thread using Blocking Queue
+ */
+class ConsumerBQ implements Runnable {
+    BlockingQueue<Integer> sharedBlockingQueue;
+
+    public ConsumerBQ(BlockingQueue<Integer> bq) {
+        this.sharedBlockingQueue = bq;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                sharedBlockingQueue.take();
+                System.out.println("C size: " + sharedBlockingQueue.size());
+                Thread.sleep(500);
+            } catch (Exception e) {
+            }
+        }
+    }
+}
+
+/**
+ * Producer thread using Blocking Queue
+ */
+class ProducerBQ implements Runnable {
+    BlockingQueue<Integer> sharedBlockingQueue;
+
+    public ProducerBQ(BlockingQueue<Integer> bq) {
+        this.sharedBlockingQueue = bq;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                sharedBlockingQueue.add(1);
+                System.out.println("P size: " + sharedBlockingQueue.size());
+                Thread.sleep(500);
+            } catch (Exception e) {
             }
         }
     }

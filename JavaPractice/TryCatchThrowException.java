@@ -77,16 +77,21 @@ public class TryCatchThrowException
         }
     }
 
-    static void foo(int age)
+    static void foo(int age)  throws MyAgeException
     {
         try
         {
             employeeAge(age);
             employeeAgeWrapper(age);
+        } 
+        catch (MyAgeException e) {
+            System.out.println("Caught in parent block 1: " + e);
+            System.out.println("Throw back the exception");
+            throw e;
         }
         catch (Exception e)
         {
-            System.out.println("Caught in parent block" + e);
+            System.out.println("Caught in parent block 2: " + e);
             System.out.println("DONE");
             e.printStackTrace();
         }

@@ -77,6 +77,8 @@ import java.util.stream.*;
  *
  * PROBLEM 27. Round off seconds to minutes, hours, day, months, years
  *
+ * PROBLEM 28. Product of all other numbers
+ *
  * PROBLEM 29. Find rotation index
  *
  * PROBLEM 30. Search in rotated sorted array
@@ -111,6 +113,43 @@ import java.util.stream.*;
  *
  * PROBLEM 45a. Convert decimal to any base
  * PROBLEM 45b. Convert any base to decimal
+ *
+ * PROBLEM 46. ZigZag conversion
+ *
+ * PROBLEM 47. Minimun length between numbers with max frequency
+ *
+ * PROBLEM 48. Pancake Sort - Sort just by using flip
+ *
+ * PROBLEM 49. Flatten list of list of integers
+ *
+ * Problem 50. Flood fill
+ *
+ * Problem 51. Find all subsets without duplicates
+ *
+ * Problem 51b. Find all subsets with duplicates
+ *
+ * PROBLEM 49. Isomorphic Strings
+ *
+ * PROBLEM 50. Find k length combinations
+ *
+ * PROBLEM 51. Word compress
+ *
+ * PROBLEM 52. Minimum flips to make 1s in the left and 0s in the right
+ *
+ * PROBLEM 53. Arrange list of numbers such that they form the largest number
+ *
+ * PROBLEM 54. Maximum subsets to sort the array
+ *
+ * PROBLEM 55. Word ladder - Transform from one word to another
+ *
+ * PROBLEM 56. Merge two sorted arrays into end of first array
+ *
+ * PROBLEM 57. Merge k sorted arrays
+ *
+ * PROBLEM 58. H-tree construction
+ *
+ * PROBLEM 59. Find all elements present more than n/3 times
+ *
  */
 
 // -----------------------------------------------------------------------------
@@ -218,6 +257,25 @@ public class AllJavaAlgoProblems {
     // Problem 1.
     // Print all possilbe steps down a ladder
     // -------------------------------------------------------------------------
+    public static void printLadderPaths(int numSteps, StringBuilder path) {
+        if (numSteps == 0) {
+            System.out.println(path);
+            return;
+        }
+
+        if (numSteps >= 1) {
+            path.append('1');
+            printLadderPaths(numSteps - 1, path);
+            path.setLength(path.length()-1);
+        }
+
+        if (numSteps >= 2) {
+            path.append('2');
+            printLadderPaths(numSteps - 2, path);
+            path.setLength(path.length()-1);
+        }
+    }
+
     public static void printLadderPaths(int numSteps, String path) {
         if (numSteps == 0) {
             System.out.println(path);
@@ -426,22 +484,25 @@ public class AllJavaAlgoProblems {
     public static List<Integer> ROW_DIRECTION = new ArrayList<>(Arrays.asList(-1, -1, -1,  0, 0,  1, 1, 1));
     public static List<Integer> COL_DIRECTION = new ArrayList<>(Arrays.asList(-1,  0,  1, -1, 1, -1, 0, 1));
 
-    public static void dfsRecursive(List<List<Integer>> twoDMat, int row, int col) {
+    public static int dfsRecursive(List<List<Integer>> twoDMat, int row, int col) {
         twoDMat.get(row).set(col, 2);
+        int count = 1;
         for (int i = 0; i < 8; i++) {
             int newRow = row + ROW_DIRECTION.get(i);
             int newCol = col + COL_DIRECTION.get(i);
             if (newRow >= 0 && newRow < twoDMat.size() &&
                 newCol >= 0 && newCol < twoDMat.get(newRow).size() &&
                 twoDMat.get(newRow).get(newCol) == 1) {
-                dfsRecursive(twoDMat, newRow, newCol);
+                count += dfsRecursive(twoDMat, newRow, newCol);
             }
         }
+        return count;
     }
 
     public static void dfsIterative(List<List<Integer>> twoDMat, int row, int col) {
         //Stack<PairRowCol> dfsStack = new Stack<PairRowCol>();
-        Queue<PairRowCol> dfsStack = new LinkedList<>();
+        //Queue<PairRowCol> dfsStack = new LinkedList<>();
+        Queue<PairRowCol> dfsStack = new ArrayDeque<>();
         dfsStack.add(new PairRowCol(row, col));
         while (!dfsStack.isEmpty()) {
             PairRowCol obj = dfsStack.remove();
@@ -471,15 +532,17 @@ public class AllJavaAlgoProblems {
 
     public static int countConnectedIslands(List<List<Integer>> twoDMat) {
         int countIslands = 0;
+        int maxCount = Integer.MIN_VALUE;
         for (int i = 0; i < twoDMat.size(); i++) {
             for (int j = 0; j < twoDMat.get(i).size(); j++) {
                 if (twoDMat.get(i).get(j) == 1) {
-                    //dfsRecursive(twoDMat, i, j);
-                    dfsIterative(twoDMat, i ,j);
+                    maxCount = Math.max(maxCount, dfsRecursive(twoDMat, i, j));
+                    //dfsIterative(twoDMat, i ,j);
                     countIslands++;
                 }
             }
         }
+        System.out.println("Size of max island: " + maxCount);
         return countIslands;
     }
 
@@ -547,25 +610,29 @@ public class AllJavaAlgoProblems {
         int curSum = 0;
         int maxSum = Integer.MIN_VALUE;
         int stIdx = 0;
+        int tmpStIdx = 0;
         int endIdx = 0;
         for (int i = 0; i < nums.length; i++) {
             if (nums[i] > nums[i] + curSum) {
                 curSum = nums[i];
-                stIdx = i;
+                tmpStIdx = i;
             } else {
                 curSum = nums[i] + curSum;
             }
 
             if (curSum > maxSum) {
                 maxSum = curSum;
+                stIdx = tmpStIdx;
                 endIdx = i;
             }
         }
         // IMP: If all negative numbers with two equals nums, then stIdx will be greater than endIdx
         // {-2,-3,-4,-1,-2,-1,-5,-3}
+        /*
         if (stIdx > endIdx) {
             stIdx = endIdx;
         }
+        */
         System.out.println("St Idx: " + stIdx + "; EndIdx: " + endIdx);
     }
 
@@ -821,7 +888,6 @@ public class AllJavaAlgoProblems {
             }
         }
 
-
         for (int i = sb.length() - 1; i >= 0; i--) {
             if (i - 1 >= 0 && sb.charAt(i) == sb.charAt(i - 1)) {
                 sb.deleteCharAt(i);
@@ -936,8 +1002,53 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
-    // PROBLEM 24. 3 number sum closest
+    // PROBLEM 24. 3 number sum AND closest
     // -------------------------------------------------------------------------
+    // This does not use HashSet to find unique entries
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> resultList = new ArrayList<List<Integer>>();
+        for (int i = 0; i < nums.length; i++)
+        {
+            int k = nums.length - 1;
+            // VERY IMPORTANT. This hugely saves time
+            if (i != 0 && nums[i] == nums[i-1]) {
+                continue;
+            }
+            for (int j = i + 1; j < k; )
+            {
+                if (nums[i] + nums[j] + nums[k] == 0)
+                {
+                    resultList.add(new ArrayList<>(Arrays.asList(nums[i], nums[j], nums[k])));
+                    j++;
+                    k--;
+                    while (j < nums.length && nums[j] == nums[j - 1]) {
+                        j++;
+                    }
+                    while (k >= 0 && nums[k] == nums[k + 1]) {
+                        k--;
+                    }                    
+                }
+                else if (nums[i] + nums[j] + nums[k] > 0)
+                {
+                    k--;
+                    while (k >= 0 && nums[k] == nums[k + 1]) {
+                        k--;
+                    }
+                }
+                else
+                {
+                    j++;
+                    while (j < nums.length && nums[j] == nums[j - 1]) {
+                        j++;
+                    }
+                }
+            }
+        }
+        return resultList;
+    }
+
+    // This uses HashSet to find unique entries
     static List<List<Integer>> threeSum(int[] nums) {
         Arrays.sort(nums);
         // Copy into Set to remove duplicates
@@ -970,6 +1081,7 @@ public class AllJavaAlgoProblems {
         }
         return new ArrayList<List<Integer>>(result);       
     }
+
     static void printThreeNumSum(int[] arr, int sum) {
         int j;
         int k;
@@ -1355,23 +1467,44 @@ public class AllJavaAlgoProblems {
         });
 
         int stIdx = 0;
-        for (int i = 1; i < intervals.size(); ) {
+        for (int i = 1; i < intervals.size(); i++) {
             if (intervals.get(stIdx).end >= intervals.get(i).start) {
                 // Merge these two
                 if (intervals.get(i).end > intervals.get(stIdx).end) {
                     intervals.get(stIdx).end = intervals.get(i).end;
                 }
-                intervals.remove(i);
             } else {
                 stIdx++;
-                i++;
+                intervals.get(stIdx).start = intervals.get(i).start;
+                intervals.get(stIdx).end = intervals.get(i).end;
             }
+        }
+        
+        // Remove extra entries
+        for (int i = intervals.size() - 1; i >= stIdx + 1; i--) {
+            intervals.remove(i);
         }
 
         for (Interval i : intervals) {
             System.out.println("S: " + i.start + "; E: " + i.end);
         }
         return intervals;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 35b. Merge all overlapping intervals
+    // Say each list is sorted
+    // -------------------------------------------------------------------------
+    static List<Interval> mergeOverlappingIntervals(List<Interval> intervalOne, List<Interval> intervalTwo) {
+        List<Interval> mergedIntervals = new ArrayList<>();
+        int indexOne = 0;
+        int indexTwo = 0;
+        /*
+        while (indexOne < intervalOne.size() && indexTwo < intervalTwo.size()) {
+            if (intervalOne.get(indexOne).
+        }
+        */
+        return null;
     }
 
     // -------------------------------------------------------------------------
@@ -1824,6 +1957,598 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
+    // PROBLEM 48. Pancake Sort - Sort just by using flip
+    // -------------------------------------------------------------------------
+    static int findSmallest(int[] arr, int end) {
+        int minNum = Integer.MAX_VALUE;
+        int minIdx = -1;
+        for (int i = 0; i <= end; i++) {
+            if (arr[i] < minNum) {
+                minNum = arr[i];
+                minIdx = i;
+            }
+        }
+        return minIdx;
+    }
+
+    static void flip(int[] arr, int k) {
+        for (int i = 0, j = k; i < j; i++, j--) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
+    static int[] pancakeSort(int[] arr) {
+        int startIndex = 0;
+        int endIndex = arr.length - 1;
+        while (endIndex > 0) {
+            int smallestIndex = findSmallest(arr, endIndex);
+            flip(arr, smallestIndex);
+            flip(arr, endIndex);
+            endIndex--;
+        }
+        flip(arr, arr.length - 1);
+        return arr;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 49. Flatten list of list of integers
+    // https://www.careercup.com/question?id=17727664
+    // -------------------------------------------------------------------------
+    static class FlattenList {
+        List<Integer> flattenedList;
+        List<List<Integer>> nestedList;
+        int currentIndex = 0;
+
+        public FlattenList(List<List<Integer>> nestedList) {
+            this.nestedList = nestedList;
+            flattenedList = new ArrayList<>();
+        }
+
+        public void flatten() {
+            for (List<Integer> list : nestedList) {
+                flattenedList.addAll(list);
+            }
+        }
+
+        public Integer next() {
+            return flattenedList.get(currentIndex++);
+        }
+
+        public boolean hasNext() {
+            return currentIndex < flattenedList.size();
+        }
+    }
+
+    /*
+    static class NestedIterator implements Iterator<Integer> {
+        List<Integer> flattenedList;
+        int currentIndex = 0;
+        
+        public NestedIterator(List<NestedInteger> nestedList) {
+            flattenedList = new ArrayList<>();
+            flatten(nestedList);
+        }
+
+        private void flatten(List<NestedInteger> nestedList) {
+            for (NestedInteger ni : nestedList) {
+                if (ni.isInteger()) {
+                    flattenedList.add(ni.getInteger());
+                } else {
+                    flatten(ni.getList());
+                }
+            }    
+        }
+        
+        @Override
+        public Integer next() {
+            return flattenedList.get(currentIndex++);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < flattenedList.size();
+        }
+    }
+    */
+
+    // -------------------------------------------------------------------------
+    // Problem 50. Flood fill
+    // https://leetcode.com/problems/flood-fill/description/
+    // -------------------------------------------------------------------------
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        if (image[sr][sc] == newColor) {
+            return image;
+        }        
+        floodFillDfs(image, sr, sc, image[sr][sc], newColor);
+        return image;
+    }
+    
+    public void floodFillDfs(int[][] image, int sr, int sc, int curColor, int newColor) {
+        if (sr < 0 || sr >= image.length || sc < 0 || sc >= image[sr].length) {
+            return;
+        }
+        if (image[sr][sc] == curColor) {
+            image[sr][sc] = newColor;
+        } else {
+            return;
+        }
+        
+        floodFillDfs(image, sr, sc - 1, curColor, newColor);
+        floodFillDfs(image, sr - 1, sc, curColor, newColor);
+        floodFillDfs(image, sr, sc + 1, curColor, newColor);
+        floodFillDfs(image, sr + 1, sc, curColor, newColor);
+        
+        return;
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 51. Find all subsets without duplicates
+    // https://leetcode.com/problems/subsets/description/
+    // -------------------------------------------------------------------------
+    public static List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        int numSubsets = (int)Math.pow(2, nums.length);
+        
+        for (int index = 0; index < numSubsets; index++) {
+            int numBitsPresent = (int)(Math.log10(index) / Math.log10(2)) + 1;
+            List<Integer> subList = new ArrayList<>();
+            for (int i = 0; i < numBitsPresent; i++) {
+                // VERY IMP: NOT equals 0. Should not compare with 1 i.e. " == 1"
+                if (((1 << i) & index) != 0) {
+                    subList.add(nums[i]);
+                }
+            }
+            result.add(subList);
+        }
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 51b. Find all subsets with duplicates
+    // https://leetcode.com/problems/subsets-ii/description/
+    // -------------------------------------------------------------------------
+    public static List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        Set<List<Integer>> resultSet = new HashSet<List<Integer>>();
+        int numSubsets = (int)Math.pow(2, nums.length);
+        
+        for (int index = 0; index < numSubsets; index++) {
+            int numBitsPresent = (int)(Math.log10(index) / Math.log10(2)) + 1;
+            List<Integer> subList = new ArrayList<>();
+            for (int i = 0; i < numBitsPresent; i++) {
+                // VERY IMP: NOT equals 0. Should not compare with 1 i.e. " == 1"
+                if (((1 << i) & index) != 0) {
+                    subList.add(nums[i]);
+                }
+            }
+            Collections.sort(subList);
+            resultSet.add(subList);
+        }
+        result.addAll(resultSet);
+        return result;
+    }
+
+    // -----------------------------------------------------------------------------
+    // PROBLEM 49. Isomorphic Strings
+    // i.e. All chars in s, map to another char in t
+    // -----------------------------------------------------------------------------
+    static boolean isIsomorphic(String s, String t) {
+        // IMP: If all ASCII don't need hashset
+        int[] sourceCharIndex = new int[256];
+        int[] targetCharIndex = new int[256];
+        
+        if (s.length() != t.length()) {
+            return false;
+        }
+        
+        // IMP: Fill the array with -1 to handle below case
+        // "ab"
+        // "aa"
+        Arrays.fill(sourceCharIndex, -1);
+        Arrays.fill(targetCharIndex, -1);
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (sourceCharIndex[s.charAt(i)] != targetCharIndex[t.charAt(i)]) {
+                return false;
+            }
+            sourceCharIndex[s.charAt(i)] = i;
+            targetCharIndex[t.charAt(i)] = i;
+        }
+        return true;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 50. Find k length combinations
+    // Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+    // https://leetcode.com/problems/combinations/description/
+    // If n = 4 and k = 2, a solution is:
+    // [[2,4],
+    //  [3,4],
+    //  [2,3],
+    //  [1,2],
+    //  [1,3],
+    //  [1,4]]
+    // Complexity O(n^k)
+    // -------------------------------------------------------------------------
+    static boolean areDoubleSame(double a, double b) {
+        return (Math.abs(a - b) <= 0.000001);
+    }
+
+    static List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        List<Integer> tmpResult = new ArrayList<>();
+        // IMP: We need to pass startIndex (1) and current number of entries (0)
+        combineRec(n, k, 0, 1, result, tmpResult);
+        return result;
+    }
+    
+    static void combineRec(int n, int k, int current, int start, List<List<Integer>> result, List<Integer> kList) {
+        if (current == k) {
+            result.add(new ArrayList<>(kList));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            kList.add(i);
+            combineRec(n, k, current + 1, i + 1, result, kList);
+            kList.remove(kList.get(kList.size() - 1));
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 51. Word compress
+    // https://leetcode.com/problems/string-compression/description/
+    // -------------------------------------------------------------------------
+    static int compress(char[] chars) {
+        if (chars == null || chars.length == 0) {
+            return 0;
+        }
+        
+        int totalCount = 0;        
+        for (int baseIndex = 0; baseIndex < chars.length;) {
+            char currentChar = chars[baseIndex];
+            // VERY IMP: Put current character in target location
+            chars[totalCount] = chars[baseIndex];
+            int currentCharCount = 1;
+            int nextPosition = baseIndex + 1;
+            while (nextPosition < chars.length && chars[nextPosition] == chars[baseIndex]) {
+                currentCharCount++;
+                nextPosition++;
+            }
+            if (currentCharCount != 1) {
+                String strCharCount = String.valueOf(currentCharCount);
+                for (char c : strCharCount.toCharArray()) {
+                    chars[++totalCount] = c;
+                }
+            }
+            totalCount++;
+            baseIndex = nextPosition;
+        }
+        return totalCount;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 52. Minimum flips to make 1s in the left and 0s in the right
+    // https://www.geeksforgeeks.org/minimum-flips-make-1s-left-0s-right-set-1-using-bitmask/
+    // https://www.geeksforgeeks.org/minimum-flips-make-1s-left-0s-right-set-2/
+    // -------------------------------------------------------------------------
+    static int minFlipsToMovesOnesToLeftAndZerosToRight(String bits) {
+        int num = Integer.parseInt(bits, 2);
+        int numBits = (int)(Math.log(num) / Math.log(2) + 1);
+        int bitMask = (int)Math.pow(2, numBits) - 1;
+        // System.out.println(Integer.toString(bitMask, 2));
+
+        int minFlips = Integer.MAX_VALUE;
+        int i = 0;
+        while (i < numBits) {
+            minFlips = Math.min(Integer.bitCount(num ^ bitMask), minFlips);
+            bitMask = bitMask & (~(1 << i));
+            i++;
+        }
+        return minFlips;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 53. Arrange list of numbers such that they form the largest number
+    // Given a list of non negative integers, arrange them such that they form the largest number.
+    // https://leetcode.com/problems/largest-number/description/
+    // For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330
+    // -------------------------------------------------------------------------
+    static String largestNumber(int[] nums) {
+        StringBuilder result = new StringBuilder();
+        List<String> strNums = new ArrayList<>();
+        for (int num : nums) {
+            strNums.add(String.valueOf(num));
+        }
+        // Collections.sort(strNums, Collections.reverseOrder());
+        Collections.sort(strNums, new Comparator<String>() {
+            public int compare (String s1, String s2) {
+                String temp1 = s1 + s2;
+                String temp2 = s2 + s1;
+                // Reverse the order
+                return temp2.compareTo(temp1);
+            }
+        });
+        // Corner case in case input has a bunch of 0s
+        if (strNums.get(0).equals("0")) {
+            return "0";
+        }
+        for (String strNum : strNums) {
+            result.append(strNum);
+        }
+        return result.toString();
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 54. Maximum subsets to sort the array
+    // https://leetcode.com/problems/max-chunks-to-make-sorted/description/
+    // Given an array arr that is a permutation of [0, 1, ..., arr.length - 1], we split the array into some number of "chunks" (partitions), and individually sort each chunk
+    // arr = [1,0,2,3,4]
+    // [1, 0], [2], [3], [4]
+    // -------------------------------------------------------------------------
+    static int maxChunksToSorted(int[] arr) {
+        if (arr == null || arr.length == 0) {
+            return 0;
+        }
+        int maxChunks = 0;
+        int maxNumSoFar = Integer.MIN_VALUE;
+        for (int i = 0; i < arr.length; i++) {
+            maxNumSoFar = Math.max(maxNumSoFar, arr[i]);
+            if (maxNumSoFar == i) {
+                maxChunks++;
+            }
+        }
+        return maxChunks;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 54b. Maximum subsets to sort the array
+    // https://leetcode.com/problems/max-chunks-to-make-sorted-ii/description/
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 55. Word ladder - Transform from one word to another
+    // https://www.geeksforgeeks.org/word-ladder-length-of-shortest-chain-to-reach-a-target-word/
+    // https://leetcode.com/problems/word-ladder/description/
+    //
+    // Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation sequence from beginWord to endWord, such that:
+    // 
+    // Only one letter can be changed at a time.
+    // Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+    // For example, // Given:
+    // beginWord = "hit"
+    // endWord = "cog"
+    // wordList = ["hot","dot","dog","lot","log","cog"]
+    // As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+    // return its length 5.
+    // -------------------------------------------------------------------------
+    static class WordDetails {
+        String word;
+        int currentCount;
+        
+        public WordDetails(String word, int currentCount) {
+            this.word = word;
+            this.currentCount = currentCount;
+        }
+    }
+    
+    static boolean areWordsOneStepAway(String word1, String word2) {
+        if (word1.length() != word2.length()) {
+            return false;
+        }
+        int diffCount = 0;
+        for (int i = 0; i < word1.length(); i++) {
+            if (word1.charAt(i) != word2.charAt(i)) {
+                diffCount++;
+            }
+            if (diffCount > 1) {
+                return false;
+            }
+        }
+        return diffCount == 1;
+    }
+    
+    static int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        // Can have a base condition
+        //  - False if either words is not in the list
+        //  - False if the words are of different length
+
+        Queue<WordDetails> wordsQueue = new ArrayDeque<>();
+        // We don't need Visited set
+        // Instead we can delete entries from the dictionary (Set)
+        Set<String> visitedWords = new HashSet<>();
+        int minCount = Integer.MAX_VALUE;
+        wordsQueue.add(new WordDetails(beginWord, 1));
+        // Should mark visited once we add
+        // Eg: hot -> lot -> pot
+        // Say you add 'lot' and 'pot'. Later when you look at 'lot' you should not
+        // add 'pot' again
+        visitedWords.add(beginWord);        
+        while (!wordsQueue.isEmpty()) {
+            WordDetails currentWord = wordsQueue.remove();
+            if (currentWord.word.equals(endWord)) {
+                minCount = Math.min(minCount, currentWord.currentCount);
+            }    
+            // Check if there is a word in the dictionary which is one step away
+            for (String dictWord : wordList) {
+                if (!visitedWords.contains(dictWord) && areWordsOneStepAway(currentWord.word, dictWord)) {
+                    wordsQueue.add(new WordDetails(dictWord, currentWord.currentCount + 1));
+                    visitedWords.add(dictWord);
+                }
+            }
+        }
+        return minCount == Integer.MAX_VALUE ? 0 : minCount;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 56. Merge two sorted arrays into end of first array
+    // -------------------------------------------------------------------------
+    static void mergeSortedArrays(int[] arr1, int[] arr2) {
+        int endIndex = arr1.length - 1;
+        int i = arr1.length - arr2.length - 1;
+        int j = arr2.length - 1;
+        while (i >= 0 && j >= 0) {
+            if (arr1[i] > arr2[j]) {
+                arr1[endIndex--] = arr1[i];
+                i--;
+            } else {
+                arr1[endIndex--] = arr2[j];
+                j--;
+            }
+        }
+
+        while (i >= 0) {
+            arr1[endIndex--] = arr1[i];
+            i--;
+        }
+
+        while (j >= 0) {
+            arr1[endIndex--] = arr2[j];
+            j--;
+        }
+    }
+
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 57. Merge 'k' sorted arrays
+    // -------------------------------------------------------------------------
+    static class ArrayDetails {
+        int value;
+        int arrNumber;
+        int nextIndex;
+
+        public ArrayDetails(int value, int arrNumber, int nextIndex) {
+            this.value = value;
+            this.arrNumber = arrNumber;
+            this.nextIndex = nextIndex;
+        }
+    }
+
+    static int[] mergeKSortedArrays(List<int[]> kArrays) {
+        int totalSize = 0;
+        PriorityQueue<ArrayDetails> kEntries = new PriorityQueue<>(kArrays.size(),
+                new Comparator<ArrayDetails>() {
+                    public int compare(ArrayDetails a, ArrayDetails b) {
+                        return a.value - b.value;
+                    }
+                });
+        for (int i = 0; i < kArrays.size(); i++) {
+            totalSize += kArrays.get(i).length;
+            kEntries.add(new ArrayDetails(kArrays.get(i)[0], i, 1));
+        }
+
+        int[] merge = new int[totalSize];
+        int mergeIndex = 0;
+        while (!kEntries.isEmpty()) {
+            ArrayDetails entry = kEntries.remove();
+            merge[mergeIndex++] = entry.value;
+            if (kArrays.get(entry.arrNumber).length != entry.nextIndex) {
+                kEntries.add(new ArrayDetails(
+                             kArrays.get(entry.arrNumber)[entry.nextIndex],
+                             entry.arrNumber,
+                             entry.nextIndex + 1));
+            }
+        }
+        return merge;
+    }
+
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 58. H-tree construction
+    // From Pramp
+    // -------------------------------------------------------------------------
+    void drawLine(double x1, double y1, double x2, double y2) {
+    }
+
+    void drawHTree(double x, double y, int length, int depth) {
+        if (depth == 0) {
+            return;
+        }
+
+        double x1 = x - length / 2.0;
+        double y1 = y;
+        double x2 = x + length / 2.0;
+        double y2 = y;
+        drawLine(x1, y1, x2, y2);
+        drawLine(x1, y - (length / 2.0), x1, y + (length / 2.0));
+        drawLine(x2, y - (length / 2.0), x2, y + (length / 2.0));
+        drawHTree(x1 - length / 2.0, y1 - length / 2.0, (int) (length/Math.sqrt(2.0)), depth - 1);
+        drawHTree(x1 - length / 2.0, y1 + length / 2.0, (int) (length/Math.sqrt(2.0)), depth - 1);
+        drawHTree(x1 + length / 2.0, y1 + length / 2.0, (int) (length/Math.sqrt(2.0)), depth - 1);
+        drawHTree(x1 + length / 2.0, y1 - length / 2.0, (int) (length/Math.sqrt(2.0)), depth - 1);
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 59. Find all elements present more than n/3 times
+    // Given an integer array of size n, find all elements that appear more than ⌊ n/3 ⌋ times. The algorithm should run in linear time and in O(1) space
+    // https://www.geeksforgeeks.org/given-an-array-of-of-size-n-finds-all-the-elements-that-appear-more-than-nk-times/
+    // https://stackoverflow.com/questions/14955634/number-which-appears-more-than-n-3-times-in-an-array
+    // https://stackoverflow.com/questions/3001181/find-if-there-is-an-element-repeating-itself-n-k-times
+    // -------------------------------------------------------------------------
+    public List<Integer> majorityElement(int[] nums) {
+        List<Integer> result = new ArrayList<>();
+
+        int numA = 0;
+        int numB = 0;
+        int numACount = 0;
+        int numBCount = 0;
+        // [1,2,2,3,2,1,1,3]
+        for (int i = 0; i < nums.length; i++) {
+            // VERY IMP: First check "nums[i] == numA" and then check "numAcount == 0"
+            // System.out.println("A: " + numA + "; NA: " + numACount + "; B: " + numB + "; NB: " + numBCount);
+            if (nums[i] == numA) {
+                numACount++;
+            } else if (nums[i] == numB) {
+                numBCount++;
+            } else if (numACount == 0) {
+                numA = nums[i];  
+                numACount++;
+            } else if (numBCount == 0) {
+                numB = nums[i];    
+                numBCount++;
+            } else {
+                numACount--;
+                numBCount--;
+            }
+        }
+        
+        // System.out.println("A2: " + numA + "; B2: " + numB);
+
+        // Check if each of the elements are present more than n/3 times
+        numACount = 0;
+        numBCount = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == numA) {
+                numACount++;
+            } else if (nums[i] == numB) {
+                numBCount++;
+            }
+        }
+        //System.out.println("NA: " + numACount + "; NB: " + numBCount);
+        if (numACount > nums.length / 3) {
+            result.add(numA);
+        }
+        if (numBCount > nums.length / 3) {
+            result.add(numB);
+        }
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 59. Return all combinations of k numbers out of 1 to n
+    // Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+    //
+    // If n = 4 and k = 2, a solution is:
+    // [[2,4],
+    //  [3,4],
+    //  [2,3],
+    //  [1,2],
+    //  [1,3],
+    //  [1,4]]
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String[] args) {
@@ -1833,7 +2558,9 @@ public class AllJavaAlgoProblems {
         {
             System.out.println("\nProblem 1. Print All Steps down a ladder");
             String str = "";
+            StringBuilder sb = new StringBuilder();
             printLadderPaths(4, str);
+            printLadderPaths(4, sb);
         }
 
         // Problem 2. Print the matrix in diagonal order
@@ -2253,6 +2980,8 @@ public class AllJavaAlgoProblems {
             int base = 62;
             String result1 = convertDecimalToAnyBase(num, base);
             int result2 = convertAnyBaseToDecimal(result1, base);
+            //String str = "zzzzzz";
+            //int result2 = convertAnyBaseToDecimal(str, base);
             System.out.println("Res1: " + result1 + ", Res2: " + result2);
         }
 
@@ -2270,6 +2999,87 @@ public class AllJavaAlgoProblems {
             int[] nums2 = {1, 2, 2, 3, 1};
             System.out.println(minLengthMaxFrequencyNumbers(nums2));
         }
+
+        // PROBLEM 48. Pancake Sort - Sort just by using flip
+        {
+            System.out.println("\nPROBLEM 48. Pancake Sort - Sort just by using flip");
+            int[] nums1 = {1,5,4,3,2};
+            System.out.println(Arrays.toString(nums1));
+            System.out.println(Arrays.toString(pancakeSort(nums1)));
+        }
+
+        // PROBLEM 49. Isomorphic Strings
+        {
+            System.out.println("\nPROBLEM 49. Isomorphic Strings");
+        }
+
+        // PROBLEM 50. Find k length combinations
+        {
+            System.out.println("\nPROBLEM 50. Find k length combinations");
+        }
+
+        // PROBLEM 51. Word compress
+        {
+            System.out.println("\nPROBLEM 51. Word compress");
+        }
+
+        // PROBLEM 52. Minimum flips to make 1s in the left and 0s in the right
+        {
+            System.out.println("\nPROBLEM 52. Minimum flips to make 1s in the left and 0s in the right");
+            System.out.println(minFlipsToMovesOnesToLeftAndZerosToRight("10110000"));
+        }
+
+        // PROBLEM 53. Arrange list of numbers such that they form the largest number
+        {
+            System.out.println("\nPROBLEM 53. Arrange list of numbers such that they form the largest number");
+        }
+
+        // PROBLEM 54. Maximum subsets to sort the array
+        {
+            System.out.println("\nPROBLEM 54. Maximum subsets to sort the array");
+        }
+
+        // PROBLEM 55. Word ladder - Transform from one word to another
+        {
+            System.out.println("\nPROBLEM 55. Word ladder - Transform from one word to another");
+        }
+
+        // PROBLEM 56. Merge two sorted arrays into end of first array
+        {
+            System.out.println("\nPROBLEM 56. Merge two sorted arrays into end of first array");
+            int[] arr1 = {1, 3, 5, 7, -1, -1, -1, -1};
+            int[] arr2 = {2, 3, 6, 10};
+            System.out.println(Arrays.toString(arr1));
+            System.out.println(Arrays.toString(arr2));
+            mergeSortedArrays(arr1, arr2);
+            System.out.println(Arrays.toString(arr1));
+        }
+
+        // PROBLEM 57. Merge k sorted arrays
+        {
+            System.out.println("\nPROBLEM 57. Merge k sorted arrays");
+            int[] arr1 = {1, 3, 5, 7};
+            int[] arr2 = {2, 3, 6, 10, 16};
+            int[] arr3 = {4, 7, 9, 10, 12, 15};
+            int[] arr4 = {0, 2, 4};
+            List<int[]> entries = new ArrayList<>();
+            entries.add(arr1);
+            entries.add(arr2);
+            entries.add(arr3);
+            entries.add(arr4);
+            System.out.println(Arrays.toString(mergeKSortedArrays(entries)));
+        }
+
+        // PROBLEM 58. H-tree construction
+        {
+            System.out.println("\nPROBLEM 58. H-tree construction");
+        }
+
+        // PROBLEM 59. Find all elements present more than n/3 times
+        {
+            System.out.println("\nPROBLEM 59. Find all elements present more than n/3 times");
+        }
+
     }
 }
 

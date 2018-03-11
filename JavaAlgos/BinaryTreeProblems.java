@@ -199,8 +199,8 @@ public class BinaryTreeProblems {
         if (root == null) {
             return;
         }
-        System.out.println(root.data);
         printTreeInorder(root.left);
+        System.out.println(root.data);
         printTreeInorder(root.right);
     }
 
@@ -513,6 +513,7 @@ public class BinaryTreeProblems {
     // -------------------------------------------------------------------------
     // Problem 14. Given a Binary Tree, find the maximum sum path from a leaf to root.
     // -------------------------------------------------------------------------
+    /*
     static int maxSumLeafToRoot(Node root, int curSum) {
         if (root == null) {
             // Can't return 0. 
@@ -523,6 +524,20 @@ public class BinaryTreeProblems {
         }
         int leftSum = maxSumLeafToRoot(root.left, curSum);
         int rightSum = maxSumLeafToRoot(root.right, curSum);
+        return Math.max(leftSum, rightSum) + root.data;
+    }
+    */
+
+    static int maxSumLeafToRoot(Node root) {
+        if (root == null) {
+            // Can't return 0. 
+            return Integer.MIN_VALUE;
+        }
+        if (root.left == null && root.right == null) {
+            return root.data;
+        }
+        int leftSum = maxSumLeafToRoot(root.left);
+        int rightSum = maxSumLeafToRoot(root.right);
         return Math.max(leftSum, rightSum) + root.data;
     }
 
@@ -561,7 +576,6 @@ public class BinaryTreeProblems {
             return res.value;
         }
     }
-
 
     // -------------------------------------------------------------------------
     // Problem 18. Print Tree in Level Order
@@ -948,6 +962,28 @@ public class BinaryTreeProblems {
     }
 
     // -------------------------------------------------------------------------
+    // Problem 36. Check if Subtree of Another Tree
+    // -------------------------------------------------------------------------
+    static boolean compareIfSame(TreeNode s, TreeNode t) {
+        if (s == null && t == null) {
+            return true;
+        }
+        if ((s == null && t != null) ||
+            (s != null && t == null) ||
+            (s.val != t.val)) {
+            return false;
+        }
+        return compareIfSame(s.left, t.left) && compareIfSame(s.right, t.right);
+    }
+    
+    static boolean isSubtree(TreeNode s, TreeNode t) {
+        if (s == null) {
+            return false;
+        }
+        return compareIfSame(s, t) || isSubtree(s.left, t) || isSubtree(s.right, t);
+    }
+
+    // -------------------------------------------------------------------------
     // Main Function
     // -------------------------------------------------------------------------
     public static void main(String[] args) {
@@ -1061,7 +1097,7 @@ public class BinaryTreeProblems {
         // Problem 14. Given a Binary Tree, find the maximum sum path from a leaf to root
         {
             System.out.println("Problem 14. Given a Binary Tree, find the maximum sum path from a leaf to root");
-            System.out.println(maxSumLeafToRoot(root, 0));
+            System.out.println(maxSumLeafToRoot(root));
         }
 
         // Problem 15. Given a Binary Tree, find the maximum sum path from a leaf to root

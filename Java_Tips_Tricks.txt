@@ -9,6 +9,8 @@
 9. What is Escape Analysis:
 10. Where objects are stored in Java
 11. Hashtable HashMap LinkedHashMap TreeMap
+11a. HashTable vs HashMap vs ConcurrentHashMap
+11b. HashTable vs ConcurrentHashMap
 11b. LinkedHashMap Complexity and Usage
 12. How to make System.out.println() shorter
 13. Using int vs Integer
@@ -32,9 +34,11 @@
 28b. Priority Queue Reverse Order:
 29. for each loop in Java
 30. Increment Value of a HashMap's Key
+30a. HashMap get and delete if key is absent
 30b. Print All Key Value pairs of Hashmap in Java
 30c. Add to an arraylist in HashMap
 30d. Sort HashMap by values
+30d2. Custom comparator for PriorityQueue
 30e. Comparator for TreeMap and TreeSet
 30f. Hashmap getOrDefault
 31. How to split a string in Java
@@ -73,7 +77,9 @@
 61. What is finalize
 62. Create 2D Array in Java
 63. Access Specifiers in Java
-64. Find log base 2 of a number
+64. Convert base2 string to decimal
+64b. Convert decimal to binary, octal, hex
+64c. Count number of bits in a number
 65. Convert a char to an int or Get numeric value of a character
 66. What is THIS
 67. Java Heap Old gen, Perm Gen and Young gen
@@ -118,7 +124,11 @@
 104. Multithreading - Callable vs Runnable and Future
 104b1. Multithreading - “implements Runnable” vs. “extends Thread”
 104b2. Creating new Threads
+104b3. Creating dynamic number of threads
 104c. CountdownLatch
+104d. Blocking queue and multi-threaded consumer, how to know when to stop
+104e. Does notify/notifyall release the lock being held
+104f. Sleep vs Wait Thread.sleep() does not release the lock. wait() releases the lock
 105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
 106. Can I compile a java file with a different name than the class?
 107. Is main method compulsory in Java
@@ -172,15 +182,37 @@
 150. How to initialize HashSet values by construction?
 151. List of lists
 152. Directly return an array
-153. Remove range of elements from a list
+153. Delete / Remove range of elements from a list
 154. Int to Char and Char to int
 155. Convert HashSet to List
+156. String to Uppercase (Upper case) and lowercase (lower case)
+157. Count number of digits in a number
+157b. Log base2 in Java
+158. Remove duplicate lists using Collection
+159. Java Arrays how to add elements at the beginning
+160. Create a compareTo to a Generic Class that Implements Comparable
+161. Java- The meaning of <T extends Comparable<T>>?
+162. Get first / last element from LinkedHashMap and LinkedHashSet
+163. What's the difference between ConcurrentHashMap and Collections.synchronizedMap(Map)?
+164. Java Fastest way to read through text file with 2 million lines
+165. Find an array inside another larger array
+166. File to byte[] in Java
+167. How can the wait() and notify() methods be called on Objects that are not threads?
+168. Multithreading - Counting total amount of words from several files
+169. Deep, Shallow and Lazy Copy with Java Examples
+170. How to merge more than one hashmaps also sum the values of same key in java
+171. Access private method from outside the class
+172. Java Queue LinkedList vs ArrayDeque
+173. Remove element from Array
+174. why is Stack a class while Queue is a Interface?
+175. Call constructor from main AND initialize array in constructor with capacity
 --------------------------------------------------------------------------------------------
 
 1.
 Why Java uses Heap instead of Stack
 http://stackoverflow.com/questions/15558245/why-does-java-use-heap-data-structure-to-store-object
 http://stackoverflow.com/questions/3646632/do-java-primitives-go-on-the-stack-or-the-heap
+https://stackoverflow.com/questions/23550385/where-are-instance-variables-of-an-object-stored-in-the-jvm
 
     Primitives defined locally would be on the stack. However if a primitive were defined as part of an instance of an object, that primitive would be on the heap.
         public class Test
@@ -204,6 +236,13 @@ http://stackoverflow.com/questions/3646632/do-java-primitives-go-on-the-stack-or
     However, all primitive variables declared in the body of any method would be on the stack.
 
     As you can see in the above example, int x is on the stack because it is declared in a method body--not as a member of a class.
+
+    Stack and heap are the memories allocated by the OS to the JVM that runs in the system.Stack is a memory place where the methods and the local variables are stored. (variable references either primitive or object references are also stored in the stack). Heap is a memory place where the objects and its instance variable are stored.
+
+    So to sum it up:
+        Class objects, including method code and static fields: heap.
+        Objects, including instance fields: heap.
+        Local variables and calls to methods: stack
 
 2.
 Access Specifiers
@@ -292,6 +331,9 @@ Heap and Stack Storage
 7.
 How Garbage Collector Works
 http://stackoverflow.com/questions/774357/how-does-the-garbage-collection-mechanism-work
+https://www.geeksforgeeks.org/garbage-collection-java/
+https://www.geeksforgeeks.org/how-to-make-object-eligible-for-garbage-collection/
+https://www.geeksforgeeks.org/island-of-isolation-in-java/
 
     - The way actual memory gets allocated to variables and the way it is reclaimed is abstracted from the programmer.
     - The acutal where the memory gets allocated is abstracted
@@ -339,9 +381,262 @@ http://stackoverflow.com/questions/774357/how-does-the-garbage-collection-mechan
             - Once program is stable, don't have to KEEP copying as LITTLE or NO GARBAGE would be generated.
             - JVM detects this and switch to M&S
 
+FROM GEEKSFORGEEKS:
+        An object is eligible to be garbage collected if its reference variable is lost from the program during execution.Sometimes they are also called unreachable objects.
+
+        What is reference of an object?
+
+        The new operator dynamically allocates memory for an object and returns a reference to it. This reference is the address in memory of the object allocated by new. A reference is an address that indicates where an object’s variables, methods etc. are stored.
+
+        The objects are not actually used when assigned to a variable or passed as an argument to a method . The references to objects are used everywhere. Example:
+
+        Box mybox =  new Box();   //referencing to object
+
+        Role of an unreachable objects in java
+
+        In java, the memory allocated at runtime i.e. heap area can be made free by the process of garbage collection. It is nothing but just a method of making the memory free which is not being used by the programmer. Only the objects who have no longer reference to them are eligible for garbage collection in java.
+
+        Ways to make an object eligible for garbage collection:
+
+        Please note that the object can not become a candidate for garbage collection until all references to it are discarded.
+
+            Object created inside a method : When a method is called it goes inside the stack frame. When the method is popped from the stack, all its members dies and if some objects were created inside it then these objects becomes unreachable or anonymous after method execution and thus becomes eligible for garbage collection
+            .Example:
+
+            /* Java program to demonstrate that 
+            objects created inside a method will becomes
+            eligible for gc after method execution terminate */
+             
+            class Test
+            {
+                 
+                // to store object name
+                String obj_name;
+                 
+                public Test(String obj_name) 
+                {
+                    this.obj_name = obj_name;
+                }
+                 
+                static void show()
+                {
+                    //object t1 inside method becomes unreachable when show() removed
+                    Test t1 = new Test("t1"); 
+                    display();
+                     
+                }
+                static void display()
+                {
+                    //object t2 inside method becomes unreachable when display() removed
+                    Test t2 = new Test("t2"); 
+                }
+                 
+                // Driver method
+                public static void main(String args[])
+                {
+                    // calling show()
+                    show();
+                     
+                    // calling garbage collector
+                    System.gc();
+                }
+                 
+                @Override
+                /* Overriding finalize method to check which object
+                is garbage collected */
+                protected void finalize() throws Throwable 
+                {
+                    // will print name of object
+                    System.out.println(this.obj_name + " successfully garbage collected");
+                }
+            }
+
+        Output:
+
+        t1 successfully garbage collected
+        t2 successfully garbage collected
+
+        Note : If a method returns the object created inside it and we store this object reference by using a reference-type variable than it is no longer eligible for garbage collection.
+        Reassigning the reference variable: When reference id of one object is referenced to reference id of some other object then the previous object has no any longer reference to it and becomes unreachable and thus becomes eligible for garbage collection.Example:
+        /* Java program to demonstrate gc
+         when one object referred to other object */
+         
+        class Test
+        {
+            // to store object name
+            String obj_name;
+             
+            public Test(String obj_name) 
+            {
+                this.obj_name = obj_name;
+            }
+             
+            // Driver method
+            public static void main(String args[])
+            {
+                Test t1 = new Test("t1");
+                Test t2 = new Test("t2");
+                 
+                //t1 now referred to t2
+                t1 = t2;
+                 
+                // calling garbage collector
+                System.gc();
+            }
+             
+            @Override
+            /* Overriding finalize method to check which object
+             is garbage collected */
+            protected void finalize() throws Throwable 
+            {
+                // will print name of object
+                System.out.println(this.obj_name + " successfully garbage collected");
+            }
+        }
+
+        Output:
+
+        t1 successfully garbage collected
+
+        Nullifying the reference variable : When all the reference variables of an object are changed to NULL, it becomes unreachable and thus becomes eligible for garbage collection.Example:
+        /* Java program to demonstrate gc
+         when object reference changed to NULL */
+         
+        class Test
+        {
+            // to store object name
+            String obj_name;
+             
+            public Test(String obj_name) 
+            {
+                this.obj_name = obj_name;
+            }
+             
+            // Driver method
+            public static void main(String args[])
+            {
+                Test t1 = new Test("t1");
+                  
+                /* t1 being used for some purpose in program */
+          
+                /* When there is no more use of t1, make the object
+                   referred by t1 eligible for garbage collection */       
+                t1 = null;
+          
+                // calling garbage collector
+                System.gc();
+            }
+             
+            @Override
+            /* Overriding finalize method to check which object
+             is garbage collected */
+            protected void finalize() throws Throwable 
+            {
+                // will print name of object
+                System.out.println(this.obj_name + " successfully garbage collected");
+            }
+        }
+
+        Output:
+
+        t1 successfully garbage collected
+
+        Anonymous object : The reference id of an anonymous object is not stored anywhere. Hence, it becomes unreachable.
+        Example:
+
+        /* Java program to demonstrate gc
+         of anonymous objects */
+         
+        class Test
+        {
+            // to store object name
+            String obj_name;
+             
+            public Test(String obj_name) 
+            {
+                this.obj_name = obj_name;
+            }
+             
+            // Driver method
+            public static void main(String args[])
+            {
+                //anonymous object without reference id
+                new Test("t1"); 
+          
+                // calling garbage collector
+                System.gc();
+            }
+             
+            @Override
+            /* Overriding finalize method to check which object
+             is garbage collected */
+            protected void finalize() throws Throwable 
+            {
+                // will print name of object
+                System.out.println(this.obj_name + " successfully garbage collected");
+            }
+        }
+
+        Output:
+
+        t1 successfully garbage collected
+
+https://www.geeksforgeeks.org/island-of-isolation-in-java/
+        In java, object destruction is taken care by the Garbage Collector module and the objects which do not have any references to them are eligible for garbage collection. Garbage Collector is capable to identify this type of objects.
+        Island of Isolation:
+
+            Object 1 references Object 2 and Object 2 references Object 1. Neither Object 1 nor Object 2 is referenced by any other object. That’s an island of isolation.
+            Basically, an island of isolation is a group of objects that reference each other but they are not referenced by any active object in the application. Strictly speaking, even a single unreferenced object is an island of isolation too.
+
+        Example:
+        public class Test
+        {
+            Test i;
+            public static void main(String[] args)  
+            {
+                Test t1 = new Test();
+                Test t2 = new Test();
+                  
+                // Object of t1 gets a copy of t2
+                t1.i = t2;
+              
+                // Object of t2 gets a copy of t1
+                t2.i = t1;
+                  
+                // Till now no object eligible
+                // for garbage collection 
+                t1 = null;
+                 
+                //now two objects are eligible for
+                // garbage collection 
+                t2 = null;
+                 
+                // calling garbage collector
+                System.gc();
+                
+            }
+         
+            @Override
+            protected void finalize() throws Throwable 
+            { 
+                System.out.println("Finalize method called"); 
+            }
+        }
+
+        Output:
+
+        Finalize method called
+        Finalize method called
+
+        Explanation :
+        Before destructing an object, Garbage Collector calls finalize method at most one time on that object.
+        The reason finalize method called two times in above example because two objects are eligible for garbage collection.This is because we don’t have any external references to t1 and t2 objects after executing t2=null.
+        All we have is only internal references(which is in instance variable i of class Test) to them of each other. There is no way we can call instance variable of both objects. So, none of the objects can be called again.
+
 8.
 How JVM works
 https://www.youtube.com/watch?v=viS5d8DA_VI
+https://www.geeksforgeeks.org/jvm-works-jvm-architecture/
 
     a1.c ---              a1.obj
             |
@@ -455,7 +750,27 @@ http://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhas
         LinkedHashMap preserves the insertion order
         Hashtable is synchronized, in contrast to HashMap. It has an overhead for synchronization.
 
-        This is the reason that HashMap should be used if the program is thread-safe. 
+        This is the reason that HashMap should be used if the program is thread-safe
+
+11a.
+HashTable vs HashMap vs ConcurrentHashMap
+https://stackoverflow.com/questions/40471/differences-between-hashmap-and-hashtable
+
+IMP:
+    Naive approach to thread-safety in Hashtable makes it very much worse for threaded applications.
+    You're better off externally synchronizing a HashMap, or using a ConcurrentMap implementation.
+    Bottom line: the only reason to use Hashtable is when a legacy API (from ca. 1996) requires it
+
+    - Hashtable is synchronized, whereas HashMap is not.
+    - Hashtable does not allow null keys or values.  HashMap allows one null key and any number of null values
+    - One of HashMap's subclasses is LinkedHashMap, so in the event that you'd want predictable iteration order (which is insertion order by default), you could easily swap out the HashMap for a LinkedHashMap. This wouldn't be as easy if you were using Hashtable
+
+11b. HashTable vs ConcurrentHashMap
+https://stackoverflow.com/questions/12646404/concurrenthashmap-and-hashtable-in-java
+    ConcurrentHashMap uses multiple buckets to store data. This avoids read locks and greatly improves performance over a HashTable. Both are thread safe, but there are obvious performance wins with ConcurrentHashMap.
+
+    When you read from a ConcurrentHashMap using get(), there are no locks, contrary to the HashTable for which all operations are simply synchronized.
+
 11b.
 LinkedHashMap Complexity and Usage
 
@@ -902,6 +1217,17 @@ http://stackoverflow.com/questions/4157972/how-to-update-a-value-given-a-key-in-
     - Replace Integer by AtomicInteger and call one of the incrementAndGet/getAndIncrement methods on it.
     - An alternative is to wrap an int in your own MutableInteger class which has an increment()
 
+30a. HashMap get and delete if key is absent
+    hashMap.remove(key):
+        RETURNS: The previous value associated with key,
+                 null if there was no mapping for key.
+                 A null return can also indicate that the map previously associated null with key
+
+    hashMap.get(key):
+        A return value of null does not necessarily indicate that the map contains no mapping for the key;
+        it's also possible that the map explicitly maps the key to null.
+        The containsKey operation may be used to distinguish these two cases.
+
 30b.
 Print All Key Valye pairs of Hashmap in Java
 
@@ -939,6 +1265,15 @@ https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
         return result;
     }
 
+30d2. Custom comparator for PriorityQueue
+        PriorityQueue<Pair<Integer, Pair<Integer, Integer>>> pqNums = new PriorityQueue<>(lists.size(), new Comparator<Pair<Integer, Pair<Integer, Integer>>>() {
+            public int compare(Pair<Integer, Pair<Integer, Integer>> p1, Pair<Integer, Pair<Integer, Integer>> p2) {
+                //return p1.getLeft() > p2.getLeft() ? 1 : p1.getLeft() < p2.getLeft() ? -1 : 0;
+                return p1.getLeft().compareTo(p2.getLeft());
+            }
+        });
+
+
 30e. Comparator for TreeMap and TreeSet
     SortedMap<String, Double> myMap = 
         new TreeMap<String, Double>(new Comparator<String>()
@@ -973,6 +1308,9 @@ http://stackoverflow.com/questions/3481828/how-to-split-a-string-in-java
         String part1 = parts[0]; // 004
         String part2 = parts[1]; // 034556
 
+        String[] splited = str.split("\\s+");
+    This will cause any number of consecutive spaces to split your string into tokens.
+
     Note that this takes a regular expression, so remember to escape special characters if necessary.
     There are 12 characters with special meanings: the backslash \, the caret ^, the dollar sign $, the period or dot ., the vertical bar or pipe symbol |, the question mark ?, the asterisk or star *, the plus sign +, the opening parenthesis (, the closing parenthesis ), and the opening square bracket [, the opening curly brace {, These special characters are often called "metacharacters".
 
@@ -999,8 +1337,13 @@ http://stackoverflow.com/questions/3335737/integer-tostringint-i-vs-string-value
 
 		String s = "1234";
 		int i = Integer.parseInt(s);
+        Integer it = Integer.valueOf(s);
 		System.out.println(i);
 		
+        Similarly, 
+        long l = Long.parseLong(s);
+        Long l = Long.valueOf(String s).longValue();
+
 		i++;
 		String t = String.valueOf(i);
 		System.out.println(t);
@@ -1356,6 +1699,13 @@ http://stackoverflow.com/questions/5887709/getting-random-numbers-in-java
 49.
 Using Synchronized in Java
 http://tutorials.jenkov.com/java-concurrency/synchronized.html
+https://stackoverflow.com/questions/6214229/question-about-java-synchronized
+
+    synchronized only prevents multiple threads from simultaneously executing the method in the same instance. If you have n instances, there could be n threads, each executing the method in one of the instances.
+
+    If you need to ensure that only one thread may execute the method across all instances, you should make the method static, or make the method non-synchronized and rather use a synchronized block inside the method to lock on a private static field.
+
+    Edit: Note that synchronizing on a private instance variable is preferrable to having a synchronized method or to synchronize on this, and that locking on a private static instance variable is preferrable to having a static synchronized method or an instance method that synchronizes on this.getClass(). The reason is that this and this.getClass() are object references that are accessible throughout the program, so anybody may synchronize on these objects, and thereby block threads that want to call your method.
 
  The synchronized keyword can be used to mark four different types of blocks:
 
@@ -1425,6 +1775,7 @@ What are Packages
 
 53.
 What is CLASSPATH
+https://stackoverflow.com/questions/2396493/what-is-a-classpath
 
     - Think of it as Java's answer to the PATH environment variable
     - OSes search for EXEs on the PATH.
@@ -1443,6 +1794,16 @@ What is CLASSPATH
 
     It would be impractical to have the VM look through every folder on your machine, so you have to provide the VM a list of places to look.
     This is done by putting folder and jar files on your classpath
+
+    Before we talk about how the classpath is set, let's talk about .class files, packages, and .jar files.
+
+    First, let's suppose that MyClass is something you built as part of your project, and it is in a directory in your project called output. The .class file would be at output/org/javaguy/coolframework/MyClass.class (along with every other file in that package). In order to get to that file, your path would simply need to contain the folder 'output', not the whole package structure, since your import statement provides all that information to the VM.
+
+    Now let's suppose that you bundle CoolFramework up into a .jar file, and put that CoolFramework.jar into a lib directory in your project. You would now need to put lib/CoolFramework.jar into your classpath. The VM will look inside the jar file for the org/javaguy/coolframework part, and find your class.
+
+    So, classpaths contain:
+        JAR files, and
+        Paths to the top of package hierarchies.
 
 54.
 What is Strongly Typed / Weak Typed, Static Typed and Dynamic Typed Language
@@ -1631,9 +1992,23 @@ Access Specifiers in Java
     private 	Y 	    N 	        N 	        N
 
 64.
-Find log base 2 of a number
+Convert base2 string to decimal
+    int decimalValue = Integer.parseInt(c, 2);
 
-    logb(n) = log(n) / log(b)
+64b. Convert decimal to binary, octal, hex
+    Integer.toString(n,8) // decimal to octal
+    Integer.toString(n,2) // decimal to binary
+    Integer.toString(n,16) //decimal to Hex
+
+64c. Count number of bits in a number
+    Integer.bitCount(int);
+    Long.bitCount(long);
+
+    int no = 12345;
+    int count;
+    for (count = 0; no > 0; ++count) {
+      no &= no - 1;
+    }
 
 65.
 Convert a char to an int or Get numeric value of a character
@@ -1679,6 +2054,12 @@ http://stackoverflow.com/questions/605226/boolean-vs-bitset-which-is-more-effici
 
     boolean[] is more CPU efficient except for very large sizes, where they are about even.
     E.g., for size 1 million boolean[] is about four times faster (e.g. 6ms vs 27ms), for ten and a hundred million they are about even.
+
+        BitSet bs1 = new BitSet();
+        BitSet bs2 = new BitSet(6);
+        bs1.set(0);
+        bs1.set(1);
+        bs1.get(0); -> boolean
 
 70.
 ArrayList get set
@@ -1915,6 +2296,12 @@ http://stackoverflow.com/questions/18571223/how-to-convert-java-string-into-byte
     byte[] b = string.getBytes(Charset.forName("UTF-8"));
     byte[] b = string.getBytes(StandardCharsets.UTF_8); // Java 7+ only
 
+    String str = "hello";
+    byte[] b = str.getBytes(StandardCharsets.UTF_8); // Java 7+ only
+    String string = new String(b, StandardCharsets.UTF_8);
+    System.out.println(Arrays.toString(b));
+    System.out.println(string);
+
 83b.
 Convert integer into byte array (Java)
 
@@ -1966,11 +2353,24 @@ http://stackoverflow.com/questions/3842828/converting-little-endian-to-big-endia
 	}
 
 87.
-StringBuilder vs String
+StringBuffer vs StringBuilder vs String
 http://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java
 
     Use StringBuilder when concatenating Strings inside a loop
     Compiler will take care of String concatenation outside the loop
+
+https://www.geeksforgeeks.org/g-fact-27-string-vs-stringbuilder-vs-stringbuffer/
+
+    1. Concat1 : In this method, we pass a string “Geeks” and perform “s1 = s1 + ”forgeeks”. The string passed from main() is not changed, this is due to the fact that String is immutable. Altering the value of string creates another object and s1 in concat1() stores reference of new string. References s1 in main() and cocat1() refer to different strings.
+
+    2. Concat2 : In this method, we pass a string “Geeks” and perform “s2.append(“forgeeks”)” which changes the actual value of the string (in main) to “Geeksforgeeks”. This is due to the simple fact that StringBuilder is mutable and hence changes its value.
+
+    2. Concat3 : StringBuffer is similar to StringBuilder except one difference that StringBuffer is thread safe, i.e., multiple threads can use it without any issue. The thread safety brings a penalty of performance.
+
+    WHEN TO USE WHICH ONE :
+        If a string is going to remain constant throughout the program, then use String class object because a String object is immutable.
+        If a string can change (example: lots of logic and operations in the construction of the string) and will only be accessed from a single thread, using a StringBuilder is good enough.
+        If a string can change, and will be accessed from multiple threads, use a StringBuffer because StringBuffer is synchronous so you have thread-safety.
 
 88.
 How to read an unknown number of bytes from an inputStream (socket/socketServer)?
@@ -2147,10 +2547,8 @@ Sort list of strings
 
     There are two ways of creating threads – one by extending the Thread class and other by creating a thread with a Runnable. However, one feature lacking in  Runnable is that we cannot make a thread return result when it terminates, i.e. when run() completes. For supporting this feature, the Callable interface is present in Java.
 
-
     1. For implementing Runnable, the run() method needs to be implemented which does not return anything, while for a Callable, the call() method needs to be implemented which returns a result on completion. Note that a thread can’t be created with a Callable, it can only be created with a Runnable
     2. Another difference is that the call() method can throw an exception whereas run() cannot.
-
 
 104b1. Multithreading - “implements Runnable” vs. “extends Thread”
     https://stackoverflow.com/questions/541487/implements-runnable-vs-extends-thread
@@ -2166,8 +2564,72 @@ Sort list of strings
     Or rather it should be read as:
     Inherit less, interface more.
 
+104b1. Callable Future Example
+https://howtodoinjava.com/core-java/multi-threading/threadpoolexecutor-callable-future-example/
+
+            BlockingQueue<File> filesBlockingQueue = new ArrayBlockingQueue<>(filesInPath.size());
+            filesBlockingQueue.addAll(filesInPath);
+
+            ExecutorService executorService = Executors.newFixedThreadPool(FILE_THREAD_COUNT);
+            int finalWordCount = 0;
+            while (!filesBlockingQueue.isEmpty()) {
+                Callable<Integer> task = () -> {
+                    int wordVariationsCount = 0;
+                    try {
+                        File file = filesBlockingQueue.take();
+                        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                            String currentLine;
+                            while ((currentLine = bufferedReader.readLine()) != null) {
+                                String[] words = currentLine.split("\\s+");
+                                for (String word : words) {
+                                    if (searchTextVariations.contains(word)) {
+                                        wordVariationsCount++;
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Failed to cound words in file=" + file + "; Exception=" + e);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Failed to take file entry from files queue=" + e);
+                    }
+                    return wordVariationsCount;
+                };
+                finalWordCount += executorService.submit(task).get();
+            }
+            System.out.println("Final word count=" + finalWordCount);
+            executorService.shutdown();
+
 104b2. Creating new Threads
 http://tutorials.jenkov.com/java-concurrency/creating-and-starting-threads.html
+
+            static class ThreadClass implements Runnable {
+                private IdGenerator id;
+
+                public ThreadClass (IdGenerator id) {
+                    this.id = id;
+                }
+
+                public void run() {
+                    System.out.println(id.GetNextId());
+                }
+            }
+
+            Thread th1 = new Thread(new Runnable() {
+                public void run() {
+                    System.out.println(id.GetNextId());
+                }
+            });
+            th1.start();
+
+            Thread th2 = new Thread(new ThreadClass(id));
+            Thread th3 = new Thread(new ThreadClass(id));
+            th2.start();
+            th3.start();
+            th1.join();
+            th2.join();
+            th3.join();
+
     Creating a thread in Java is done like this:
        Thread thread = new Thread();
 
@@ -2217,6 +2679,24 @@ http://www.codejava.net/java-core/the-java-language/java-8-lambda-runnable-examp
      
      // start the thread
      new Thread(task2).start();
+
+104b3. Creating dynamic number of threads
+     Thread[] threads = new Thread[NUM_JOBS_TO_CREATE];
+     for (int i = 0; i < threads.length; i++) {
+         threads[i] = new Thread(new Runnable() {
+             public void run() {
+                 // some code to run in parallel
+                 // this could also be another class that implements Runnable
+             }
+         });
+         threads[i].start();
+     }
+
+    // wait for the threads running in the background to finish
+    for (Thread thread : threads) {
+        thread.join();
+    }
+
 104c. CountdownLatch
 http://www.geeksforgeeks.org/countdownlatch-in-java/
 https://stackoverflow.com/questions/17827022/how-is-countdownlatch-used-in-java-multithreading
@@ -2274,6 +2754,64 @@ http://tutorials.jenkov.com/java-concurrency/thread-signaling.html
     The thread, which is dependent on other threads to start processing, waits on until every other thread has called count down. All threads, which are waiting on await() proceed together once count down reaches to zero.
     countDown() method decrements the count and await() method blocks until count == 0
 
+104d. Blocking queue and multi-threaded consumer, how to know when to stop
+https://stackoverflow.com/questions/8974638/blocking-queue-and-multi-threaded-consumer-how-to-know-when-to-stop
+
+        I have a single thread producer which creates some task objects which are then added into an ArrayBlockingQueue (which is of fixed size).
+
+        I also start a multi-threaded consumer. This is build as a fixed thread pool (Executors.newFixedThreadPool(threadCount);). I then submit some ConsumerWorker intances to this threadPool, each ConsumerWorker having a refference to the above mentioned ArrayBlockingQueue instance.
+
+        Each such Worker will do a take() on the queue and deal with the task.
+
+        My issue is, what's the best way to have a Worker know when there won't be any more work to be done. In other words, how do I tell the Workers that the producer has finished adding to the queue, and from this point on, each worker should stop when he sees that the Queue is empty.
+
+    You should continue to take() from the queue. You can use a poison pill to tell the worker to stop. For example:
+
+    private final Object POISON_PILL = new Object();
+
+    @Override
+    public void run() {
+        //worker loop keeps taking en element from the queue as long as the producer is still running or as 
+        //long as the queue is not empty:
+        while(isRunning) {
+            System.out.println("Consumer "+Thread.currentThread().getName()+" START");
+            try {
+                Object queueElement = inputQueue.take();
+                if(queueElement == POISON_PILL) {
+                     inputQueue.add(POISON_PILL);//notify other threads to stop
+                     return;
+                }
+                //process queueElement
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //this is used to signal from the main thread that he producer has finished adding stuff to the queue
+    public void finish() {
+        //you can also clear here if you wanted
+        isRunning = false;
+        inputQueue.add(POISON_PILL);
+    }
+
+104e. Does notify/notifyall release the lock being held
+https://www.geeksforgeeks.org/inter-thread-communication-java/
+    it is advised to use notify only at the end of your method. 
+
+    notify()-It wakes up one single thread that called wait() on the same object. It should be noted that calling notify() does not actually give up a lock on a resource.
+
+104f. Thread.sleep() does not release the lock. wait() releases the lock
+https://stackoverflow.com/questions/1036754/difference-between-wait-and-sleep
+    A wait can be "woken up" by another thread calling notify on the monitor which is being waited on whereas a sleep cannot.
+    Also a wait (and notify) must happen in a block synchronized on the monitor object whereas sleep does not
+    Another point is that you call wait on Object itself (i.e. you wait on an object's monitor) whereas you call sleep on Thread
+
+    Yet another point is that you can get spurious wakeups from wait (i.e. the thread which is waiting resumes for no apparent reason). You should always wait whilst spinning on some condition as follows:
+
+    synchronized {
+        while (!condition) { mon.wait(); }
+    }
 
 105. Difference between Arrays.asList(array) vs new ArrayList<Integer>(Arrays.asList(ia)) in java
 https://stackoverflow.com/questions/16748030/difference-between-arrays-aslistarray-vs-new-arraylistintegerarrays-aslist
@@ -2343,11 +2881,13 @@ https://stackoverflow.com/questions/1841847/can-i-compile-a-java-file-with-a-dif
 108. Java Data structures:
 
                 Add         Get             Remove          Update      isPresent       Size        isEmpty     Clear
-ArrayList       add         get                             set         indexOf         size        isEmpty     clear
+Array
+ArrayList       add         get             remove          set         indexOf         size        isEmpty     clear
 Stack           push        pop/peek                                    search          size        empty
 Queue           add/offer   element/peek   remove/poll                                              isEmpty
 PiorityQueue    add/offer   peek           remove/poll                  contains        size        isEmpty     clear
 LinkedList      add/offer   element/peek   remove/poll                                              isEmpty
+                addFirst(), addLast(), removeFirst, removeLast, pollFirst, pollLast
 HashSet         add                        remove                       contains        size        isEmpty     clear
 HashMap         put         get            remove           put         containsKey     size        isEmpty     clear
 LinkedHashMap   put         get            remove           put         containsKey     size        isEmpty     clear
@@ -2438,6 +2978,13 @@ Arrays: asList, binarySearch, fill, equals, sort
     10. Google Multimap
            Multimap<Integer, Integer> sumMap = HashMultimap.create();
     BitSet
+        BitSet uses about 1 bit per boolean value
+        BitSet bs1 = new BitSet();
+        BitSet bs2 = new BitSet(6);
+        bs1.set(0);
+        bs1.set(1);
+        System.out.println(bs1.get(1));
+        
 
 109. Difference between int[] array and int array[]
     The [] is part of the TYPE, not of the NAME. For me, that's the biggest difference
@@ -2852,6 +3399,8 @@ BufferedReader is Faster then Scanner
 
 128b. Get substring from String / StringBuilder
     line.substring(line.indexOf("//") + 1);
+    String substring(int beginIndex, int endIndex)
+        Returns a new string that is a substring of this string. The substring begins at the specified beginIndex and extends to the character at index endIndex - 1
 
 128c. Java indexOf method for multiple matches in String
     i = str.indexOf('x');
@@ -3037,6 +3586,9 @@ https://stackoverflow.com/questions/12861726/why-cant-you-have-a-listliststring-
     list.subList(start, end).clear();
     This actually calls removeRange behind the scenes
 
+    List<Integer> head = numbers.subList(0, 4);
+    List<Integer> tail = numbers.subList(4, 8);
+
 154. Int to Char and Char to int
 https://stackoverflow.com/questions/17984975/convert-int-to-char-in-java
     int a = 1;
@@ -3063,3 +3615,350 @@ https://stackoverflow.com/questions/16458564/convert-character-to-ascii-numeric-
 
 155. Convert HashSet to List
     List<String> list = new ArrayList<String>(listOfTopicAuthors);
+
+    Also,
+    mainList.addAll(set);
+
+156. String to Uppercase (Upper case) and lowercase (lower case)
+    inputVal.toUpperCase()
+    inputVal.toLowerCase()
+
+157. Count number of digits in a number
+    int length = (int)(Math.log10(n)+1);
+    int length = String.valueOf(1000).length();
+
+157b. Log base2 in Java
+    Math.log10(value) / Math.log10(2)
+
+158. Remove duplicate lists using Collection
+https://stackoverflow.com/questions/42330457/using-collection-to-remove-duplicate-lists
+    List<Integer> coins1 = Arrays.asList(5, 5, 10);
+    List<Integer> coins2 = Arrays.asList(5, 10, 5);
+    List<Integer> coins3 = Arrays.asList(10, 10);
+
+    Set<Integer> dedupedCollection = new HashSet<Integer>();
+
+    dedupedCollection.add(coins1);
+    dedupedCollection.add(coins2);
+    dedupedCollection.add(coins3);
+
+    return dedupedCollection;
+
+159. Java Arrays how to add elements at the beginning
+    list.add(0, yourObject);
+
+160. Create a compareTo to a Generic Class that Implements Comparable
+    public class DoubleKey<K extends Comparable<K>, J extends Comparable<J>> implements Comparable<DoubleKey<K, J>> {
+
+        private K key1;
+        private J key2;
+
+        public DoubleKey(K key1, J key2) {
+            this.key1 = key1;
+            this.key2 = key2;
+        }
+
+        public K getFirstKey() {
+            return this.key1;
+        }
+
+        public J getSecondKey() {
+            return this.key2;
+        }
+
+        public int compareTo(DoubleKey<K, J> that) {
+
+            int cmp = this.getFirstKey().compareTo(that.getFirstKey());
+            if (cmp == 0)
+                cmp = this.getSecondKey().compareTo(that.getSecondKey());
+            return cmp;
+        }
+    }
+
+161. Java- The meaning of <T extends Comparable<T>>?
+    The full context being:
+        public class RClass<T extends Comparable<T>>
+    Would I be right in saying that the statement in the title means that the arguments plugged into the method must either be an object of a class which implements Comparable OR one of its derived classes?
+
+    This means that the type parameter must support comparison with other instances of its own type, via the Comparable interface.
+
+    An example of such a class is provided in the Oracle tutorial Object Ordering. Note the similar pattern to T extends Comparable<T> in the excerpt below:
+
+    public class Name implements Comparable<Name> {
+       ...
+       public int compareTo(Name n) { ... }
+    }
+
+162. Get first / last element from LinkedHashMap and LinkedHashSet
+    Get first:
+        1.
+        Object key = linkedHashMap.keySet().iterator().next();
+
+        2.
+        for(String aSiteId: siteIdSet) {
+            siteId = aSiteId;
+            break;
+        }
+
+    Get Last:
+        1. This take O(1) space and O(n) time
+        while (iterator.hasNext()) { lastElement = iterator.next() }
+
+        2. This take O(n) space and O(n) time
+        linkedHashMap.entrySet().toArray()[linkedHashMap.size() -1];
+
+163. What's the difference between ConcurrentHashMap and Collections.synchronizedMap(Map)?
+https://stackoverflow.com/questions/510632/whats-the-difference-between-concurrenthashmap-and-collections-synchronizedmap
+
+    ConcurrentHashMap does not allow null keys or values. So they are NOT equal alternatives of a synchronized map
+
+    For your needs, use ConcurrentHashMap. It allows concurrent modification of the Map from several threads without the need to block them. Collections.synchronizedMap(map) creates a blocking Map which will degrade performance, albeit ensure consistency (if used properly).
+
+    Use the second option if you need to ensure data consistency, and each thread needs to have an up-to-date view of the map. Use the first if performance is critical, and each thread only inserts data to the map, with reads happening less frequently
+
+    ╔═══════════════╦═══════════════════╦═══════════════════╦═════════════════════╗
+    ║   Property    ║     HashMap       ║    Hashtable      ║  ConcurrentHashMap  ║
+    ╠═══════════════╬═══════════════════╬═══════════════════╩═════════════════════╣ 
+    ║      Null     ║     allowed       ║              not allowed                ║
+    ║  values/keys  ║                   ║                                         ║
+    ╠═══════════════╬═══════════════════╬═════════════════════════════════════════╣
+    ║Is thread-safe ║       no          ║                  yes                    ║
+    ╠═══════════════╬═══════════════════╬═══════════════════╦═════════════════════╣
+    ║     Lock      ║       not         ║ locks the whole   ║ locks the portion   ║        
+    ║  mechanism    ║    applicable     ║       map         ║                     ║ 
+    ╠═══════════════╬═══════════════════╩═══════════════════╬═════════════════════╣
+    ║   Iterator    ║               fail-fast               ║ weakly consistent   ║ 
+    ╚═══════════════╩═══════════════════════════════════════╩═════════════════════╝
+
+    Regarding locking mechanism: Hashtable locks the object, while ConcurrentHashMap locks only the bucket.
+
+164. Java Fastest way to read through text file with 2 million lines
+https://stackoverflow.com/questions/19486077/java-fastest-way-to-read-through-text-file-with-2-million-lines
+
+    You will find that BufferedReader.readLine() is as fast as you need: you can read millions of lines a second with it. It is more probable that your string splitting and handling is causing whatever performance problems you are encountering.
+
+164. Find indexOf a byte array within another byte array
+
+    Google's Guava provides a Bytes.indexOf(byte[] array, byte[] target).
+
+    The simpelst way would be to compare each element:
+    public int indexOf(byte[] outerArray, byte[] smallerArray) {
+        for(int i = 0; i < outerArray.length - smallerArray.length+1; ++i) {
+            boolean found = true;
+            for(int j = 0; j < smallerArray.length; ++j) {
+               if (outerArray[i+j] != smallerArray[j]) {
+                   found = false;
+                   break;
+               }
+            }
+            if (found) return i;
+         }
+       return -1;  
+    }  
+
+165. Find an array inside another larger array
+    public static int findArray(Integer[] array, Integer[] subArray)
+    {
+        return Collections.indexOfSubList(Arrays.asList(array), Arrays.asList(subArray));
+    }
+
+166. File to byte[] in Java
+    Path path = Paths.get("path/to/file");
+    byte[] data = Files.readAllBytes(path);
+
+167. How can the wait() and notify() methods be called on Objects that are not threads?
+https://stackoverflow.com/questions/16197135/how-can-the-wait-and-notify-methods-be-called-on-objects-that-are-not-thread
+
+    Locks are different from threads. The lock is on the data structure being protected. The threads are the things accessing the data structure. The locks are on the data structure object in order to keep the threads from accessing the data structure in an unsafe way.
+
+    Any object can be used as an intrinsic lock (meaning used in conjunction with synchronized). This way you can guard access to any object by adding the synchronized modifier to the methods that access the shared data. (Not that it's a good idea, because that allows any thread that can access the object to acquire its lock, even if it's not calling any methods on it; it's better to keep the lock as a private member of the data structure being locked, so that access to it is limited.)
+
+    wait and notify are called on objects that are being used as locks. The lock is a shared communication point:
+
+    When a thread that has a lock calls notifyAll on it, the other threads waiting on that same lock get notified. When a thread that has a lock calls notify on it, one of the threads waiting on that same lock gets notified.
+
+    When a thread that has a lock calls wait on it, the thread releases the lock and goes dormant until either a) it receives a notification, or b) it just wakes up arbitrarily (the "spurious wakeup"); the waiting thread remains stuck in the call to wait until it wakes up due to one of these 2 reasons, then the thread has to re-acquire the lock before it can exit the wait method
+
+168. Multithreading - Counting total amount of words from several files
+https://stackoverflow.com/questions/8438497/multithreading-counting-total-amount-of-words-from-several-files
+https://stackoverflow.com/questions/24133037/java-wordcount-a-mediocre-implementation
+https://softwareengineering.stackexchange.com/questions/337225/parsing-multiple-files-and-their-contents-in-java-using-multithreading-without-e
+    A worker thread:
+        class WordCount extends Thread {
+           int count;
+
+           @Override
+           public void run() {
+              count = 0;
+              /* Count the words... */
+              ...
+              ++count;
+              ...
+           }
+        }
+
+    And a class to use them:
+        class Main {
+           public static void main(String args[]) throws InterruptedException {
+              WordCount[] counters = new WordCount[args.length];
+              for (int idx = 0; idx < args.length; ++idx) {
+                 counters[idx] = new WordCount(args[idx]);
+                 counters[idx].start();
+              }
+              int total = 0;
+              for (WordCount counter : counters) {
+                counter.join();
+                total += counter.count;
+              }
+              System.out.println("Total: " + total);
+           }
+        }
+
+169. Deep, Shallow and Lazy Copy with Java Examples
+https://www.geeksforgeeks.org/deep-shallow-lazy-copy-java-examples/
+https://stackoverflow.com/questions/13667556/shallow-copy-new-instance-or-assignment
+
+    Just doing the assignment of reference just creates a copy of reference which points to the same instance.
+
+    But generally I prefer two ways: -
+
+    Either use a copy-constructor: -
+        public A(A obj) {
+            copy.aValue = obj.aValue;
+        }
+    And use it like: -
+        A first = new A();
+        A copy = new A(first);
+
+    Or, use a public static method which takes an instance and returns a copy of that.
+        public static A createCopy(A obj) {
+            A copy = new A();
+            copy.aValue = obj.aValue;
+            return copy;
+        }
+
+    - Whenever we use default implementation of clone method we get shallow copy of object means it creates new instance and copies all the field of object to that new instance and returns it as object type
+    - Whenever we need own copy not to use default implementation we call it as deep copy
+
+    Lazy Copy
+    A lazy copy can be defined as a combination of both shallow copy and deep copy. The mechanism follows a simple approach – at the initial state, shallow copy approach is used. A counter is also used to keep a track on how many objects share the data. When the program wants to modify the original object, it checks whether the object is shared or not. If the object is shared, then the deep copy mechanism is initiated.
+
+170. How to merge more than one hashmaps also sum the values of same key in java
+    m2.forEach((k, v) -> m.merge(k, v, (v1, v2) -> v1 + v2));
+
+171. Access private method from outside the class
+https://stackoverflow.com/questions/11282265/how-to-call-a-private-method-from-outside-a-java-class
+
+    use setAccessible(true) on your Method object before using its invoke method.
+        import java.lang.reflect.*;
+        class Dummy{
+            private void foo(){
+                System.out.println("hello foo()");
+            }
+        }
+
+        class Test{
+            public static void main(String[] args) throws Exception {
+                Dummy d = new Dummy();
+                Method m = Dummy.class.getDeclaredMethod("foo");
+                //m.invoke(d);// throws java.lang.IllegalAccessException
+                m.setAccessible(true);// Abracadabra 
+                m.invoke(d);// now its OK
+            }
+        }
+
+172. Java 7 vs Java 8
+http://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html
+    Lambda expressions
+    Parallel operations
+    Java + JavaScript = ❤
+    New date / time APIs
+    Concurrent accumulators
+
+173. Should I initialize variable within constructor or outside constructor [duplicate]
+    public class ME {
+        private int i;
+
+        public ME() {
+             this.i = 100;
+        }
+    }
+
+    public class ME {
+        private int i = 100;
+
+        public ME() {
+        }
+    }
+
+    I find the second style (declaration + initialization in one go) superior. Reasons:
+    It makes it clear at a glance how the variable is initialized. Typically, when reading a program and coming across a variable, you'll first go to its declaration (often automatic in IDEs). With style 2, you see the default value right away. With style 1, you need to look at the constructor as well.
+
+    As to the concern mentioned above about multiple constructors, that's easily solved by having one no-arg constructor that initializes all the instance variables that are initilized the same for all constructors and then each constructor calls this() at the first line.
+
+174. How to create a generic array in Java?
+https://stackoverflow.com/questions/529085/how-to-create-a-generic-array-in-java
+https://stackoverflow.com/questions/2927391/whats-the-reason-i-cant-create-generic-array-types-in-java
+
+        queue = (T[])new Object[capacity];
+
+    The below still gives ArrayStoreException
+        public class GenSet<E> {
+            private E a[];
+
+            public GenSet() {
+                a = new E[INITIAL_ARRAY_LENGTH]; // error: generic array creation
+            }
+
+            public GenSet(Class<E[]> clazz, int length) {  
+                a = clazz.cast(Array.newInstance(clazz.getComponentType(), length));  
+            }  
+        }
+
+        class Stack<T> {
+            public Stack(Class<T> clazz, int capacity) {
+                array = (T[])Array.newInstance(clazz, capacity);
+            }
+
+            private final T[] array;
+        }
+
+        GenSet<String> foo = new GenSet<String>(String[].class, 1);  
+
+172. Java Queue LinkedList vs ArrayDeque
+https://stackoverflow.com/questions/6163166/why-is-arraydeque-better-than-linkedlist
+
+    Linked structures are possibly the worst structure to iterate with a cache miss on each element. On top of it they consume way more memory.
+
+    If you need add/remove of the both ends, ArrayDeque is significantly better than a linked list. Random access each element is also O(1) for a cyclic queue.
+
+    It's "better" in some cases because you're not allocating a node for each item to insert; instead all elements are stored in a giant array, which is resized if it gets full.
+
+173. Remove element from Array
+https://stackoverflow.com/questions/7940337/remove-a-specific-string-from-an-array-of-string
+    Arrays are fixed length and can not be resized once created. You can set an element to null to remove an object reference;
+
+174. why is Stack a class while Queue is a Interface?
+
+    Stack, is a Last-In-First-Out stack of objects derived from Vector, also a class. Vector goes with the "old" set of collections that Java originally shipped with, and derives ultimately from AbstractCollection. Of note, there's really one canonical implementation of a Stack; Queues and Lists have many well known implementations that can make a substantial performance difference when chosen correctly.
+
+    Queue on the other hand follows the Collection interface from the "new" set of collections that are typically used today, so it follows the interfaces and comes with a variety of implementations.
+
+    Stacks should be used when you need LIFO semantics, while Queues should be used when you need First-In-First-Out semantics.
+
+    ArrayList and LinkedList store ordered collections of things, and don't line up with the use-cases of Stack or Queue directly. Stacks and Queues are in a sense buffers of data, whereas the semantics of a List typically make it such that it's a store of data; nothing is stopping you from using a List to implement a Stack or a Queue
+
+175. Call constructor from main AND initialize array in constructor with capacity
+    public class ArrayConstructorDeclaration {
+        int[] arr;
+
+        public ArrayConstructorDeclaration(int capacity) {
+            arr = new int[capacity];
+        }
+
+        public static void main(String[] args) {
+            ArrayConstructorDeclaration ob = new ArrayConstructorDeclaration(5);
+            System.out.println(Arrays.toString(ob.arr));
+        }
+    }
+

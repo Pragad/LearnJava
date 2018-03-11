@@ -40,5 +40,20 @@ public class b
         System.out.println(countPalindromes(str));
         String str2 = "wowpurerocks";
         System.out.println(countPalindromes(str2));
+
+        int dir = 0;
+        if (dir == 0) {
+            System.out.println("dir 0");
+            dir = 1;
+        } else if (dir == 1) {
+            System.out.println("dir 1");
+            dir = 2;
+        } else if (dir == 2) {
+            System.out.println("dir 2");
+            dir = 3;
+        } else {
+            System.out.println("dir else");
+        }
+        System.out.println(Math.log10(7) / Math.log10(2));
     }
 }

@@ -86,7 +86,10 @@ public class Graph<T> {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // BFS Traversal
     // Very Important: Should make the node visited
+    // -------------------------------------------------------------------------
     void printGraphBfs(int startNodeId) {
         System.out.println("\nBFS of Graph");
         Node<T> startNode = getNode(startNodeId);
@@ -107,6 +110,9 @@ public class Graph<T> {
         System.out.println();
     }
 
+    // -------------------------------------------------------------------------
+    // DFS Traversal
+    // -------------------------------------------------------------------------
     void printGraphDfs(int startNodeId) {
         System.out.println("\nDFS of Graph");    
         Node<T> startNode = getNode(startNodeId);
@@ -127,6 +133,9 @@ public class Graph<T> {
         System.out.println();
     }
 
+    // -------------------------------------------------------------------------
+    // Print Graph
+    // -------------------------------------------------------------------------
     void printGraphDfsRecursiveUtil(Node<T> node, Set<Integer> visited) {
         if (node.neighbors.isEmpty()) {
             return;
@@ -148,13 +157,30 @@ public class Graph<T> {
         System.out.println();
     }
 
-    /*
-    static Graph cloneGraph(Graph g) {
+    // -------------------------------------------------------------------------
+    // Clone Graph
+    // -------------------------------------------------------------------------
+    Map<Integer, UndirectedGraphNode> nodeSet = new HashMap<>();
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) {
+            return node;
+        }
+        if (nodeSet.containsKey(node.label)) {
+            return nodeSet.get(node.label);
+        }
+        
+        UndirectedGraphNode newNode = new UndirectedGraphNode(node.label);
+        nodeSet.put(node.label, newNode);
+        for (UndirectedGraphNode neighbor : node.neighbors) {
+            newNode.neighbors.add(cloneGraph(neighbor));
+        }
+        return newNode;
     }
-    */
 
+    // -------------------------------------------------------------------------
+    // Main Function
+    // -------------------------------------------------------------------------
     public static void main(String[] args) {
-
         /*
          * Imagine a directed version of the below graph
          *
@@ -201,5 +227,4 @@ public class Graph<T> {
 
         Graph<String> newGraph = cloneGraph(g);
     }
-
 }
