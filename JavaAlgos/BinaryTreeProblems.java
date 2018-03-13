@@ -964,23 +964,46 @@ public class BinaryTreeProblems {
     // -------------------------------------------------------------------------
     // Problem 36. Check if Subtree of Another Tree
     // -------------------------------------------------------------------------
-    static boolean compareIfSame(TreeNode s, TreeNode t) {
+    static boolean compareIfSame(Node s, Node t) {
         if (s == null && t == null) {
             return true;
         }
         if ((s == null && t != null) ||
             (s != null && t == null) ||
-            (s.val != t.val)) {
+            (s.data != t.data)) {
             return false;
         }
         return compareIfSame(s.left, t.left) && compareIfSame(s.right, t.right);
     }
     
-    static boolean isSubtree(TreeNode s, TreeNode t) {
+    static boolean isSubtree(Node s, Node t) {
         if (s == null) {
             return false;
         }
         return compareIfSame(s, t) || isSubtree(s.left, t) || isSubtree(s.right, t);
+    }
+
+    // -------------------------------------------------------------------------
+    // Problem 37. Convert Sorted Array to Binary Search Tree
+    // https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/description/
+    // -------------------------------------------------------------------------
+    static Node sortedArrayToBST(int[] nums) {
+        if (nums.length <= 0) {
+            return null;
+        }
+        return sortedArrayToBST(nums, 0, nums.length - 1);
+    }
+    
+    static Node sortedArrayToBST(int[] nums, int stIdx, int endIdx) {
+        if (stIdx > endIdx) {
+            return null;
+        }
+        
+        int midIdx = stIdx + (endIdx - stIdx) / 2;
+        Node root = new Node(nums[midIdx]);
+        root.left = sortedArrayToBST(nums, stIdx, midIdx - 1);
+        root.right = sortedArrayToBST(nums, midIdx + 1, endIdx);
+        return root;
     }
 
     // -------------------------------------------------------------------------
