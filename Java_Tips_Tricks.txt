@@ -63,6 +63,7 @@
 47. How to use Iterator in Java
 48. Generating Random Number
 49. Using Synchronized in Java
+49b. Java synchronized method lock on object, or method?
 50. Converting int to Integer and Integer to int
 51. Iterator for LinkedHashMap
 52. What are Packages
@@ -206,7 +207,8 @@
 173. Remove element from Array
 174. why is Stack a class while Queue is a Interface?
 175. Call constructor from main AND initialize array in constructor with capacity
---------------------------------------------------------------------------------------------
+176. 
+--------------------------------------------------------------------------------
 
 1.
 Why Java uses Heap instead of Stack
@@ -1732,6 +1734,74 @@ https://stackoverflow.com/questions/6214229/question-about-java-synchronized
               log.writeln(msg2);  
            }
         }
+
+49b.
+Java synchronized method lock on object, or method?
+
+    If I have 2 synchronized methods in the same class, but each accessing different variables, can 2 threads access those 2 methods at the same time? Does the lock occur on the object, or does it get as specific as the variables inside the synchronized method?
+
+    Example:
+        class X {
+
+            private int a;
+            private int b;
+
+            public synchronized void addA(){
+                a++;
+            }
+
+            public synchronized void addB(){
+                b++;
+            }
+
+        }
+    Can 2 threads access the same instance of class X performing x.addA() and x.addB() at the same time?
+
+    If you declare the method as synchonized (as you're doing by typing public synchronized void addA()) you synchronize on the whole object, so two thread accessing a different variable from this same object would block each other anyway.
+
+    If you want to synchronize only on one variable at a time, so two threads won't block each other while accessing different variables, you have synchronize on them separately in synchronized () blocks. If a and b were object references you would use:
+
+        public void addA() {
+            synchronized( a ) {
+                a++;
+            }
+        }
+        public void addB() {
+            synchronized( b ) {
+                b++;
+            }
+        }
+    But since they're primitives you can't do this.
+
+49c. Synchronized Block vs Method
+
+    When you synchronize a method, you are effectively synchronizing to the object itself. In the case of a static method, you're synchronizing to the class of the object. So the following two pieces of code execute the same way:
+
+    public synchronized int getCount() {
+        // ...
+    }
+    This is just like you wrote this.
+
+    public int getCount() {
+        synchronized (this) {
+            // ...
+        }
+    }
+    If you want to control synchronization to a specific object, or you only want part of a method to be synchronized to the object, then specify a synchronized block.
+
+    Although not usually a concern, from a security perspective, it is better to use synchronized on a private object, rather than putting it on a method.
+
+    Putting it on the method means you are using the lock of the object itself to provide thread safety. With this kind of mechanism, it is possible for a malicious user of your code to also obtain the lock on your object, and hold it forever, effectively blocking other threads. A non-malicious user can effectively do the same thing inadvertently.
+
+    If you use the lock of a private data member, you can prevent this, since it is impossible for a malicious user to obtain the lock on your private object.
+
+    private final Object lockObject = new Object();
+
+    public void getCount() {
+        synchronized( lockObject ) {
+            ...
+        }
+    }
 
 50.
 Converting int to Integer and Integer to int
@@ -3961,4 +4031,5 @@ https://stackoverflow.com/questions/7940337/remove-a-specific-string-from-an-arr
             System.out.println(Arrays.toString(ob.arr));
         }
     }
+
 
