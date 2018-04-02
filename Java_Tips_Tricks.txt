@@ -207,7 +207,12 @@
 173. Remove element from Array
 174. why is Stack a class while Queue is a Interface?
 175. Call constructor from main AND initialize array in constructor with capacity
-176. 
+176. Java Options class
+177. What is the difference between “Class.forName()” and “Class.forName().newInstance()”?
+178. In Eclipse, can I have multiple Console views at once, each showing a different Console?
+179. What is the difference between System.getProperty and properties.getProperty in Java
+180. Using Java System Properties
+
 --------------------------------------------------------------------------------
 
 1.
@@ -4032,4 +4037,47 @@ https://stackoverflow.com/questions/7940337/remove-a-specific-string-from-an-arr
         }
     }
 
+176. Java Options class
+https://commons.apache.org/proper/commons-cli/javadocs/api-1.3.1/org/apache/commons/cli/Options.html
 
+177. What is the difference between “Class.forName()” and “Class.forName().newInstance()”?
+
+    Maybe an example demonstrating how both methods are used will help you to understand things better. So, consider the following class:
+        package test;
+        public class Demo {
+            public Demo() {
+                System.out.println("Hi!");
+            }
+
+            public static void main(String[] args) throws Exception {
+                Class clazz = Class.forName("test.Demo");
+                Demo demo = (Demo) clazz.newInstance();
+            }
+        }
+
+    As explained in its javadoc, calling Class.forName(String) returns the Class object associated with the class or interface with the given string name i.e. it returns test.Demo.class which is affected to the clazz variable of type Class.
+
+    Then, calling clazz.newInstance() creates a new instance of the class represented by this Class object. The class is instantiated as if by a new expression with an empty argument list. In other words, this is here actually equivalent to a new Demo() and returns a new instance of Demo.
+
+    And running this Demo class thus prints the following output:
+        Hi!
+    The big difference with the traditional new is that newInstance allows to instantiate a class that you don't know until runtime, making your code more dynamic.
+
+178. In Eclipse, can I have multiple Console views at once, each showing a different Console?
+https://stackoverflow.com/questions/7261151/in-eclipse-can-i-have-multiple-console-views-at-once-each-showing-a-different
+
+Yes,
+
+    located near your console tab should be a button "Open Console".
+    If you click this button one of your options should be "New Console View".
+
+179. What is the difference between System.getProperty and properties.getProperty in Java
+https://stackoverflow.com/questions/17151547/what-is-the-difference-between-system-getproperty-and-properties-getproperty-in
+
+180. Using Java System Properties
+https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+
+    In Properties, we examined the way an application can use Properties objects to maintain its configuration. The Java platform itself uses a Properties object to maintain its own configuration. The System class maintains a Properties object that describes the configuration of the current working environment. System properties include information about the current user, the current version of the Java runtime, and the character used to separate components of a file path name.
+
+181. Difference between System.getenv() & System.getProperty() [duplicate]
+https://stackoverflow.com/questions/13112038/difference-between-system-getenv-system-getproperty
