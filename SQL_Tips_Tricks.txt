@@ -1,0 +1,2 @@
+https://www.w3schools.com/Sql/sql_join_inner.asp
+https://stackoverflow.com/questions/18153665/inner-join-where-clause

@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Streams 
+public class Streams_Old
 {
     private static final List<String> KOMPRISE_EXCLUDE_DIRS = Arrays.asList(".komprise_move_reserve", ".komprise_move_test_reserved");
     private static final List<String> KOMPRISE_EXCLUDE_FILES = Arrays.asList("_komprise_migrate_test", ".kompriseWriteTes");
@@ -38,14 +38,16 @@ public class Streams
 
         {
             List<Person> persons = new ArrayList<>();
-            /*
             persons.add(new Person("abc", 5));
             persons.add(new Person("def", 6));
             persons.add(new Person("qwerty", 7));
             persons.add(new Person("zx", 8));
-            */
             List<String> personNames = getPersonNames(persons);
             System.out.println(getPersonNames(persons));
+
+            System.out.println(persons.stream().anyMatch(person -> person.devices.contains("iPhone")));
+            List<Car> cars = persons.stream().map(p -> p.car).collect(Collectors.toList());
+            System.out.println(cars);
         }
     }
 }
@@ -53,9 +55,28 @@ public class Streams
 class Person {
     String name;
     int age;
+    Set<String> devices = new HashSet<>();
+    Car car;
 
     Person (String name, int age) {
         this.name = name;
         this.age= age;
+        devices.add("iphone");
+        devices.add("nexus");
+        devices.add("oneplus");
+        car = new Car(name + age);
+    }
+}
+
+class Car {
+    String model;
+
+    Car (String model) {
+        this.model = model;
+    }
+
+    @Override
+    public String toString() {
+        return this.model;
     }
 }

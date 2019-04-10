@@ -212,7 +212,18 @@
 178. In Eclipse, can I have multiple Console views at once, each showing a different Console?
 179. What is the difference between System.getProperty and properties.getProperty in Java
 180. Using Java System Properties
-
+181. Difference between System.getenv() & System.getProperty() [duplicate]
+182. Finding enum value with Java 8 Stream API
+183. Static Initialization Blocks
+184. GROOVY:
+185. JsonMappingException: No suitable constructor found for type [simple type, class ]: can not instantiate from JSON object
+186. Why Objects should be immutable
+187. How to create default constructor for immutable class
+188. Using Executor Service and Thread
+189. Making local variables and parameters as final
+190. Mockito test a void method throws an exception
+191. Test coverage to private constructor
+192. Static import in Java
 --------------------------------------------------------------------------------
 
 1.
@@ -1354,6 +1365,35 @@ http://stackoverflow.com/questions/3335737/integer-tostringint-i-vs-string-value
 		i++;
 		String t = String.valueOf(i);
 		System.out.println(t);
+
+	For valid positive integer:
+
+	private static int parseInt(String str) {
+		int i, n = 0;
+
+		for (i = 0; i < str.length(); i++) {
+			n *= 10;
+			n += str.charAt(i) - 48;
+		}
+		return n;
+	}
+	For both positive and negative integers:
+
+	private static int parseInt(String str) {
+		int i=0, n=0, sign=1;
+		if(str.charAt(0) == '-') {
+			i=1;
+			sign=-1;
+		}
+		for(; i<str.length(); i++) {
+			n*=10;
+			n+=str.charAt(i)-48;
+		}
+		return sign*n;
+	}
+	 
+
+	If you are expecting a whitespace before or after these numbers, then make sure to do a str = str.trim() before processing further.
 
 32b. Difference between parseInt and valueOf in java?
     Well, the API for Integer.valueOf(String) does indeed say that the String is interpreted exactly as if it were given to Integer.parseInt(String). However, valueOf(String) returns a new Integer() object whereas parseInt(String) returns a primitive int
@@ -2641,6 +2681,13 @@ Sort list of strings
 
 104b1. Callable Future Example
 https://howtodoinjava.com/core-java/multi-threading/threadpoolexecutor-callable-future-example/
+            Executor.execute(() -> {
+                // line or method;
+            });
+
+            new Thread(() -> {
+                floorplanBundle.setCurrentFloorPlan(0);
+            }).start();
 
             BlockingQueue<File> filesBlockingQueue = new ArrayBlockingQueue<>(filesInPath.size());
             filesBlockingQueue.addAll(filesInPath);
@@ -3152,7 +3199,7 @@ https://stackoverflow.com/questions/5600668/how-can-i-initialize-an-arraylist-wi
     ArrayList<Integer> al;
     al = new ArrayList<Integer>(1000);
     
-113. Java Streams
+113. JAVA STREAMS
 http://winterbe.com/posts/2014/07/31/java8-stream-tutorial-examples/
 
     int sum = list.stream().mapToInt(Integer::intValue).sum();
@@ -4081,3 +4128,167 @@ https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 181. Difference between System.getenv() & System.getProperty() [duplicate]
 https://stackoverflow.com/questions/13112038/difference-between-system-getenv-system-getproperty
+
+182. Finding enum value with Java 8 Stream API
+https://stackoverflow.com/questions/27807232/finding-enum-value-with-java-8-stream-api
+
+    return Arrays.stream(Type.values())
+                .filter(e -> e.s.equals(val))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(String.format("Unsupported type %s.", val)));
+
+183. Static Initialization Blocks
+https://stackoverflow.com/questions/2420389/static-initialization-blocks/2420404#2420404
+https://stackoverflow.com/questions/12550135/static-block-vs-initializer-block-in-java
+
+Here's an example:
+
+  private static final HashMap<String, String> MAP = new HashMap<String, String>();
+  static {
+    MAP.put("banana", "honey");
+    MAP.put("peanut butter", "jelly");
+    MAP.put("rice", "beans");
+  }
+The code in the "static" section(s) will be executed at class load time, before any instances of the class are constructed (and before any static methods are called from elsewhere). That way you can make sure that the class resources are all ready to use.
+
+They're for two very different purposes:
+
+The static initializer block will be called on loading of the class, and will have no access to instance variables or methods. As per @Prahalad Deshpande's comment, it is often used to create static variables.
+The non-static initializer block on the other hand is created on object construction only, will have access to instance variables and methods, and (as per the important correction suggested by @EJP) will be called at the beginning of the constructor, after the super constructor has been called (either explicitly or implicitly) and before any other subsequent constructor code is called. 
+
+184. GROOVY:
+https://www.tutorialspoint.com/groovy/groovy_methods.htm
+
+185. JsonMappingException: No suitable constructor found for type [simple type, class ]: can not instantiate from JSON object
+https://stackoverflow.com/questions/7625783/jsonmappingexception-no-suitable-constructor-found-for-type-simple-type-class
+
+186. Why Objects should be immutable
+https://octoperf.com/blog/2016/04/07/why-objects-must-be-immutable/
+
+187. How to create default constructor for immutable class
+https://stackoverflow.com/questions/52437320/how-to-create-default-counstructor-for-immutable-class
+
+    class School {
+        //fields
+
+        public School(String id, String name) {
+            this.schoolId = id;
+            this.schoolName = name;
+        }
+
+        @JsonCreator
+        public static School create(Map<String, Object> object) {
+            return new School((String) object.get("schoolId"),
+                              (String) object.get("schoolName"));
+        }
+
+        //getters
+    }
+
+188. Using Executor Service and Thread
+            Executor.execute(() -> {
+                // line or method;
+            });
+
+            new Thread(() -> {
+                floorplanBundle.setCurrentFloorPlan(0);
+            }).start();
+
+189. Making local variables and parameters as final
+https://stackoverflow.com/questions/316352/why-would-one-mark-local-variables-and-method-parameters-as-final-in-java
+
+190. Mockito test a void method throws an exception
+https://stackoverflow.com/questions/15156857/mockito-test-a-void-method-throws-an-exception/15157021
+
+191. Test coverage to private constructor
+https://stackoverflow.com/questions/4520216/how-to-add-test-coverage-to-a-private-constructor
+
+192. Static import in Java
+    Difference between import and static import
+        With the help of import, we are able to access classes and interfaces which are present in any package. But using static import, we can access all the static members (variables and methods) of a class directly without explicitly calling class name.
+        For Example: we always use sqrt() method of Math class by using Math class i.e. Math.sqrt(), but by using static import we can access sqrt() method directly.
+
+        The main difference is Readablity, ClassName.dataMember (System.out) is less readable when compared to dataMember(out), static import can make your program more readable
+
+193. Dependency Injection
+https://medium.freecodecamp.org/a-quick-intro-to-dependency-injection-what-it-is-and-when-to-use-it-7578c84fa88f
+http://www.vogella.com/tutorials/DependencyInjection/article.html
+
+194. Argument Captor
+https://stackoverflow.com/questions/36253040/example-on-mockitos-argumentcaptor
+
+195. AssertEquals and AssertSame
+https://stackoverflow.com/questions/28451925/why-assertequals-and-assertsame-in-junit-return-the-same-result-for-two-instance
+
+196. RxJava
+http://www.vogella.com/tutorials/RxJava/article.html
+https://medium.com/@factoryhr/understanding-java-rxjava-for-beginners-5eacb8de12ca
+https://blog.mindorks.com/rxjava-anatomy-what-is-rxjava-how-rxjava-is-designed-and-how-rxjava-works-d357b3aca586
+https://www.baeldung.com/rxjava-schedulers
+https://medium.com/@vanniktech/rxjava-2-disposable-under-the-hood-f842d2373e64
+
+197:
+How to tell Jackson to ignore a field during serialization if its value is null?
+https://stackoverflow.com/questions/11757487/how-to-tell-jackson-to-ignore-a-field-during-serialization-if-its-value-is-null
+
+    To suppress serializing properties with null values using Jackson >2.0, you can configure the ObjectMapper directly, or make use of the @JsonInclude annotation:
+
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    or:
+
+    @JsonInclude(Include.NON_NULL)
+    class Foo
+    {
+      String bar;
+    }
+
+198:
+Ignoring new fields on JSON objects using Jackson [duplicate]
+https://stackoverflow.com/questions/5455014/ignoring-new-fields-on-json-objects-using-jackson
+
+    Jackson provides an annotation that can be used on class level (JsonIgnoreProperties).
+
+    Add the following to the top of your class (not to individual methods):
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public class Foo {
+        ...
+    }
+
+199.
+Why is “log and throw” considered an anti-pattern? [closed]
+https://stackoverflow.com/questions/6639963/why-is-log-and-throw-considered-an-anti-pattern
+
+    I assume the answer is largely because why are you catching it if you can't handle it? Why not let whomever can handle it (or whomever is left with no choice but to handle it) log it, if they feel that it is log-worthy?
+
+    If you catch it and log it and rethrow it, then there's no way for the upstream code to know that you've already logged the exception, and so the same exception might get logged twice. Or worse, if all the upstream code follows this same pattern, the exception might be logged an arbitrary number of times, once for each level in the code that decides to catch it, log it, and then throw it again.
+
+    Also some might argue that since throwing and catching exceptions are relatively costly operations, all this catching and rethrowing isn't helping your runtime performance. Nor is it helping your code in terms of conciseness or maintainability.
+
+
+    Log-and-throw is a good pattern iff the entity catching and rethrowing the exception has reason to believe that it contains information which will not get logged further up the call stack--at least not in the most-desired fashion. A couple of reasons this may occur:
+
+    The exception may be caught and rethrown at an application-layer boundary, and may contain privileged information. It would be bad for a database layer to allow an exception saying, e.g. "Attempt to add duplicate key 'fnord' to field 'users'" to reach the outer application layer (which might in turn expose it to a user), but it could be useful for inner portions of the database to throw such an exception and the application interface to catch it, log it securely, and rethrow a somewhat less descriptive exception.
+    The exception may be one that the outer layer would likely be expecting to handle without logging, but the inner layer may know something that the outer layer doesn't which would suggest that logging may be useful. As a crude example, a middle application layer might be programmed to try connecting to one server and, if that doesn't work, try another. Flooding the application's log with 'connection failed' messages while a server is down for maintenance might not be helpful, especially since--from the application's perspective, everything worked fine. It may be useful to forward information about the connection failure to a logging resource associated with servers, which could then filter the logs so as to produce a report of when the server went up and down, as opposed to a log of every single connection attempt.
+
+200.
+How convert byte array to string [duplicate]
+https://stackoverflow.com/questions/11654562/how-convert-byte-array-to-string
+
+    var str = System.Text.Encoding.Default.GetString(result);
+
+    string convert = "This is the string to be converted";
+
+    // From string to byte array
+    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(convert);
+
+    // From byte array to string
+    string s = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+
+201.
+How to check which exception type was thrown in Java?
+https://stackoverflow.com/questions/27280928/how-to-check-which-exception-type-was-thrown-in-java
+
+    if (e instanceof NotAnInt) {
+        ...
+    }

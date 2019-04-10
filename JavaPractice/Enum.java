@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Random;
 
 public class Enum {
 
@@ -14,7 +15,8 @@ public class Enum {
 
     private enum Color {
         RED("RED"),
-        BLUE("BLUE");
+        BLUE("BLUE"),
+        GREEN("GREEN");
 
         private final String color;
 
@@ -27,10 +29,25 @@ public class Enum {
         }
     }
 
+    /*
+    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
+        Random random = new Random();
+        int x = random.nextInt(clazz.getEnumConstants().length);
+        return clazz.getEnumConstants()[x];
+    }
+    */
+
     public static void main(String[] args) {
         System.out.println("Java Enum");
         System.out.println("1. " + OpenFlags.NO_OVERWRITE.value);
         System.out.println("2. " + OpenFlags.OVERWRITE.value);
+
+        System.out.println("Random Enum");
+        System.out.println(Color.values()[new Random().nextInt(Color.values().length)]);
+        System.out.println(Color.values()[0]);
+        System.out.println(Color.values()[1]);
+        System.out.println(Color.values()[2]);
+        System.out.println("Done Random Enum");
 
         String s = "RED";
         System.out.println(Color.valueOf(s));

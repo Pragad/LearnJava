@@ -1,0 +1,44 @@
+1. What is an Activity
+2. Why Parcelable
+3. Should adb remount always be run before adb push? What does adb remount actually do?
+4. Room adding Index and Composite Index
+--------------------------------------------------------------------------------
+1. What is an Activity
+https://www.tutorialspoint.com/android/android_acitivities.htm
+
+    If you have worked with C, C++ or Java programming language then you must have seen that your program starts from main() function. Very similar way, Android system initiates its program with in an Activity starting with a call on onCreate() callback method. There is a sequence of callback methods that start up an activity and a sequence of callback methods that tear down an activity as shown in the below Activity life cycle diagram: (image courtesy : android.com )
+
+3. Should adb remount always be run before adb push? What does adb remount actually do?
+https://stackoverflow.com/questions/28961572/what-does-adb-remount-do-when-is-it-useful
+
+adb remount put /system partition in writable mode. By default /system is only readable. It could only be done on rooted device.
+
+It must be done before pushing file on /system partition.
+
+adb remount corresponding to:
+
+adb shell mount -o rw,remount,rw /system
+
+4. Room adding Index and Composite Index
+https://dev.mysql.com/doc/refman/8.0/en/multiple-column-indexes.html
+https://developer.android.com/training/data-storage/room/defining-data
+https://medium.com/@User3141592/single-vs-composite-indexes-in-relational-databases-58d0eb045cbe
+
+5. Adding Schema location to build.gradle
+https://stackoverflow.com/questions/44322178/room-schema-export-directory-is-not-provided-to-the-annotation-processor-so-we
+
+6. ROOM Useful Links
+https://medium.com/@magdamiu/android-room-persistence-library-relations-75bbe02e8522
+https://medium.com/@ajaysaini.official/building-database-with-room-persistence-library-ecf7d0b8f3e9
+https://medium.com/androiddevelopers/7-pro-tips-for-room-fbadea4bfbd1
+https://medium.com/androiddevelopers/understanding-migrations-with-room-f01e04b07929
+https://android.jlelse.eu/room-store-your-data-c6d49b4d53a3
+https://android.jlelse.eu/android-architecture-components-room-relationships-bf473510c14a
+https://android.jlelse.eu/5-steps-to-implement-room-persistence-library-in-android-47b10cd47b24
+https://android.jlelse.eu/setting-android-room-in-real-project-58a77469737c
+https://android.jlelse.eu/android-architecture-components-room-migration-1a269e1aeef7
+
+7. The emulator process for AVD was killed in android studio2 [closed]
+https://stackoverflow.com/questions/36526037/the-emulator-process-for-avd-was-killed-in-android-studio2
+
+

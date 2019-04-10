@@ -87,9 +87,10 @@ public class TryCatchThrowException
         catch (MyAgeException e) {
             System.out.println("Caught in parent block 1: " + e);
             System.out.println("Throw back the exception");
-            throw e;
+            //throw new IllegalArgumentException("Illegal age passed");
+            throw new IllegalArgumentException(e.getMessage());
         }
-        catch (Exception e)
+        catch (MyCustomException e)
         {
             System.out.println("Caught in parent block 2: " + e);
             System.out.println("DONE");
@@ -129,8 +130,9 @@ public class TryCatchThrowException
         //catch (MyCustomException e1)
         {
             System.out.println("1.");
+            System.out.println(e1.getClass().getCanonicalName());
             System.out.println(e1);
-            //e1.printStackTrace();
+            e1.printStackTrace();
         }
         /*
         catch (Exception e2)
