@@ -224,6 +224,12 @@
 190. Mockito test a void method throws an exception
 191. Test coverage to private constructor
 192. Static import in Java
+193. Java 8 Function
+194. Java STREAMS
+195. Get first element of HashSet
+196. Iterate through HashSet
+197. Java 8 stream operation on empty list
+
 --------------------------------------------------------------------------------
 
 1.
@@ -2476,6 +2482,21 @@ http://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation
 
 https://www.geeksforgeeks.org/g-fact-27-string-vs-stringbuilder-vs-stringbuffer/
 
+    // Concatenates to String
+    public static void concat1(String s1) {
+        s1 = s1 + "forgeeks";
+    }
+
+    // Concatenates to StringBuilder
+    public static void concat2(StringBuilder s2) {
+        s2.append("forgeeks");
+    }
+
+    // Concatenates to StringBuffer
+    public static void concat3(StringBuffer s3) {
+        s3.append("forgeeks");
+    }
+
     1. Concat1 : In this method, we pass a string “Geeks” and perform “s1 = s1 + ”forgeeks”. The string passed from main() is not changed, this is due to the fact that String is immutable. Altering the value of string creates another object and s1 in concat1() stores reference of new string. References s1 in main() and cocat1() refer to different strings.
 
     2. Concat2 : In this method, we pass a string “Geeks” and perform “s2.append(“forgeeks”)” which changes the actual value of the string (in main) to “Geeksforgeeks”. This is due to the simple fact that StringBuilder is mutable and hence changes its value.
@@ -4292,3 +4313,64 @@ https://stackoverflow.com/questions/27280928/how-to-check-which-exception-type-w
     if (e instanceof NotAnInt) {
         ...
     }
+
+193. Java 8 Function
+https://dzone.com/articles/functional-programming-java-8
+
+    x -> x + 1
+    And what is the type of this function in Java?
+
+    Well, the answer is that it depends. In Java the same lambda expression could be bound to variables of different types. For instance, the following two are valid declarations in Java:
+
+    Function<Integer,Integer> add1 = x -> x + 1;
+    Function<String,String> concat = x -> x + 1;
+    The first one increments an integer x by one, whereas the second one concatenates the integer 1 to any string x.
+
+    And how can we invoke these functions?
+
+    Well, now that they are bound to a reference we can treat them pretty much like we treat any object:
+
+    Integer two = add1.apply(1); //yields 2
+    String answer = concat1.apply("0 + 1 = "); //yields "0 + 1 = 1"
+
+194. Java STREAMS
+    durableGeometryIds.addAll(durablePolygons.stream().map(DurableGeometry::getId).collect(Collectors.toList()));
+    durablePoses.stream().map(DurableGeometry::getId).forEach(durableGeometryIds::add)
+
+195. Get first element of HashSet
+https://stackoverflow.com/questions/8882295/how-to-get-the-first-element-of-the-list-or-set
+
+    set.iterator().next();
+
+196. Iterate through HashSet
+https://stackoverflow.com/questions/12455737/how-to-iterate-over-a-set-hashset-without-an-iterator
+
+1.
+    Set<String> set = new HashSet<String>();
+
+    //populate set
+
+    for (String s : set) {
+        System.out.println(s);
+    }
+
+2.
+    set.forEach(System.out::println);
+
+3.
+    Iterator iter = set.iterator();
+    while (iter.hasNext()) {
+        System.out.println(iter.next());
+    }
+
+197. Java 8 stream operation on empty list
+I am just wondering what will be behavior of Java 8 stream on empty list.
+
+List<?> emptyList = new ArrayList<>();
+List<?> processedList = emptyList.stream().collect(Collectors.toList());
+
+https://stackoverflow.com/questions/54501501/java-8-stream-operation-on-empty-list/54501749
+
+    collect is a terminal operation, so it must be evaluated.
+
+    When terminating a Stream pipeline with collect(Collectors.toList()), you'll always get an output List (you'll never get null). If the Stream is empty (and it doesn't matter if it's empty due to the source of the stream being empty, or due to all the elements of the stream being filtered out prior to the terminal operation), the output List will be empty too.

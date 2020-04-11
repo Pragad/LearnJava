@@ -297,6 +297,9 @@ public class AllJavaAlgoProblems {
     // -------------------------------------------------------------------------
     // Problem 2.
     // Print matrix diagonally
+    // https://www.geeksforgeeks.org/zigzag-or-diagonal-traversal-of-matrix/
+    // https://www.geeksforgeeks.org/print-matrix-diagonal-pattern/
+    // https://www.geeksforgeeks.org/zigzag-or-diagonal-traversal-of-matrix/
     // -------------------------------------------------------------------------
     static void printMatrixDiagonally(int[][] twoDMat) {
         int rows = twoDMat.length;
