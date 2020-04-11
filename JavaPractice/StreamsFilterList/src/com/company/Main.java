@@ -54,6 +54,23 @@ public class Main {
                         .collect(ImmutableList.toImmutableList());
         */
 
+        /*
+        final List<Person> personList = somelist.stream()
+                .map(entry -> {
+						return Asd.builder()
+								.withA(entry)
+								.withS("S")
+								.build();
+                }).collect(ImmutableList.toImmutableList());
+
+        final List<Person> personList = somelist.stream()
+                .map(entry -> 
+						return Asd.builder()
+								.withA(entry)
+								.withS("S")
+								.build()
+                ).collect(ImmutableList.toImmutableList());
+        */
         System.out.println(availableSubjects);
 
         // Construct a list of Entities from a List of String

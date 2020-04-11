@@ -79,15 +79,17 @@ public class TryCatchThrowException
 
     static void foo(int age)  throws MyAgeException
     {
+        //throw new RuntimeException("runtime");
         try
         {
             employeeAge(age);
             employeeAgeWrapper(age);
         } 
         catch (MyAgeException e) {
-            System.out.println("Caught in parent block 1: " + e);
-            System.out.println("Throw back the exception");
+            //System.out.println("Caught in parent block 1: " + e);
+            //System.out.println("Throw back the exception");
             //throw new IllegalArgumentException("Illegal age passed");
+            //throw new IllegalArgumentException(e.getMessage());
             throw new IllegalArgumentException(e.getMessage());
         }
         catch (MyCustomException e)
@@ -129,10 +131,11 @@ public class TryCatchThrowException
         catch (Exception e1)
         //catch (MyCustomException e1)
         {
-            System.out.println("1.");
-            System.out.println(e1.getClass().getCanonicalName());
-            System.out.println(e1);
+            //System.out.println("1.");
+            //System.out.println(e1.getClass().getCanonicalName());
+            System.out.println("Got exception: " + e1);
             e1.printStackTrace();
+            System.out.println("DONE");
         }
         /*
         catch (Exception e2)
