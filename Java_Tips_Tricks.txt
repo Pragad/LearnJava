@@ -15,7 +15,7 @@
 12. How to make System.out.println() shorter
 13. Using int vs Integer
 13b. Using array vs ArrayList
-14. How do I apply the for-each loop to every character in a String
+14. How do I apply the for-each loop to every character in a String / Iterate over a String
 15. Why can Java Collections not directly store Primitives types
 16. Why is Java Vector class considered obsolete or deprecated
 17. What is meant by immutable
@@ -55,7 +55,8 @@
 41. Check if Array is empty
 42. Convert Array to ArrayList in Java
 42a. How to convert int[] into List<Integer> in Java?
-42b. Convert ArrayList to Array in Java
+42b. Convert Array to Set
+42c. Convert ArrayList to Array in Java
 43. Integer MAX_VALUE
 44. Char array to String
 45. String to Char Array
@@ -879,7 +880,7 @@ http://stackoverflow.com/questions/2843928/benefits-of-arrays
     While an array of a subclass IS an array of the superclass, lists of subclasses are NOT lists of superclasses (and there is a good reason for it - generics would have a type safery flaw if it were allowed).
 
 14.
-How do I apply the for-each loop to every character in a String
+How do I apply the for-each loop to every character in a String / Iterate over a String
 http://stackoverflow.com/questions/2451650/how-do-i-apply-the-for-each-loop-to-every-character-in-a-string
 
     for (char ch: "xyz".toCharArray()) {
@@ -1643,8 +1644,12 @@ Convert Array to ArrayList
     int[] ints = {1,2,3};
     List<Integer> list = Arrays.stream(ints).boxed().collect(Collectors.toList());
 
+42b. Convert Array to Set
+https://stackoverflow.com/questions/3064423/how-to-convert-an-array-to-a-set-in-java
+    Set<String> s = new HashSet<String>(
+        Arrays.asList(new String[] { "1", "2", "3" }));
 
-42b.
+42c.
 Convert ArrayList to Array in Java
 
     String[] dsf = new String[al.size()];

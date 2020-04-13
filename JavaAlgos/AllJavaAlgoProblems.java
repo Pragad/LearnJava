@@ -1052,7 +1052,7 @@ public class AllJavaAlgoProblems {
     }
 
     // This uses HashSet to find unique entries
-    static List<List<Integer>> threeSum(int[] nums) {
+    static List<List<Integer>> threeSumHashSet(int[] nums) {
         Arrays.sort(nums);
         // Copy into Set to remove duplicates
         Set<List<Integer>> result = new HashSet<>();
@@ -2536,6 +2536,28 @@ public class AllJavaAlgoProblems {
             result.add(numB);
         }
         return result;
+    }
+
+    public boolean backspaceCompare(String S, String T) {
+        Stack<Character> firstString = new Stack<>();
+        Stack<Character> secondString = new Stack<>();
+        
+        populateStack(S, firstString);
+        populateStack(T, secondString);
+        
+        //System.out.println(firstString.toString());
+        return true;
+        // return compareStack(firstString, secondString);
+    }
+    
+    private void populateStack(String s, Stack<Character> remainChars) {
+         for (Character c : s.toCharArray()) {
+            if (c == '#') {
+                remainChars.pop();
+            } else {
+                remainChars.push(c);
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
