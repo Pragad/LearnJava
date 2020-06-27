@@ -150,6 +150,7 @@ import java.util.stream.*;
  *
  * PROBLEM 59. Find all elements present more than n/3 times
  *
+ * PROBLEM 60. Manager Hierarchy
  */
 
 // -----------------------------------------------------------------------------
@@ -2561,7 +2562,91 @@ public class AllJavaAlgoProblems {
     }
 
     // -------------------------------------------------------------------------
-    // PROBLEM 59. Return all combinations of k numbers out of 1 to n
+    // PROBLEM 60. Manager Hierarchy
+    // a
+    //  - b
+    //    - c
+    //    - d
+    //      - e
+    //    - f
+    //  - g
+    //
+    //  1-a-0;2-b-1;3-c-2;4-d-2;5-e-4;6-f-2;7-g-1
+    // -------------------------------------------------------------------------
+    static class Person {
+        String name;
+        int id;
+
+        Person(String name, int id) {
+            this.name = name;
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "Name: " + name + "; Id: " + id;
+        }
+    }
+
+    static void printHierarchy(String input) {
+        // Input String validation
+        final String[] parts = input.split(";");
+        //List<String> inputList = Arrays.asList(parts);
+        //System.out.println(inputList);
+
+        Map<Integer, List<Person>> employeeMap = new HashMap<>();
+
+        for (final String employee : parts) {
+            // IMP: Split returns a string. Should be converted to Integer
+            final String[] empParts = employee.split("-");
+            // empParts validation
+            
+            final Integer mgrId = Integer.valueOf(empParts[2]);
+            final Person person = new Person(empParts[1], Integer.valueOf(empParts[0]));
+            // IMP: Add to ArrayList in HashMap
+            if (employeeMap.containsKey(mgrId)) {
+                // Add under the manager to existing list of employee
+                employeeMap.get(mgrId).add(person);
+            } else {
+                // Create a new list for the manager and add
+                employeeMap.put(mgrId, new ArrayList<>(Arrays.asList(person)));
+            }
+        }
+
+        // Debug
+        for (final Integer mgrId : employeeMap.keySet()) {
+            System.out.println();
+            System.out.print("MgrId: " + mgrId + "; Employees: " + employeeMap.get(mgrId));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+        prettyPrintHierarchy(employeeMap, 0, 0);
+    }
+
+    static void prettyPrintHierarchy(final Map<Integer, List<Person>> employeeMap, int mgrId, int level) {
+        final List<Person> employeeList = employeeMap.get(mgrId);
+        // Validate list is not empty
+        for (Person employee : employeeList) {
+            for (int i = 0; i < level; i++) {
+                System.out.print(" - ");
+            }
+
+            System.out.print(employee.name + ", ");
+            System.out.println();
+
+            List<Person> subEmployees = employeeMap.get(employee.id);
+            if (subEmployees != null && !subEmployees.isEmpty()) {
+                System.out.println();
+                prettyPrintHierarchy(employeeMap, employee.id, level + 1);
+            }
+        }
+        System.out.println();
+    }
+
+    // -------------------------------------------------------------------------
+    // PROBLEM 61. Return all combinations of k numbers out of 1 to n
     // Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
     //
     // If n = 4 and k = 2, a solution is:
@@ -3103,6 +3188,13 @@ public class AllJavaAlgoProblems {
         // PROBLEM 59. Find all elements present more than n/3 times
         {
             System.out.println("\nPROBLEM 59. Find all elements present more than n/3 times");
+        }
+
+        // PROBLEM 60. Manager Hirarchy
+        {
+            System.out.println("\nPROBLEM 60. Manager hierarchy from string");
+            String input = "1-a-0;2-b-1;3-c-2;4-d-2;5-e-4;6-f-2;7-g-1";
+            printHierarchy(input);
         }
 
     }
