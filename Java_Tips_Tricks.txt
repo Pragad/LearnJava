@@ -230,7 +230,7 @@
 195. Get first element of HashSet
 196. Iterate through HashSet
 197. Java 8 stream operation on empty list
-
+198. Java Platform Independent
 --------------------------------------------------------------------------------
 
 1.
@@ -4217,7 +4217,7 @@ https://stackoverflow.com/questions/52437320/how-to-create-default-counstructor-
             });
 
             new Thread(() -> {
-                floorplanBundle.setCurrentFloorPlan(0);
+                myBundle.setCurrentFloorPlan(0);
             }).start();
 
 189. Making local variables and parameters as final
@@ -4379,3 +4379,24 @@ https://stackoverflow.com/questions/54501501/java-8-stream-operation-on-empty-li
     collect is a terminal operation, so it must be evaluated.
 
     When terminating a Stream pipeline with collect(Collectors.toList()), you'll always get an output List (you'll never get null). If the Stream is empty (and it doesn't matter if it's empty due to the source of the stream being empty, or due to all the elements of the stream being filtered out prior to the terminal operation), the output List will be empty too.
+
+198. Java Platform Independent
+https://www.geeksforgeeks.org/java-platform-independent/
+https://www.geeksforgeeks.org/how-does-a-c-program-executes/
+https://www.geeksforgeeks.org/compilation-execution-java-program/
+https://stackoverflow.com/questions/7674839/is-the-jvm-a-compiler-or-an-interpreter    
+    Javac is Java Compiler -- Compiles your Java code into Bytecode
+
+    JVM is Java Virtual Machine -- Runs/ Interprets/ translates Bytecode into Native Machine Code
+
+    JIT is Just In Time Compiler -- Compiles the given bytecode instruction sequence to machine code at runtime before executing it natively. It's main purpose is to do heavy optimizations in performance.
+
+    So now, Let's find answers to your questions..
+
+    1)JVM: is it a compiler or an interpreter? -- Ans: Interpreter
+
+    2)what about JIT compiler that exist inside the JVM? -- Ans: If you read this reply completly, you probably know it now
+
+
+    Java compiler produces a unique type of code called bytecode unlike c compiler where compiler produces only natively executable code for a particular machine.
+    When the Java program runs in a particular machine it is sent to java compiler, which converts this code into intermediate code called bytecode. This bytecode is sent to Java virtual machine (JVM) which resides in the RAM of any operating system. JVM recognizes the platform it is on and converts the bytecodes into native machine code. Hence java is called platform independent language.
