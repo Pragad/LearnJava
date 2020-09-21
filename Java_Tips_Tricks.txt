@@ -4400,3 +4400,103 @@ https://stackoverflow.com/questions/7674839/is-the-jvm-a-compiler-or-an-interpre
 
     Java compiler produces a unique type of code called bytecode unlike c compiler where compiler produces only natively executable code for a particular machine.
     When the Java program runs in a particular machine it is sent to java compiler, which converts this code into intermediate code called bytecode. This bytecode is sent to Java virtual machine (JVM) which resides in the RAM of any operating system. JVM recognizes the platform it is on and converts the bytecodes into native machine code. Hence java is called platform independent language.
+
+199. Functional Interfaces and Lamda Expressions
+Functional Interfaces: What is Functional Interface?
+    If a Java interface contains one and only one abstract method then it is termed as functional interface. This only one method specifies the intended purpose of the interface.
+
+    For example, the Runnable interface from package java.lang; is a functional interface because it constitutes only one method i.e. run().
+
+    Example 1: Define a Functional Interface in java
+        import java.lang.FunctionalInterface;
+        @FunctionalInterface
+        public interface MyInterface{
+            // the single abstract method
+            double getValue();
+        }
+
+    In Java 7, functional interfaces were considered as Single Abstract Methods or SAM type. SAMs were commonly implemented with Anonymous Classes in Java 7.
+
+    Example 2: Implement SAM with anonymous classes in java
+        public class FunctionInterfaceTest {
+            public static void main(String[] args) {
+
+                // anonymous class
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("I just implemented the Runnable Functional Interface.");
+                    }
+                }).start();
+            }
+        }
+
+Introduction to lambda expressions
+Lambda expression is, essentially, an anonymous or unnamed method. The lambda expression does not execute on its own. Instead, it is used to implement a method defined by a functional interface.
+
+How to define lambda expression in Java?
+Here is how we can define lambda expression in Java.
+
+(parameter list) -> lambda body
+The new operator (->) used is known as an arrow operator or a lambda operator. The syntax might not be clear at the moment. Let's explore some examples,
+
+Suppose, we have a method like this:
+
+double getPiValue() {
+    return 3.1415;
+}
+We can write this method using lambda expression as:
+
+() -> 3.1415
+Here, the method does not have any parameters. Hence, the left side of the operator includes an empty parameter. The right side is the lambda body that specifies the action of the lambda expression. In this case, it returns the value 3.1415.
+
+Types of Lambda Body
+In Java, the lambda body is of two types.
+
+1. A body with a single expression
+
+() -> System.out.println("Lambdas are great");
+This type of lambda body is known as the expression body.
+
+2. A body that consists of a block of code.
+
+() -> {
+    double pi = 3.1415;
+    return pi;
+};
+This type of the lambda body is known as a block body. The block body allows the lambda body to include multiple statements. These statements are enclosed inside the braces and you have to add a semi-colon after the braces.
+
+Note: For the block body, you should always have a return statement. However, the expression body does not require a return statement.
+200. Java Streams Continued
+https://winterbe.com/posts/2014/03/16/java-8-tutorial/
+
+1. Using Lambda Expressions for Sorting
+
+Let's start with a simple example of how to sort a list of strings in prior versions of Java:
+
+    List<String> names = Arrays.asList("peter", "anna", "mike", "xenia");
+
+    Collections.sort(names, new Comparator<String>() {
+        @Override
+        public int compare(String a, String b) {
+            return b.compareTo(a);
+        }
+    });
+The static utility method Collections.sort accepts a list and a comparator in order to sort the elements of the given list. You often find yourself creating anonymous comparators and pass them to the sort method.
+
+Instead of creating anonymous objects all day long, Java 8 comes with a much shorter syntax, lambda expressions:
+    Collections.sort(names, (String a, String b) -> {
+        return b.compareTo(a);
+    });
+
+As you can see the code is much shorter and easier to read. But it gets even shorter:
+    Collections.sort(names, (String a, String b) -> b.compareTo(a));
+
+For one line method bodies you can skip both the braces {} and the return keyword. But it gets even more shorter:
+    Collections.sort(names, (a, b) -> b.compareTo(a));
+The java compiler is aware of the parameter types so you can skip them as well. Let's dive deeper into how lambda expressions can be used in the wild.
+
+201: What is the difference between assigning null to object and just declaration
+https://stackoverflow.com/questions/16415848/java-what-is-the-difference-between-assigning-null-to-object-and-just-declarati
+
+    For instance, local variables don't have default values in which case you will have to assign null manually, where as in case of instance variables assigning null is redundant since instance variables get default values.

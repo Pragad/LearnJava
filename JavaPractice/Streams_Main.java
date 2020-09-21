@@ -1,7 +1,3 @@
-package com.company;
-
-import com.oracle.tools.packager.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +36,7 @@ class Plan {
     }
 }
 
-public class Main {
+public class Streams_Main {
 
     private Map<String, Point> pointsMap = new HashMap<>();
     private final Map<String, Plan> planMap = new HashMap<>();
@@ -89,9 +85,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             System.out.println("Streams");
-            Log.verbose("hi");
 
-            Main obj = new Main();
+            Streams_Main obj = new Streams_Main();
             obj.addPoints();
             obj.printPoints();
         } catch (Exception e) {
@@ -99,3 +94,4 @@ public class Main {
         }
     }
 }
+
