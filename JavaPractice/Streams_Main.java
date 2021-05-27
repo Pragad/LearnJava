@@ -93,5 +93,74 @@ public class Streams_Main {
             System.out.println("Exception: " + e);
         }
     }
+
+    public static void foo() {
+        final Map<String, Car> existingCars = StorageJsonLdTransformer.getCars(storagesMap)
+                .stream()
+                .filter(car -> carIds.contains(car.getId()))
+                .collect(Collectors.toMap(Car::getId, Function.identity()));
+
+        final Set<String> storageIdsOfCarsToBeDeleted = existingCars.values().stream()
+                .map(car -> car.getStorageIdentifier().getStorageId())
+                .collect(Collectors.toSet());
+
+        storagesMap = storagesMap.entrySet()
+                .stream()
+                .filter(entry -> fpIdsOfCarsToBeDeleted.contains(entry.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        spaceIds.stream().collect(Collectors.toMap(Function.identity(), id -> new Exception("Failed to delete")));
+
+        try {
+            storageServiceAdapter.call(someValue);
+            // TODO: Publish notification for all edits in CHRS Patch Handler.
+        } catch (final IOException e) {
+            return carIds.stream().collect(Collectors.toMap(Function.identity(), (id) -> new SomeException()));
+        }
+
+
+	    String a = "a";
+        String b = "b";
+        String c = "c";
+        String d = "d";
+	    List<String> items = Arrays.asList(a, b, c, d);
+        Map<String, Exception> map = items.stream().collect(Collectors.toMap(i -> i, i -> new IOException()));
+        System.out.println(map);
+
+        // Both are the same
+
+        return entityJsonLd.stream()
+                .map(featureNode ->
+                        EntityJsonLdTransformer.getEntity(someIdentifier, embedGeometryInFeature(someNode, featureNode)))
+                .collect(Collectors.toList());
+
+        return entityJsonLd.stream()
+                .map(featureNode -> {
+                    try {
+                        return EntityJsonLdTransformer.getEntity(someIdentifier, embedGeometryInFeature(someNode, featureNode));
+                    } catch (final IOException e) {
+                        log.error("error");
+                        throw new JsonLdTransformerException("Error happened when transforming entity from JsonLdNode: "
+                                + featureNode.getId().getIri(), e);
+                    }
+                })
+                .collect(Collectors.toList());
+
+         final List<Entity> entity = new ArrayList<>();
+  
+         entityJsonLd.forEach(
+                 featureNode -> {
+                     try {
+                         entity.add(EntityJsonLdTransformer.getEntity(someIdentifier,
+                                 embedGeometryInFeature(someNode, featureNode)));
+                     } catch (final IOException e) {
+                         throw new JsonLdTransformerException("Error happened when transforming entity from JsonLdNode: "
+                                 + featureNode.getId().getIri(), e);
+                     }
+                 }
+         );
+         return entity;
+    }
 }
+
 
