@@ -27,5 +27,21 @@ public class Generics<A, B> {
         ob.print();
         ob.genericFunction(6, "six");
         ob.print();
+
+        Handler handler = new Handler();
+        System.out.println(handler.handle("hello"));
     }
 }
+
+interface IBase<A, B> {
+    A handle(B entry);
+}
+
+class Handler implements IBase<Integer, String> {
+    @Override
+    public Integer handle(String entry) {
+        System.out.println(entry);
+        return entry.length();
+    }
+}
+
